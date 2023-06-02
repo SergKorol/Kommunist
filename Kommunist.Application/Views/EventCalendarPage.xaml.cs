@@ -12,6 +12,8 @@ public partial class EventCalendarPage : ContentPage
     public EventCalendarPage()
     {
         InitializeComponent();
-        BindingContext = new EventCalendarViewModel();
+        var serviceProvider = MauiProgram.CreateMauiApp().Services;
+        var eventCalendarViewModel = serviceProvider?.GetRequiredService<EventCalendarViewModel>();
+        BindingContext = eventCalendarViewModel;
     }
 }

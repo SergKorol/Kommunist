@@ -1,6 +1,6 @@
 ﻿using Kommunist.Application.ViewModels;
 
-namespace XCalendarMauiSample.Views
+namespace Kommunist.Application.Views
 {
     public partial class ExamplesPage : ContentPage
     {
