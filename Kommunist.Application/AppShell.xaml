@@ -1,126 +1,133 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    BackgroundColor="{StaticResource PrimaryColor}"
-    FlyoutBackgroundColor="{StaticResource ContentBackgroundColor}"
-    FlyoutBehavior="Flyout"
-    x:Class="Kommunist.Application.AppShell"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:Views="clr-namespace:Kommunist.Application.Views"
-    xmlns:local="clr-namespace:Kommunist.Application"
-    xmlns:views="clr-namespace:XCalendarMauiSample.Views"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+       FlyoutBehavior="Disabled"
+       x:Class="Kommunist.Application.AppShell"
+       x:Name="shell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:Views="clr-namespace:Kommunist.Application.Views"
+       xmlns:local="clr-namespace:Kommunist.Application"
+       xmlns:view="clr-namespace:Kommunist.Application.Views"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Shell.FlyoutHeader>
-        <Grid BackgroundColor="{StaticResource PrimaryColor}" Padding="10,20,10,20">
-            <Label
-                FontSize="24"
-                HorizontalTextAlignment="Center"
-                Text="XCalendar Sample"
-                TextColor="{StaticResource PrimaryTextColor}"
-                VerticalTextAlignment="Center" />
-        </Grid>
-    </Shell.FlyoutHeader>
-
-    <Shell.ItemTemplate>
-        <DataTemplate>
-            <Grid
-                ColumnSpacing="{OnPlatform WinUI=0}"
-                HeightRequest="{OnPlatform 44,
-                                           Android=50}"
-                RowSpacing="{OnPlatform WinUI=0}"
-                x:Name="FlyoutItemLayout">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{OnPlatform Android=54, iOS=50, WinUI=Auto}" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Image
-                    HeightRequest="{OnPlatform Android=24,
-                                               iOS=22,
-                                               WinUI=16}"
-                    HorizontalOptions="{OnPlatform Default=Center,
-                                                   WinUI=Start}"
-                    Source="{Binding FlyoutIcon}"
-                    VerticalOptions="Center"
-                    WidthRequest="{OnPlatform Android=24,
-                                              iOS=22,
-                                              WinUI=16}"
-                    x:Name="FlyoutItemImage">
-                    <Image.Margin>
-                        <OnPlatform x:TypeArguments="Thickness">
-                            <OnPlatform.Platforms>
-                                <On Platform="WinUI" Value="12,0,12,0" />
-                            </OnPlatform.Platforms>
-                        </OnPlatform>
-                    </Image.Margin>
-                </Image>
-                <Label
-                    FontAttributes="{OnPlatform iOS=Bold}"
-                    FontSize="{OnPlatform Android=14,
-                                          iOS=14}"
-                    Grid.Column="1"
-                    HorizontalOptions="{OnPlatform WinUI=Start}"
-                    HorizontalTextAlignment="{OnPlatform WinUI=Start}"
-                    Text="{Binding Title}"
-                    VerticalTextAlignment="Center"
-                    x:Name="FlyoutItemLabel">
-                    <Label.TextColor>
-                        <OnPlatform x:TypeArguments="Color">
-                            <OnPlatform.Platforms>
-                                <On Platform="Android" Value="{StaticResource ContentTextColor}" />
-                            </OnPlatform.Platforms>
-                        </OnPlatform>
-                    </Label.TextColor>
-                    <Label.Margin>
-                        <OnPlatform x:TypeArguments="Thickness">
-                            <OnPlatform.Platforms>
-                                <On Platform="Android" Value="20, 0, 0, 0" />
-                            </OnPlatform.Platforms>
-                        </OnPlatform>
-                    </Label.Margin>
-                    <Label.FontFamily>
-                        <OnPlatform x:TypeArguments="x:String">
-                            <OnPlatform.Platforms>
-                                <On Platform="Android" Value="sans-serif-medium" />
-                            </OnPlatform.Platforms>
-                        </OnPlatform>
-                    </Label.FontFamily>
-                </Label>
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroupList>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal">
-                                <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="Transparent" />
-                                </VisualState.Setters>
-                            </VisualState>
-                            <VisualState x:Name="Selected">
-                                <VisualState.Setters>
-                                    <Setter Property="BackgroundColor" Value="#F2F2F2" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateGroupList>
-                </VisualStateManager.VisualStateGroups>
-            </Grid>
-        </DataTemplate>
-
-    </Shell.ItemTemplate>
-
-    <!--  <ShellContent  -->
-    <!--  ContentTemplate="{DataTemplate local:MainPage}"  -->
-    <!--  Route="MainPage"  -->
-    <!--  Title="Home" />  -->
-    <ShellContent
-        ContentTemplate="{DataTemplate Views:EventCalendarPage}"
-        Route="Calendar"
-        Title="Calendar" />
-    <!--  <ShellContent  -->
-    <!--  ContentTemplate="{DataTemplate Views:PlaygroundPage}"  -->
-    <!--  Route="PlaygroundPage"  -->
-    <!--  Title="Playground" />  -->
-    <!--  <ShellContent  -->
-    <!--  ContentTemplate="{DataTemplate views:ExamplesPage}"  -->
-    <!--  Route="ExamplesPage"  -->
-    <!--  Title="Examples" />  -->
-
+    <!-- <Shell.FlyoutHeader> -->
+    <!--     <Grid BackgroundColor="{StaticResource PrimaryColor}" Padding="10,20,10,20"> -->
+    <!--  <Label  -->
+    <!--  FontSize="24"  -->
+    <!--  HorizontalTextAlignment="Center"  -->
+    <!--  Text="XCalendar Sample"  -->
+    <!--  TextColor="{StaticResource PrimaryTextColor}"  -->
+    <!--  VerticalTextAlignment="Center" />  -->
+    <!--     </Grid> -->
+    <!-- </Shell.FlyoutHeader> -->
+    <!--    -->
+    <!-- <Shell.ItemTemplate> -->
+    <!--     <DataTemplate> -->
+    <!--  <Grid  -->
+    <!--  ColumnSpacing="{OnPlatform WinUI=0}"  -->
+    <!--  HeightRequest="{OnPlatform 44,  -->
+    <!--  Android=50}"  -->
+    <!--  RowSpacing="{OnPlatform WinUI=0}"  -->
+    <!--  x:Name="FlyoutItemLayout">  -->
+    <!--             <Grid.ColumnDefinitions> -->
+    <!--                 <ColumnDefinition Width="{OnPlatform Android=54, iOS=50, WinUI=Auto}" /> -->
+    <!--                 <ColumnDefinition Width="*" /> -->
+    <!--             </Grid.ColumnDefinitions> -->
+    <!--  <Image  -->
+    <!--  HeightRequest="{OnPlatform Android=24,  -->
+    <!--  iOS=22,  -->
+    <!--  WinUI=16}"  -->
+    <!--  HorizontalOptions="{OnPlatform Default=Center,  -->
+    <!--  WinUI=Start}"  -->
+    <!--  Source="{Binding FlyoutIcon}"  -->
+    <!--  VerticalOptions="Center"  -->
+    <!--  WidthRequest="{OnPlatform Android=24,  -->
+    <!--  iOS=22,  -->
+    <!--  WinUI=16}"  -->
+    <!--  x:Name="FlyoutItemImage">  -->
+    <!--                 <Image.Margin> -->
+    <!--                     <OnPlatform x:TypeArguments="Thickness"> -->
+    <!--                         <OnPlatform.Platforms> -->
+    <!--                             <On Platform="WinUI" Value="12,0,12,0" /> -->
+    <!--                         </OnPlatform.Platforms> -->
+    <!--                     </OnPlatform> -->
+    <!--                 </Image.Margin> -->
+    <!--             </Image> -->
+    <!--  <Label  -->
+    <!--  FontAttributes="{OnPlatform iOS=Bold}"  -->
+    <!--  FontSize="{OnPlatform Android=14,  -->
+    <!--  iOS=14}"  -->
+    <!--  Grid.Column="1"  -->
+    <!--  HorizontalOptions="{OnPlatform WinUI=Start}"  -->
+    <!--  HorizontalTextAlignment="{OnPlatform WinUI=Start}"  -->
+    <!--  Text="{Binding Title}"  -->
+    <!--  VerticalTextAlignment="Center"  -->
+    <!--  x:Name="FlyoutItemLabel">  -->
+    <!--                 <Label.TextColor> -->
+    <!--                     <OnPlatform x:TypeArguments="Color"> -->
+    <!--                         <OnPlatform.Platforms> -->
+    <!--                             <On Platform="Android" Value="{StaticResource ContentTextColor}" /> -->
+    <!--                         </OnPlatform.Platforms> -->
+    <!--                     </OnPlatform> -->
+    <!--                 </Label.TextColor> -->
+    <!--                 <Label.Margin> -->
+    <!--                     <OnPlatform x:TypeArguments="Thickness"> -->
+    <!--                         <OnPlatform.Platforms> -->
+    <!--                             <On Platform="Android" Value="20, 0, 0, 0" /> -->
+    <!--                         </OnPlatform.Platforms> -->
+    <!--                     </OnPlatform> -->
+    <!--                 </Label.Margin> -->
+    <!--                 <Label.FontFamily> -->
+    <!--                     <OnPlatform x:TypeArguments="x:String"> -->
+    <!--                         <OnPlatform.Platforms> -->
+    <!--                             <On Platform="Android" Value="sans-serif-medium" /> -->
+    <!--                         </OnPlatform.Platforms> -->
+    <!--                     </OnPlatform> -->
+    <!--                 </Label.FontFamily> -->
+    <!--             </Label> -->
+    <!--             <VisualStateManager.VisualStateGroups> -->
+    <!--                 <VisualStateGroupList> -->
+    <!--                     <VisualStateGroup x:Name="CommonStates"> -->
+    <!--                         <VisualState x:Name="Normal"> -->
+    <!--                             <VisualState.Setters> -->
+    <!--                                 <Setter Property="BackgroundColor" Value="Transparent" /> -->
+    <!--                             </VisualState.Setters> -->
+    <!--                         </VisualState> -->
+    <!--                         <VisualState x:Name="Selected"> -->
+    <!--                             <VisualState.Setters> -->
+    <!--                                 <Setter Property="BackgroundColor" Value="#F2F2F2" /> -->
+    <!--                             </VisualState.Setters> -->
+    <!--                         </VisualState> -->
+    <!--                     </VisualStateGroup> -->
+    <!--                 </VisualStateGroupList> -->
+    <!--             </VisualStateManager.VisualStateGroups> -->
+    <!--         </Grid> -->
+    <!--     </DataTemplate> -->
+    <!--    -->
+    <!-- </Shell.ItemTemplate> -->
+    
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+        <Tab Icon="icon_home" Title="Home" >
+            <ShellContent ContentTemplate="{DataTemplate Views:EventCalendarPage}" />
+        </Tab>
+        <Tab Icon="icon_calendar" Title="Calendar">
+            <ShellContent ContentTemplate="{DataTemplate Views:EventCalendarPage}" />
+        </Tab>
+        <Tab Icon="icon_filters" Title="Filters">
+            <ShellContent ContentTemplate="{DataTemplate Views:EventCalendarPage}" />
+        </Tab>
+        <Tab Icon="icon_settings" Title="Settings">
+            <ShellContent ContentTemplate="{DataTemplate Views:EventCalendarPage}" />
+        </Tab>
+    </FlyoutItem>
+    
+    
+    
+    <!-- <TabBar> -->
+    <!--     <Tab Icon="icon_home.png" Title="Calendar"> -->
+    <!--         <ShellContent> -->
+    <!--             <Views:EventCalendarPage /> -->
+    <!--         </ShellContent> -->
+    <!--     </Tab> -->
+    <!-- </TabBar> -->
 </Shell>
+

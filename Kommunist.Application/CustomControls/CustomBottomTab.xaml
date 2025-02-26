@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kommunist.Application.CustomControls.CustomBottomTab">
+    <Grid RowDefinitions="Auto" ColumnDefinitions="*, *, *, *">
+        <!-- Home Tab -->
+        <Button Grid.Column="0"
+                Text="Home"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                FontSize="12"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Clicked="OnHomeClicked">
+            <Button.ImageSource>
+                <FontImageSource Glyph="&#xe700;" 
+                                 FontFamily="YourIconFont" 
+                                 Color="Blue" 
+                                 Size="24" />
+            </Button.ImageSource>
+        </Button>
+
+        <!-- Calendar Tab -->
+        <Button Grid.Column="1"
+                Text="Calendar"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                FontSize="12"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Clicked="OnCalendarClicked">
+            <Button.ImageSource>
+                <FontImageSource Glyph="&#xe701;" 
+                                 FontFamily="YourIconFont" 
+                                 Color="Green" 
+                                 Size="24" />
+            </Button.ImageSource>
+        </Button>
+
+        <!-- Filters Tab -->
+        <Button Grid.Column="2"
+                Text="Filters"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                FontSize="12"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Clicked="OnFiltersClicked">
+            <Button.ImageSource>
+                <FontImageSource Glyph="&#xe702;" 
+                                 FontFamily="YourIconFont" 
+                                 Color="Orange" 
+                                 Size="24" />
+            </Button.ImageSource>
+        </Button>
+
+        <!-- Settings Tab -->
+        <Button Grid.Column="3"
+                Text="Settings"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                FontSize="12"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Clicked="OnSettingsClicked">
+            <Button.ImageSource>
+                <FontImageSource Glyph="&#xe703;" 
+                                 FontFamily="YourIconFont" 
+                                 Color="Red" 
+                                 Size="24" />
+            </Button.ImageSource>
+        </Button>
+    </Grid>
+</ContentView>

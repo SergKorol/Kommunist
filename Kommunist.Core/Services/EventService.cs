@@ -1,6 +1,12 @@
+using System.Collections;
 using Kommunist.Core.Entities;
+using Kommunist.Core.Entities.BaseType;
+using Kommunist.Core.Entities.Enums;
+using Kommunist.Core.Entities.PageProperties.Agenda;
+using Kommunist.Core.Entities.PageProperties.EventNavigation;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kommunist.Core.Services;
 
@@ -35,6 +41,43 @@ public class EventService : IEventService
         }
     }
 
+    public async Task<IEnumerable<EventPage>> GetEventPages(int eventId)
+    {
+        var url = $"/api/v2/events/{eventId}/pages/home";
+        try
+        {
+            HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var eventPages = JsonConvert.DeserializeObject<IEnumerable<EventPage>>(json);
+            return eventPages;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"An HTTP request error occurred: {e.Message}");
+            return Enumerable.Empty<EventPage>();
+        }
+    }
+
+    public async Task<AgendaPage> GetAgenda(int eventId)
+    {
+        var url = $"/api/v2/events/{eventId}/agenda";
+        try
+        {
+            HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var agenda = JsonConvert.DeserializeObject<AgendaPage>(json);
+            return agenda;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"An HTTP request error occurred: {e.Message}");
+            return default;
+        }
+    }
     private string EncodeDateString(string date)
     {
         return Uri.EscapeDataString(date).Replace(".", "%2F");

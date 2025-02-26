@@ -1,12 +1,18 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Core.Extensions;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
+using Kommunist.Application.Views;
 using Kommunist.Core.Entities;
-using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
 using XCalendar.Core.Collections;
 using XCalendar.Core.Enums;
 using XCalendar.Core.Extensions;
@@ -72,6 +78,9 @@ public class EventCalendarViewModel : BaseViewModel
         #region Commands
         public ICommand NavigateCalendarCommand { get; set; }
         public ICommand ChangeDateSelectionCommand { get; set; }
+        
+        public ICommand EventSelectedCommand { get; }
+        
         #endregion
 
         private  readonly IEventService _eventService;
@@ -80,18 +89,18 @@ public class EventCalendarViewModel : BaseViewModel
         public EventCalendarViewModel(IEventService eventService)
         {
             _eventService = eventService;
-            GetEvents(EventCalendar.Days).ConfigureAwait(false);
+            
             NavigateCalendarCommand = new Command<int>(NavigateCalendar);
             ChangeDateSelectionCommand = new Command<DateTime>(ChangeDateSelection);
+            EventSelectedCommand = new Command<CalEvent>(OnEventSelected);
 
             EventCalendar.SelectedDates.CollectionChanged += SelectedDates_CollectionChanged;
             EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
+            GetEvents(EventCalendar.Days).ConfigureAwait(false);
             foreach (var day in EventCalendar.Days)
             {
                 day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
             }
-
-            // ChangeColorsForEvents();
         }
         #endregion
 
@@ -99,14 +108,11 @@ public class EventCalendarViewModel : BaseViewModel
         
         private void EventCalendar_DaysUpdated(object sender, EventArgs e)
         {
-            var navigatedDate = ((Calendar<EventDay>)sender).NavigatedDate.Date;
-            
-            if (navigatedDate != DateTime.Today.Date)
+            if (CalEvents.All(x => x.DateTime.Date != ((Calendar<EventDay>)sender).NavigatedDate.Date))
             {
                GetEvents(EventCalendar.Days).ConfigureAwait(false);
-               // ChangeColorsForEvents();
             }
-            
+
             foreach (var day in EventCalendar.Days)
             {
                 day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
@@ -131,51 +137,24 @@ public class EventCalendarViewModel : BaseViewModel
         {
             EventCalendar?.ChangeDateSelection(dateTime);
         }
-        #endregion
-
-        // private async Task GetEvents(DateTime startDate, DateTime endDate)
-        // {
-        //     Events = (await _eventService.LoadEvents(startDate, endDate)).ToObservableCollection();
-        //     var calEvents = new List<CalEvent>();
-        //     foreach (var e in Events)
-        //     {
-        //         var location = e.ParticipationFormat.Online ? string.Empty : $"{e.ParticipationFormat.Location}";
-        //         var callEvent = new CalEvent { Title = e.Title, Description = $"{e.Start.ToLocalDateTime()} - {e.End.ToLocalDateTime()}, {e.Language}, {location}", DateTime = e.Start.ToLocalDateTime()};
-        //         calEvents.Add(callEvent);
-        //     }
-        //
-        //     
-        //     CalEvents.ReplaceRange(calEvents);
-        //     foreach (CalEvent @event in CalEvents)
-        //     {
-        //         @event.Color = Colors[Random.Next(6)];
-        //     }
-        // }
         
-
-        private void ChangeColorsForEvents()
+        private async void OnEventSelected(CalEvent selectedEvent)
         {
-            foreach (CalEvent @event in CalEvents)
-            {
-                @event.Color = Colors[Random.Next(6)];
-            }
-        }
-        
-        // private async Task SetDays()
-        // {
-        //     await GetEvents(EventCalendar.Days);
-        //
-        //     foreach (var day in EventCalendar.Days)
-        //     {
-        //         day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-        //     }
-        // }
+            // var tappedEvent = Events.ToList().FirstOrDefault(x => x.Id == selectedEvent.EventId);
+            EventCalendarDetailViewModel eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId);
+            // eventDetailViewModel.TappedEventId = selectedEvent.EventId;
+            // eventDetailViewModel.TappedEvent = tappedEvent;
+            // eventDetailViewModel.CreateEventCalendarDetailPage();
 
+            await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
+        }
+        #endregion
 
         private async Task GetEvents(ObservableCollection<EventDay> days)
         {
-            var startDate = days.First().DateTime;
-            var endDate = days.Last().DateTime;
+            var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
+            var startDate = daysByNavMonth.First().DateTime;
+            var endDate = daysByNavMonth.Last().DateTime;
             var loadedDays = await _eventService.LoadEvents(startDate, endDate);
             Events = loadedDays.ToObservableCollection();
             var calEvents = (from e in Events
@@ -184,14 +163,13 @@ public class EventCalendarViewModel : BaseViewModel
                     : $"{e.ParticipationFormat.Location}"
                 select new CalEvent
                 {
+                    EventId = e.Id,
                     Title = e.Title,
                     Description = $"{e.Start.ToLocalDateTime()} - {e.End.ToLocalDateTime()}, {e.Language}, {location}",
                     DateTime = e.Start.ToLocalDateTime(),
                     Color = Colors[Random.Next(6)],
                     Url = "https://wearecommunity.io/events/net-talks-8"
                 }).ToList();
-            // calEvents.ForEach(x => x.Color = Microsoft.Maui.Graphics.Colors.Red);   
-
             CalEvents.ReplaceRange(calEvents);
         }
 }

@@ -26,7 +26,7 @@ public record Event
     public List<object> Talks { get; set; }
 
     [JsonProperty("speakers")]
-    public List<Speaker> Speakers { get; set; }
+    public List<Person> Speakers { get; set; }
 
     [JsonProperty("start")]
     public long Start { get; set; }

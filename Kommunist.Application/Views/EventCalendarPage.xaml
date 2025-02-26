@@ -11,8 +11,7 @@
     xmlns:ViewModels="clr-namespace:Kommunist.Application.ViewModels"
     xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
-    xmlns:xcConverters="clr-namespace:XCalendar.Maui.Converters;assembly=XCalendar.Maui">
+    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui">
 
 
     <ContentPage.Resources>
@@ -160,7 +159,6 @@
 
         </Border>
 
-        <!-- <ScrollView Grid.Row="1" Margin="0,0,0,50"> -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -193,18 +191,19 @@
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
 
-                            <Grid>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ViewModels:EventCalendarViewModel}}, Path=EventSelectedCommand}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
 
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-
                                 <BoxView
                                     BackgroundColor="{Binding Color}"
                                     Grid.Column="0"
                                     WidthRequest="20" />
-
                                 <VerticalStackLayout
                                     BackgroundColor="{StaticResource ContentBackgroundColor}"
                                     Grid.Column="1"
@@ -226,19 +225,12 @@
                                         Text="{Binding Description}"
                                         TextColor="{StaticResource ContentTextColor}" />
                                 </VerticalStackLayout>
-                                <!-- <WebView Grid.Column="1" x:Name="webView"> -->
-                                <!--     <WebView.GestureRecognizers> -->
-                                <!--         <TapGestureRecognizer Command="{Binding Source={x:Reference webView}, Path=BindingContext.NavigateCommand}" CommandParameter="{Binding Url}" /> -->
-                                <!--     </WebView.GestureRecognizers> -->
-                                <!-- </WebView> -->
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
-
-        <!-- </ScrollView> -->
     </Grid>
 
 </ContentPage>

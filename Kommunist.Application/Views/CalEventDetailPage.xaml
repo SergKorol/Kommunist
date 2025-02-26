@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="Kommunist.Application.Views.CalEventDetailPage"
+    x:Name="Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:models="clr-namespace:Kommunist.Application.Models"
+    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <StackLayout>
+        <Grid>
+            <Image
+                Aspect="AspectFill"
+                BackgroundColor="SkyBlue"
+                HeightRequest="100"
+                Opacity="0.15">
+                <Image.Source>
+                    <UriImageSource Uri="{Binding Source={x:Reference Page}, Path=BgImg}" />
+                </Image.Source>
+            </Image>
+            <VerticalStackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="24"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    Margin="0,15,0,15"
+                    Padding="15,0,15,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span
+                                FontFamily="FAS"
+                                FontSize="24"
+                                Text="{StaticResource IconHeadset}" />
+                            <Span Text=" " />
+                            <Span Text="By using text wrapping and limiting the number of lines, you can prevent the long string from exceeding the bounds of the Label and maintain a proper layout." />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="16"
+                    HorizontalTextAlignment="Center"
+                    Padding="15,0,15,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span
+                                FontFamily="FAS"
+                                FontSize="16"
+                                Text="{StaticResource IconCalendar}" />
+                            <Span Text=" " />
+                            <Span Text="{Binding SelectedEventDetail.PeriodDateTime}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="16"
+                    HorizontalTextAlignment="Center"
+                    Padding="15,0,15,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span
+                                FontFamily="FAS"
+                                FontSize="16"
+                                Text="{StaticResource IconTowerBroadcast}" />
+                            <Span Text=" " />
+                            <Span Text="{Binding SelectedEventDetail.FormatEvent}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+        </Grid>
+        <BoxView
+            Color="Black"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"
+            Margin="0,10,0,10" />
+        <Grid>
+            <HorizontalStackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="16"
+                    HorizontalTextAlignment="Center"
+                    Padding="15,0,15,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span
+                                FontFamily="FAS"
+                                FontSize="16"
+                                Text="{StaticResource IconLanguage}" />
+                            <Span Text=" " />
+                            <Span Text="{Binding SelectedEventDetail.Language}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="16"
+                    HorizontalTextAlignment="Center"
+                    Padding="15,0,15,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span
+                                FontFamily="FAS"
+                                FontSize="16"
+                                Text="{StaticResource IconLocationPin}" />
+                            <Span Text=" " />
+                            <Span Text="{Binding SelectedEventDetail.Location}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </HorizontalStackLayout>
+        </Grid>
+        <BoxView
+            Color="Black"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"
+            Margin="0,10,0,10" />
+
+        <!--  Persons  -->
+        <ScrollView MaximumHeightRequest="200">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Margin="0,20,0,10"
+                        Text="Speakers" />
+
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding SelectedEventDetail.Speakers}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="{x:Type models:PersonCard}">
+                                <StackLayout Margin="0,5,0,5">
+                                    <Image
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                        Source="{Binding Avatar}"
+                                        WidthRequest="30" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontAutoScalingEnabled="True"
+                                        FontSize="16"
+                                        HorizontalTextAlignment="Center"
+                                        Padding="15,0,15,0"
+                                        Text="{Binding Name}" />
+                                    <Label
+                                        FontAutoScalingEnabled="True"
+                                        FontSize="12"
+                                        HorizontalTextAlignment="Center"
+                                        Padding="15,0,15,0">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span FontSize="16" Text="{Binding Company}" />
+                                                <Span Text=", " />
+                                                <Span Text="{Binding Position}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Margin="0,20,0,10"
+                        Text="Moderators" />
+
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding SelectedEventDetail.Moderators}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="{x:Type models:PersonCard}">
+                                <StackLayout Margin="0,5,0,5">
+                                    <Image
+                                        Aspect="AspectFit"
+                                        HeightRequest="30"
+                                        Source="{Binding Avatar}"
+                                        WidthRequest="30">
+                                        <Image.Clip>
+                                            <EllipseGeometry
+                                                Center="15,15"
+                                                RadiusX="15"
+                                                RadiusY="15" />
+                                        </Image.Clip>
+                                    </Image>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontAutoScalingEnabled="True"
+                                        FontSize="16"
+                                        HorizontalTextAlignment="Center"
+                                        Padding="15,0,15,0">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span FontSize="16" Text="{Binding Company}" />
+                                                <Span Text=", " />
+                                                <Span Text="{Binding Position}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </Grid>
+        </ScrollView>
+
+        <Grid>
+            <WebView>
+                <WebView.Source>
+                    <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description}" />
+                </WebView.Source>
+            </WebView>
+            <!-- <Label Text="{Binding SelectedEventDetail.Description}" /> -->
+        </Grid>
+
+
+
+    </StackLayout>
+</ContentPage>
