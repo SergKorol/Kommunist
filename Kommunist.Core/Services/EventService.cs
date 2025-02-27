@@ -1,24 +1,13 @@
-using System.Collections;
-using Kommunist.Core.Entities;
-using Kommunist.Core.Entities.BaseType;
-using Kommunist.Core.Entities.Enums;
 using Kommunist.Core.Entities.PageProperties.Agenda;
-using Kommunist.Core.Entities.PageProperties.EventNavigation;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Event = Kommunist.Core.Entities.Event;
+using Item = Kommunist.Core.Models.Item;
 
 namespace Kommunist.Core.Services;
 
-public class EventService : IEventService
+public class EventService(HttpClient httpClient) : IEventService
 {
-    private readonly HttpClient _httpClient;
-    
-    public EventService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-    
     public async Task<IEnumerable<Event>> LoadEvents(DateTime startDate, DateTime endDate)
     {
         string fromDate = EncodeDateString(startDate.ToString("MM/dd/yyyy"));
@@ -27,7 +16,7 @@ public class EventService : IEventService
         
         try
         {
-            HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -41,22 +30,22 @@ public class EventService : IEventService
         }
     }
 
-    public async Task<IEnumerable<EventPage>> GetEventPages(int eventId)
+    public async Task<IEnumerable<Item>> GetHomePage(int eventId)
     {
         var url = $"/api/v2/events/{eventId}/pages/home";
         try
         {
-            HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var eventPages = JsonConvert.DeserializeObject<IEnumerable<EventPage>>(json);
+            var eventPages = JsonConvert.DeserializeObject<IEnumerable<Item>>(json);
             return eventPages;
         }
         catch (Exception e)
         {
             Console.WriteLine($"An HTTP request error occurred: {e.Message}");
-            return Enumerable.Empty<EventPage>();
+            return [];
         }
     }
 
@@ -65,7 +54,7 @@ public class EventService : IEventService
         var url = $"/api/v2/events/{eventId}/agenda";
         try
         {
-            HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
