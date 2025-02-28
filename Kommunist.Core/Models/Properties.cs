@@ -4,22 +4,19 @@ using Newtonsoft.Json;
 
 namespace Kommunist.Core.Models;
 
-public record Properties
+public class Properties
 {
     [JsonProperty("event")]
     public Event Event { get; set; }
-
-    [JsonProperty("community")]
-    public object Community { get; set; }
-
+    
     [JsonProperty("bg_color")]
-    public string BgColor { get; set; }
+    public string BackgroundColor { get; set; }
 
     [JsonProperty("opacity")]
     public string Opacity { get; set; }
 
     [JsonProperty("without_details")]
-    public bool? WithoutDetails { get; set; }
+    public bool WithoutDetails { get; set; }
 
     [JsonProperty("text")]
     public List<TextItem> Text { get; set; }
@@ -31,14 +28,35 @@ public record Properties
     public Details Details { get; set; }
 
     [JsonProperty("is_main_page")]
-    public bool? IsMainPage { get; set; }
+    public bool IsMainPage { get; set; }
 
     [JsonProperty("registration")]
     public Registration Registration { get; set; }
 
-    [JsonProperty("default_icon_color")]
-    public string DefaultIconColor { get; set; }
+    [JsonProperty("subscription")]
+    public object Subscription { get; set; }
 
-    [JsonProperty("icons")]
-    public List<Icon> Icons { get; set; }
+    [JsonProperty("is_registration")]
+    public object IsRegistration { get; set; }
+
+    [JsonProperty("is_speaker")]
+    public object IsSpeaker { get; set; }
+
+    [JsonProperty("event_url")]
+    public string EventUrl { get; set; }
+
+    [JsonProperty("communities")]
+    public List<object> Communities { get; set; }
+
+    [JsonProperty("languages")]
+    public List<string> Languages { get; set; }
+
+    [JsonProperty("show_qr")]
+    public object ShowQr { get; set; }
+
+    [JsonProperty("show_qr_scanner")]
+    public object ShowQrScanner { get; set; }
+
+    [JsonProperty("show_pinned_bar")]
+    public bool ShowPinnedBar { get; set; }
 }

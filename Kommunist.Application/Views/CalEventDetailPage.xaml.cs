@@ -14,3 +14,4 @@ public partial class CalEventDetailPage : ContentPage
         BindingContext = eventDetailViewModel;
     }
 }
+

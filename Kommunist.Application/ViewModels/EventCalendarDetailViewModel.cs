@@ -5,20 +5,20 @@ using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
+using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Markdig;
 using Markdig.Renderers;
 using Event = Kommunist.Core.Entities.Event;
-using Item = Kommunist.Core.Models.Item;
 
 namespace Kommunist.Application.ViewModels;
 
-public class EventCalendarDetailViewModel
+public class EventCalendarDetailViewModel : BaseViewModel
 {
     public CalEventDetail SelectedEventDetail { get; set; }
     public Event TappedEvent { get; set; }
     public IEnumerable<EventPage> EventPages { get; set; }
-    public IEnumerable<Item> Items { get; set; }
+    public IEnumerable<PageItem> PageItems { get; set; }
     public AgendaPage AgendaPage { get; set; }
     
 
@@ -33,117 +33,60 @@ public class EventCalendarDetailViewModel
 
         CreateEventCalendarDetailPage().ConfigureAwait(false);
     }
+    
+    private double _webViewHeight = 100; // Default height
+    public double WebViewHeight
+    {
+        get => _webViewHeight;
+        set
+        {
+            if (_webViewHeight != value)
+            {
+                _webViewHeight = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    
+    public string DescriptionWithNoScroll
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(SelectedEventDetail?.Description))
+                return string.Empty;
+
+            return $@"
+            <html>
+            <head>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        overflow: hidden; /* Hides scrolling */
+                    }}
+                </style>
+            </head>
+            <body>
+                {SelectedEventDetail.Description}
+            </body>
+            </html>";
+        }
+    }
 
     private async Task CreateEventCalendarDetailPage()
     {
         // GetEventHome(TappedEventId).ConfigureAwait(false);
-        await GetAgenda(TappedEventId);
-        var mainPart = AgendaPage?.Agenda?.Items?.FirstOrDefault();
-        if (mainPart == null)
-        {
-            await GetHomePages(TappedEventId);
-            SetCalEventDetail(Items);
-        }
-        var agenda = AgendaPage.Agenda;
+        // await GetAgenda(TappedEventId);
+        await GetHomePage(TappedEventId);
+        var eventDetail = new CalEventDetail();
+        SetMainCalEventDetail(eventDetail);
+        await SetAgendaPage(eventDetail);
         
-        var eventDetail = new CalEventDetail
-        {
-            EventId = TappedEventId,
-            AgendaId = mainPart.Id,
-            Title = mainPart.Title,
-            BgImageUrl = mainPart.Image,
-            PeriodDateTime = GetEventPeriod(agenda.Navigation.Days.First().Date, agenda.Navigation.Days.First().EndDate),
-            // Url = $"https://wearecommunity.io/{navigationProperties.Event.EventUrl}",
-            Language = mainPart.Language,
-            FormatEvent = mainPart.IsOnline ? "Online" : "Offline",
-            Location = mainPart.Location,
-            // Description = $"&lt;HTML&gt;&lt;BODY&gt;{mainPart.Info.DescriptionHtml}&lt;/BODY&gt;&lt;HTML&gt;"
-            Description = $"<![CDATA[<HTML><BODY>{mainPart.Info.DescriptionHtml}</BODY></HTML>]]>"
-        };
         
-        foreach (var speaker in mainPart.Speakers)
-        {
-            var speakerDetail = new PersonCard
-            {
-                SpeakerId = speaker.Id,
-                Name = speaker.Name,
-                Company = speaker.Company,
-                Position = speaker.JobPosition,
-                Avatar = speaker.AvatarSmall
         
-            };
-            eventDetail.Speakers.Add(speakerDetail);
-        }
-
-        foreach (var moderator in mainPart.Moderators)
-        {
-            var person = new PersonCard
-            {
-                SpeakerId = moderator.Id,
-                Name = moderator.Name,
-                Company = moderator.Company,
-                Position = moderator.JobPosition,
-                Avatar = moderator.AvatarSmall
-        
-            };
-            eventDetail.Moderators.Add(person);
-        }
-        
-        SelectedEventDetail = eventDetail;
-    }
-
-    private async Task GetAgenda(int eventId)
-    {
-        if (eventId != 0)
-        {
-            AgendaPage= await _eventService.GetAgenda(eventId);
-        }
-        
-    }
-    
-    private async Task GetHomePages(int eventId)
-    {
-        if (eventId != 0)
-        {
-            Items = await _eventService.GetHomePage(eventId);
-        }
-        
-    }
-
-    private string GetEventPeriod(long start, long end)
-    {
-        var startDate = start.ToLocalDateTime();
-        var endDate = end.ToLocalDateTime();
-        if (startDate.Day == endDate.Day)
-        {
-            return  startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
-        }
-
-        return startDate.ToString("d MMM yyyy, HH:mm") + endDate.ToString("d MMM yyyy, HH:mm");
-    }
-
-    void SetCalEventDetail(IEnumerable<Item> items)
-    {
-        foreach(var item in items)
-        {
-            
-        }
-        
-        // var eventDetail = new CalEventDetail
-        // {
-        //     EventId = TappedEventId,
-        //     AgendaId = page.,
-        //     Title = mainPart.Title,
-        //     BgImageUrl = mainPart.Image,
-        //     PeriodDateTime = GetEventPeriod(agenda.Navigation.Days.First().Date, agenda.Navigation.Days.First().EndDate),
-        //     // Url = $"https://wearecommunity.io/{navigationProperties.Event.EventUrl}",
-        //     Language = mainPart.Language,
-        //     FormatEvent = mainPart.IsOnline ? "Online" : "Offline",
-        //     Location = mainPart.Location,
-        //     // Description = $"&lt;HTML&gt;&lt;BODY&gt;{mainPart.Info.DescriptionHtml}&lt;/BODY&gt;&lt;HTML&gt;"
-        //     Description = $"<![CDATA[<HTML><BODY>{mainPart.Info.DescriptionHtml}</BODY></HTML>]]>"
-        // };
-        //
         // foreach (var speaker in mainPart.Speakers)
         // {
         //     var speakerDetail = new PersonCard
@@ -171,10 +114,129 @@ public class EventCalendarDetailViewModel
         //     };
         //     eventDetail.Moderators.Add(person);
         // }
-        //
-        // SelectedEventDetail = eventDetail;
+        
+        SelectedEventDetail = eventDetail;
+    }
+
+    private async Task GetAgenda(int eventId)
+    {
+        if (eventId != 0)
+        {
+            AgendaPage= await _eventService.GetAgenda(eventId);
+        }
+        
     }
     
+    private async Task GetHomePage(int eventId)
+    {
+        if (eventId != 0)
+        {
+            PageItems = await _eventService.GetHomePage(eventId);
+        }
+        
+    }
+
+    private string GetEventPeriod(long? start, long? end)
+    {
+        if (start != null && end != null)
+        {
+            var startDate = start.Value.ToLocalDateTime();
+            var endDate = end.Value.ToLocalDateTime();
+            if (startDate.Day == endDate.Day)
+            {
+                return  startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
+            }
+
+            return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
+        }
+        return string.Empty;
+    }
+
+    void SetMainCalEventDetail(CalEventDetail eventDetail)
+    {
+        var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
+        if (mainPart?.Properties == null) return;
+        eventDetail.EventId = TappedEventId;
+        eventDetail.Title = mainPart.Properties?.Text?.FirstOrDefault()?.Text;
+        eventDetail.BgImageUrl = mainPart.Properties?.Image;
+        eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
+        eventDetail.Url = mainPart.Properties?.EventUrl;
+        if (mainPart.Properties != null && mainPart.Properties.Languages.Any())
+            eventDetail.Language = string.Join(", ", mainPart.Properties.Languages);
+        eventDetail.FormatEvent = mainPart.Properties!.Details.ParticipationFormat.Online ? "Online" : "Offline";
+        eventDetail.Location = mainPart.Properties.Details.ParticipationFormat.Location ?? "World";
+        
+        var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
+        if (iconPointsPart != null)
+        {
+            var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
+            eventDetail.Description = $"<![CDATA[<HTML><BODY>{string.Join("\n", texts)}</BODY></HTML>";
+        }
+    }
+
+    async Task SetAgendaPage(CalEventDetail eventDetail)
+    {
+        var agendaPart = PageItems.FirstOrDefault(x => x.Type == "Agenda");
+        if (agendaPart?.Properties == null) return;
+        await GetAgenda(TappedEventId);
+        if (AgendaPage.Agenda.Items.Any())
+        {
+            var item = AgendaPage.Agenda.Items.FirstOrDefault();
+            if (item != null && item.Speakers?.Any() == true)
+            {
+                foreach (var speaker in item.Speakers)
+                {
+                    var speakerCard = new PersonCard
+                    {
+                        SpeakerId = speaker.Id,
+                        Name = speaker.Name,
+                        Company = speaker.Company,
+                        Position = speaker.JobPosition,
+                        Avatar = speaker.AvatarSmall
+                    };
+                    eventDetail.Speakers.Add(speakerCard);
+                }
+            }
+
+            if (item != null && item.Moderators?.Any() == true)
+            {
+                foreach (var moderator in item.Moderators)
+                {
+                    var moderatorCard = new PersonCard
+                    {
+                        SpeakerId = moderator.Id,
+                        Name = moderator.Name,
+                        Company = moderator.Company,
+                        Position = moderator.JobPosition,
+                        Avatar = moderator.AvatarSmall
+                    };
+                    eventDetail.Moderators.Add(moderatorCard);
+                }
+            }
+
+            if (item?.Info.DescriptionHtml != null)
+            {
+                eventDetail.Description = $@"
+            <html>
+            <head>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        
+                    }}
+                </style>
+            </head>
+            <body>
+                {item.Info.DescriptionHtml}
+            </body>
+            </html>";;
+            }
+        }
+    }
+
     // public string ConvertHtmlToMarkdown(string htmlContent)
     // {
     //     var pipeline = new MarkdownPipelineBuilder().Build();

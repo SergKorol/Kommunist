@@ -63,7 +63,7 @@ public record Item
     [JsonProperty("moderators")]
     public IEnumerable<Person> Moderators { get; set; }
     [JsonProperty("background_image")]
-    public BgImage BackgroundImage { get; set; }
+    public string BackgroundImage { get; set; }
     [JsonProperty("info")]
     public Info Info { get; set; }
     [JsonProperty("is_speaker")]

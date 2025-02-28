@@ -1,8 +1,8 @@
 using Kommunist.Core.Entities.PageProperties.Agenda;
+using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
 using Event = Kommunist.Core.Entities.Event;
-using Item = Kommunist.Core.Models.Item;
 
 namespace Kommunist.Core.Services;
 
@@ -30,7 +30,7 @@ public class EventService(HttpClient httpClient) : IEventService
         }
     }
 
-    public async Task<IEnumerable<Item>> GetHomePage(int eventId)
+    public async Task<IEnumerable<PageItem>> GetHomePage(int eventId)
     {
         var url = $"/api/v2/events/{eventId}/pages/home";
         try
@@ -39,7 +39,7 @@ public class EventService(HttpClient httpClient) : IEventService
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var eventPages = JsonConvert.DeserializeObject<IEnumerable<Item>>(json);
+            var eventPages = JsonConvert.DeserializeObject<IEnumerable<PageItem>>(json);
             return eventPages;
         }
         catch (Exception e)
