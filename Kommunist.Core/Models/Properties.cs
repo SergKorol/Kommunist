@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Kommunist.Core.Converters;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Main;
 using Newtonsoft.Json;
@@ -22,7 +24,10 @@ public class Properties
     public List<TextItem> Text { get; set; }
 
     [JsonProperty("image")]
-    public string Image { get; set; }
+    [JsonConverter(typeof(ImageDetailsConverter))]
+    // public string Image { get; set; }
+    
+    public ImageDetails Image { get; set; }
 
     [JsonProperty("details")]
     public Details Details { get; set; }
@@ -59,4 +64,10 @@ public class Properties
 
     [JsonProperty("show_pinned_bar")]
     public bool ShowPinnedBar { get; set; }
+}
+
+public class ImageDetails
+{
+    [JsonProperty("url")]
+    public string Url { get; set; }
 }

@@ -1,15 +1,12 @@
 using System;
 using XCalendar.Core.Collections;
 using XCalendar.Core.Interfaces;
+using XCalendar.Core.Models;
 
 namespace Kommunist.Application.Models;
 
-public class EventDay : BaseObservableModel, ICalendarDay
+public class EventDay : CalendarDay<Event>
 {
-    public DateTime DateTime { get; set; }
     public ObservableRangeCollection<CalEvent> CalEvents { get; } = new ObservableRangeCollection<CalEvent>();
-    public bool IsSelected { get;set; }
-    public bool IsCurrentMonth { get; set; }
-    public bool IsToday { get; set; }
-    public bool IsInvalid { get; set; }
+    // public ObservableRangeCollection<Event> Events { get; set; } = new ObservableRangeCollection<Event>(new ObservableRangeCollection<CalEvent>());
 }

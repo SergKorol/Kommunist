@@ -1,9 +1,11 @@
 using System;
 using Microsoft.Maui.Graphics;
+using XCalendar.Core.Interfaces;
+using XCalendar.Core.Models;
 
 namespace Kommunist.Application.Models;
 
-public class CalEvent : BaseObservableModel
+public class CalEvent : Event
 {
     public int EventId { get; set; }
     public string Title { get; set; }

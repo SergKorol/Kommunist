@@ -17,159 +17,135 @@ using XCalendar.Core.Collections;
 using XCalendar.Core.Enums;
 using XCalendar.Core.Extensions;
 using XCalendar.Core.Models;
+
 namespace Kommunist.Application.ViewModels;
 
 public class EventCalendarViewModel : BaseViewModel
 {
     #region Properties
-        public Calendar<EventDay> EventCalendar { get; set; } = new Calendar<EventDay>()
+    public Calendar<EventDay> EventCalendar { get; set; } = new Calendar<EventDay>()
+    {
+        SelectedDates = new ObservableRangeCollection<DateTime>(),
+        SelectionType = SelectionType.Single
+    };
+
+    public string URL { get; set; } = "https://wearecommunity.io/events/net-talks-8";
+
+    public static readonly Random Random = new Random();
+    public List<Color> Colors { get; } = new List<Color>()
+    {
+        Microsoft.Maui.Graphics.Colors.Red,
+        Microsoft.Maui.Graphics.Colors.Orange,
+        Microsoft.Maui.Graphics.Colors.Yellow,
+        Color.FromArgb("#00A000"),
+        Microsoft.Maui.Graphics.Colors.Blue,
+        Color.FromArgb("#8010E0")
+    };
+
+    public ObservableCollection<ServiceEvent> ServiceEvents;
+    public ObservableRangeCollection<CalEvent> CalEvents { get; } = new ObservableRangeCollection<CalEvent>();
+    public ObservableRangeCollection<CalEvent> SelectedEvents { get; } = new ObservableRangeCollection<CalEvent>();
+    #endregion
+
+    #region Commands
+    public ICommand NavigateCalendarCommand { get; set; }
+    public ICommand ChangeDateSelectionCommand { get; set; }
+    public ICommand EventSelectedCommand { get; }
+    #endregion
+
+    private readonly IEventService _eventService;
+    private Task _getEvents;
+
+    #region Constructors
+    public EventCalendarViewModel(IEventService eventService)
+    {
+        _eventService = eventService;
+
+        NavigateCalendarCommand = new Command<int>(NavigateCalendar);
+        ChangeDateSelectionCommand = new Command<DateTime>(ChangeDateSelection);
+        EventSelectedCommand = new Command<CalEvent>(OnEventSelected);
+
+        EventCalendar.SelectedDates.CollectionChanged += SelectedDates_CollectionChanged;
+        EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
+
+        GetEvents(EventCalendar.Days).ConfigureAwait(false);
+
+        foreach (var day in EventCalendar.Days)
         {
-            SelectedDates = new ObservableRangeCollection<DateTime>(),
-            SelectionAction = SelectionAction.Modify,
-            SelectionType = SelectionType.Single
-        };
+            day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
+        }
+    }
+    #endregion
 
-        public string URL { get; set; } = "https://wearecommunity.io/events/net-talks-8";
+    #region Methods
+    private void EventCalendar_DaysUpdated(object sender, EventArgs e)
+    {
+        var calendar = sender as Calendar<EventDay>;
+        if (calendar == null) return;
 
-        public static readonly Random Random = new Random();
-        public List<Color> Colors { get; } = new List<Color>() { Microsoft.Maui.Graphics.Colors.Red, Microsoft.Maui.Graphics.Colors.Orange, Microsoft.Maui.Graphics.Colors.Yellow, Color.FromArgb("#00A000"), Microsoft.Maui.Graphics.Colors.Blue, Color.FromArgb("#8010E0") };
-        
-        public ObservableCollection<Event> Events;
-        public ObservableRangeCollection<CalEvent> CalEvents { get; } = new ObservableRangeCollection<CalEvent>();
-        // {
-        //     new CalEvent() { Title = "Bowling", Description = "Bowling with friends" },
-        //     new CalEvent() { Title = "Swimming", Description = "Swimming with friends" },
-        //     new CalEvent() { Title = "Kayaking", Description = "Kayaking with friends" },
-        //     new CalEvent() { Title = "Shopping", Description = "Shopping with friends" },
-        //     new CalEvent() { Title = "Hiking", Description = "Hiking with friends" },
-        //     new CalEvent() { Title = "Kareoke", Description = "Kareoke with friends" },
-        //     new CalEvent() { Title = "Dining", Description = "Dining with friends" },
-        //     new CalEvent() { Title = "Running", Description = "Running with friends" },
-        //     new CalEvent() { Title = "Traveling", Description = "Traveling with friends" },
-        //     new CalEvent() { Title = "Clubbing", Description = "Clubbing with friends" },
-        //     new CalEvent() { Title = "Learning", Description = "Learning with friends" },
-        //     new CalEvent() { Title = "Driving", Description = "Driving with friends" },
-        //     new CalEvent() { Title = "Skydiving", Description = "Skydiving with friends" },
-        //     new CalEvent() { Title = "Bungee Jumping", Description = "Bungee Jumping with friends" },
-        //     new CalEvent() { Title = "Trampolining", Description = "Trampolining with friends" },
-        //     new CalEvent() { Title = "Adventuring", Description = "Adventuring with friends" },
-        //     new CalEvent() { Title = "Roller Skating", Description = "Rollerskating with friends" },
-        //     new CalEvent() { Title = "Ice Skating", Description = "Ice Skating with friends" },
-        //     new CalEvent() { Title = "Skateboarding", Description = "Skateboarding with friends" },
-        //     new CalEvent() { Title = "Crafting", Description = "Crafting with friends" },
-        //     new CalEvent() { Title = "Drinking", Description = "Drinking with friends" },
-        //     new CalEvent() { Title = "Playing Games", Description = "Playing Games with friends" },
-        //     new CalEvent() { Title = "Canoeing", Description = "Canoeing with friends" },
-        //     new CalEvent() { Title = "Climbing", Description = "Climbing with friends" },
-        //     new CalEvent() { Title = "Partying", Description = "Partying with friends" },
-        //     new CalEvent() { Title = "Relaxing", Description = "Relaxing with friends" },
-        //     new CalEvent() { Title = "Exercising", Description = "Exercising with friends" },
-        //     new CalEvent() { Title = "Baking", Description = "Baking with friends" },
-        //     new CalEvent() { Title = "Skiing", Description = "Skiing with friends" },
-        //     new CalEvent() { Title = "Snowboarding", Description = "Snowboarding with friends" },
-        //     new CalEvent() { Title = "Surfing", Description = "Surfing with friends" },
-        //     new CalEvent() { Title = "Paragliding", Description = "Paragliding with friends" },
-        //     new CalEvent() { Title = "Sailing", Description = "Sailing with friends" },
-        //     new CalEvent() { Title = "Cooking", Description = "Cooking with friends" }
-        // };
-        public ObservableRangeCollection<CalEvent> SelectedEvents { get; } = new ObservableRangeCollection<CalEvent>();
-        #endregion
-
-        #region Commands
-        public ICommand NavigateCalendarCommand { get; set; }
-        public ICommand ChangeDateSelectionCommand { get; set; }
-        
-        public ICommand EventSelectedCommand { get; }
-        
-        #endregion
-
-        private  readonly IEventService _eventService;
-        private Task _getEvents;
-        #region Constructors
-        public EventCalendarViewModel(IEventService eventService)
+        if (CalEvents.All(x => x.DateTime.Date != calendar.NavigatedDate.Date))
         {
-            _eventService = eventService;
-            
-            NavigateCalendarCommand = new Command<int>(NavigateCalendar);
-            ChangeDateSelectionCommand = new Command<DateTime>(ChangeDateSelection);
-            EventSelectedCommand = new Command<CalEvent>(OnEventSelected);
-
-            EventCalendar.SelectedDates.CollectionChanged += SelectedDates_CollectionChanged;
-            EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
             GetEvents(EventCalendar.Days).ConfigureAwait(false);
-            foreach (var day in EventCalendar.Days)
-            {
-                day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-            }
         }
-        #endregion
 
-        #region Methods
-        
-        private void EventCalendar_DaysUpdated(object sender, EventArgs e)
+        foreach (var day in EventCalendar.Days)
         {
-            if (CalEvents.All(x => x.DateTime.Date != ((Calendar<EventDay>)sender).NavigatedDate.Date))
-            {
-               GetEvents(EventCalendar.Days).ConfigureAwait(false);
-            }
+            day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
+        }
+    }
 
-            foreach (var day in EventCalendar.Days)
-            {
-                day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-            }
-        }
-        private void SelectedDates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectedEvents.ReplaceRange(CalEvents.Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date)).OrderByDescending(x => x.DateTime));
-        }
-        public void NavigateCalendar(int amount)
-        {
-            if (EventCalendar.NavigatedDate.TryAddMonths(amount, out DateTime targetDate))
-            {
-                EventCalendar.Navigate(targetDate - EventCalendar.NavigatedDate);
-            }
-            else
-            {
-                EventCalendar.Navigate(amount > 0 ? TimeSpan.MaxValue : TimeSpan.MinValue);
-            }
-        }
-        public void ChangeDateSelection(DateTime dateTime)
-        {
-            EventCalendar?.ChangeDateSelection(dateTime);
-        }
-        
-        private async void OnEventSelected(CalEvent selectedEvent)
-        {
-            // var tappedEvent = Events.ToList().FirstOrDefault(x => x.Id == selectedEvent.EventId);
-            EventCalendarDetailViewModel eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId);
-            // eventDetailViewModel.TappedEventId = selectedEvent.EventId;
-            // eventDetailViewModel.TappedEvent = tappedEvent;
-            // eventDetailViewModel.CreateEventCalendarDetailPage();
+    private void SelectedDates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        SelectedEvents.ReplaceRange(CalEvents
+            .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
+            .OrderByDescending(x => x.DateTime));
+    }
 
-            await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
-        }
-        #endregion
-
-        private async Task GetEvents(ObservableCollection<EventDay> days)
+    public void NavigateCalendar(int amount)
+    {
+        DateTime targetDate;
+        if (EventCalendar.NavigatedDate.TryAddMonths(amount, out targetDate))
         {
-            var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
-            var startDate = daysByNavMonth.First().DateTime;
-            var endDate = daysByNavMonth.Last().DateTime;
-            var loadedDays = await _eventService.LoadEvents(startDate, endDate);
-            Events = loadedDays.ToObservableCollection();
-            var calEvents = (from e in Events
-                let location = e.ParticipationFormat.Online
-                    ? string.Empty
-                    : $"{e.ParticipationFormat.Location}"
-                select new CalEvent
-                {
-                    EventId = e.Id,
-                    Title = e.Title,
-                    Description = $"{e.Start.ToLocalDateTime()} - {e.End.ToLocalDateTime()}, {e.Language}, {location}",
-                    DateTime = e.Start.ToLocalDateTime(),
-                    Color = Colors[Random.Next(6)],
-                    Url = "https://wearecommunity.io/events/net-talks-8"
-                }).ToList();
-            CalEvents.ReplaceRange(calEvents);
+            EventCalendar.Navigate(targetDate - EventCalendar.NavigatedDate);
         }
+        else
+        {
+            EventCalendar.Navigate(amount > 0 ? TimeSpan.MaxValue : TimeSpan.MinValue);
+        }
+    }
+
+    public void ChangeDateSelection(DateTime dateTime)
+    {
+        EventCalendar?.ChangeDateSelection(dateTime);
+    }
+
+    private async void OnEventSelected(CalEvent selectedEvent)
+    {
+        var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId);
+        await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
+    }
+    #endregion
+
+    private async Task GetEvents(ObservableCollection<EventDay> days)
+    {
+        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
+        var startDate = daysByNavMonth.First().DateTime;
+        var endDate = daysByNavMonth.Last().DateTime;
+        var loadedDays = await _eventService.LoadEvents(startDate, endDate);
+        ServiceEvents = loadedDays.ToObservableCollection();
+
+        var calEvents = (from e in ServiceEvents
+                         let location = e.ParticipationFormat.Online ? string.Empty : $"{e.ParticipationFormat.Location}"
+                         select new CalEvent
+                         {
+                             EventId = e.Id,
+                             Title = e.Title,
+                             Description = $"{e.Start.ToLocalDateTime()} - {e.End.ToLocalDateTime()}, {e.Language}, {location}",
+                             DateTime = e.Start.ToLocalDateTime(),
+                             Color = Colors[Random.Next(Colors.Count)],
+                             Url = "https://wearecommunity.io/events/net-talks-8"
+                         }).ToList();
+
+        CalEvents.ReplaceRange(calEvents);
+    }
 }

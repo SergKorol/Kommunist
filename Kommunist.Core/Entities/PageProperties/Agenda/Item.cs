@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Kommunist.Core.Entities.PageProperties.Main;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
@@ -59,9 +60,9 @@ public record Item
     [JsonProperty("short_language")]
     public string ShortLanguage { get; set; }
     [JsonProperty("speakers")]
-    public IEnumerable<Person> Speakers { get; set; }
+    public IEnumerable<Person> Speakers { get; set; } = new List<Person>();
     [JsonProperty("moderators")]
-    public IEnumerable<Person> Moderators { get; set; }
+    public IEnumerable<Person> Moderators { get; set; } = new List<Person>();
     [JsonProperty("background_image")]
     public string BackgroundImage { get; set; }
     [JsonProperty("info")]

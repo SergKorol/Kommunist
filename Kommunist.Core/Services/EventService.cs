@@ -1,14 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Kommunist.Core.Converters;
+using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
-using Event = Kommunist.Core.Entities.Event;
 
 namespace Kommunist.Core.Services;
 
 public class EventService(HttpClient httpClient) : IEventService
 {
-    public async Task<IEnumerable<Event>> LoadEvents(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<ServiceEvent>> LoadEvents(DateTime startDate, DateTime endDate)
     {
         string fromDate = EncodeDateString(startDate.ToString("MM/dd/yyyy"));
         string toDate = EncodeDateString(endDate.ToString("MM/dd/yyyy"));
@@ -20,13 +25,13 @@ public class EventService(HttpClient httpClient) : IEventService
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var events = JsonConvert.DeserializeObject<List<Event>>(json);
+            var events = JsonConvert.DeserializeObject<List<ServiceEvent>>(json);
             return events;
         }
         catch (Exception e)
         {
             Console.WriteLine($"An HTTP request error occurred: {e.Message}");
-            return new List<Event>();
+            return new List<ServiceEvent>();
         }
     }
 
@@ -39,6 +44,10 @@ public class EventService(HttpClient httpClient) : IEventService
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new ImageDetailsConverter() }
+            };
             var eventPages = JsonConvert.DeserializeObject<IEnumerable<PageItem>>(json);
             return eventPages;
         }

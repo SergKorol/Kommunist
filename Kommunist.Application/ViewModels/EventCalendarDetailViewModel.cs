@@ -9,14 +9,13 @@ using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Markdig;
 using Markdig.Renderers;
-using Event = Kommunist.Core.Entities.Event;
 
 namespace Kommunist.Application.ViewModels;
 
 public class EventCalendarDetailViewModel : BaseViewModel
 {
     public CalEventDetail SelectedEventDetail { get; set; }
-    public Event TappedEvent { get; set; }
+    public ServiceEvent TappedServiceEvent { get; set; }
     public IEnumerable<EventPage> EventPages { get; set; }
     public IEnumerable<PageItem> PageItems { get; set; }
     public AgendaPage AgendaPage { get; set; }
@@ -78,42 +77,10 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
     private async Task CreateEventCalendarDetailPage()
     {
-        // GetEventHome(TappedEventId).ConfigureAwait(false);
-        // await GetAgenda(TappedEventId);
         await GetHomePage(TappedEventId);
         var eventDetail = new CalEventDetail();
         SetMainCalEventDetail(eventDetail);
         await SetAgendaPage(eventDetail);
-        
-        
-        
-        // foreach (var speaker in mainPart.Speakers)
-        // {
-        //     var speakerDetail = new PersonCard
-        //     {
-        //         SpeakerId = speaker.Id,
-        //         Name = speaker.Name,
-        //         Company = speaker.Company,
-        //         Position = speaker.JobPosition,
-        //         Avatar = speaker.AvatarSmall
-        //
-        //     };
-        //     eventDetail.Speakers.Add(speakerDetail);
-        // }
-        //
-        // foreach (var moderator in mainPart.Moderators)
-        // {
-        //     var person = new PersonCard
-        //     {
-        //         SpeakerId = moderator.Id,
-        //         Name = moderator.Name,
-        //         Company = moderator.Company,
-        //         Position = moderator.JobPosition,
-        //         Avatar = moderator.AvatarSmall
-        //
-        //     };
-        //     eventDetail.Moderators.Add(person);
-        // }
         
         SelectedEventDetail = eventDetail;
     }
@@ -157,8 +124,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
         eventDetail.EventId = TappedEventId;
-        eventDetail.Title = mainPart.Properties?.Text?.FirstOrDefault()?.Text;
-        eventDetail.BgImageUrl = mainPart.Properties?.Image;
+        eventDetail.Title = mainPart.Properties?.Text?.First()?.Text;
+        eventDetail.BgImageUrl = mainPart.Properties?.Image.Url;
         eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
         eventDetail.Url = mainPart.Properties?.EventUrl;
         if (mainPart.Properties != null && mainPart.Properties.Languages.Any())
@@ -181,10 +148,10 @@ public class EventCalendarDetailViewModel : BaseViewModel
         await GetAgenda(TappedEventId);
         if (AgendaPage.Agenda.Items.Any())
         {
-            var item = AgendaPage.Agenda.Items.FirstOrDefault();
-            if (item != null && item.Speakers?.Any() == true)
+            var agendaItem = AgendaPage.Agenda.Items.First();
+            if (agendaItem != null && agendaItem.Speakers?.Any() == true)
             {
-                foreach (var speaker in item.Speakers)
+                foreach (var speaker in agendaItem.Speakers)
                 {
                     var speakerCard = new PersonCard
                     {
@@ -198,9 +165,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (item != null && item.Moderators?.Any() == true)
+            if (agendaItem != null && agendaItem.Moderators?.Any() == true)
             {
-                foreach (var moderator in item.Moderators)
+                foreach (var moderator in agendaItem.Moderators)
                 {
                     var moderatorCard = new PersonCard
                     {
@@ -214,7 +181,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (item?.Info.DescriptionHtml != null)
+            if (agendaItem?.Info?.DescriptionHtml != null)
             {
                 eventDetail.Description = $@"
             <html>
@@ -230,9 +197,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 </style>
             </head>
             <body>
-                {item.Info.DescriptionHtml}
+                {agendaItem.Info.DescriptionHtml}
             </body>
-            </html>";;
+            </html>";
             }
         }
     }

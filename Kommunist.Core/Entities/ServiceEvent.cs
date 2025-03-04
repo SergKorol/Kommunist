@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Kommunist.Core.Entities;
 
-public record Event
+public record ServiceEvent
 {
     [JsonProperty("id")]
     public int Id { get; set; }

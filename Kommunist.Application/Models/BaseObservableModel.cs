@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using XCalendar.Core.Interfaces;
 
 namespace Kommunist.Application.Models;
 
