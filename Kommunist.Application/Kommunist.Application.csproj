@@ -67,6 +67,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="CustomControls\" />
       <Folder Include="Popups\" />
     </ItemGroup>
 

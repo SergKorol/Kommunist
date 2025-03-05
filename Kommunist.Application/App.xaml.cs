@@ -10,6 +10,6 @@ public partial class App : Microsoft.Maui.Controls.Application
         InitializeComponent();
 
         MainPage = new AppShell();
-        Routing.RegisterRoute("CalEventDetailPage", typeof(CalEventDetailPage));
+        // Routing.RegisterRoute("CalEventDetailPage", typeof(CalEventDetailPage));
     }
 }
