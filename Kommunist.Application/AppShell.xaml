@@ -3,14 +3,11 @@
        FlyoutBehavior="Disabled"
        x:Class="Kommunist.Application.AppShell"
        x:Name="Shell"
-       xmlns:local="clr-namespace:Kommunist.Application"
        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:views="clr-namespace:Kommunist.Application.Views"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
-    <ShellContent x:Name="MainContent"
-                  ContentTemplate="{DataTemplate views:EventCalendarPage}"
-                  Route="Home" />
     
+    <ShellContent Route="Calendar" 
+                  ContentTemplate="{DataTemplate views:EventCalendarPage}" />
 </Shell>
 

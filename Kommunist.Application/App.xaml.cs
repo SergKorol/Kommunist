@@ -1,15 +1,14 @@
-﻿using Kommunist.Application.Views;
-using Microsoft.Maui.Controls;
-
-namespace Kommunist.Application;
+﻿namespace Kommunist.Application;
 
 public partial class App : Microsoft.Maui.Controls.Application
 {
     public App()
     {
         InitializeComponent();
-
-        MainPage = new AppShell();
-        // Routing.RegisterRoute("CalEventDetailPage", typeof(CalEventDetailPage));
+    }
+    
+    protected override Window CreateWindow(IActivationState activationState)
+    {
+        return new Window(new AppShell());
     }
 }

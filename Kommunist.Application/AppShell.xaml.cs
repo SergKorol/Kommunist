@@ -1,6 +1,4 @@
-﻿using Kommunist.Application.ViewModels;
-using Kommunist.Application.Views;
-using Microsoft.Maui.Controls;
+﻿using Kommunist.Application.Views;
 
 namespace Kommunist.Application;
 
@@ -10,9 +8,5 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         Routing.RegisterRoute("Calendar", typeof(EventCalendarPage));
-        Routing.RegisterRoute("Home", typeof(EventCalendarPage));
-        Routing.RegisterRoute("Cal", typeof(EventCalendarPage));
-        Routing.RegisterRoute("Filters", typeof(EventCalendarPage));
-        Routing.RegisterRoute("Settings", typeof(EventCalendarPage));
     }
 }

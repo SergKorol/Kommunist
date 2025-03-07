@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-
-<ContentPage
-    Style="{StaticResource DefaultPageStyle}"
-    Title="Event Calendar"
-    x:Class="Kommunist.Application.Views.EventCalendarPage"
-    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
-    x:Name="This"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:models="clr-namespace:Kommunist.Application.Models"
-    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
-    xmlns:local="clr-namespace:Kommunist.Application"
-    xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui">
-
-
-    <ContentPage.Resources>
-        <mct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />
-        <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-    </ContentPage.Resources>
-
+<controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                           xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                           xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
+                           xmlns:controls="clr-namespace:Kommunist.Application.Controls"
+                           xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
+                           xmlns:models="clr-namespace:Kommunist.Application.Models"
+                           Style="{StaticResource DefaultPageStyle}"
+                           x:Class="Kommunist.Application.Views.EventCalendarPage"
+                           x:DataType="{x:Type viewModels:EventCalendarViewModel}"
+                           x:Name="This"
+                           Title="Event Calendar"
+                           ControlTemplate="{StaticResource SecondaryColorTemplate}">
+<controls:MyTabBar.Resources>
+    <mct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />
+    <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+</controls:MyTabBar.Resources>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -100,30 +96,30 @@
                                 <xc:DayView.ControlTemplate>
                                     <ControlTemplate>
                                         <Grid BindingContext="{Binding BindingContext, Source={RelativeSource TemplatedParent}}" RowSpacing="2">
-                                
+
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="1.5*" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
-                                
+
                                             <ContentPresenter
                                                 Grid.Row="0"
                                                 Grid.RowSpan="2"
                                                 VerticalOptions="Center" />
-                                
+
                                             <HorizontalStackLayout
                                                 BindableLayout.ItemsSource="{Binding CalEvents}"
                                                 Grid.Row="1"
                                                 HorizontalOptions="Center"
                                                 Spacing="2.5">
-                                
+
                                                 <HorizontalStackLayout.IsVisible>
                                                     <MultiBinding Converter="{StaticResource AllTrueConverter}">
                                                         <Binding Path="IsCurrentMonth" />
                                                         <Binding Converter="{StaticResource InvertedBoolConverter}" Path="IsInvalid" />
                                                     </MultiBinding>
                                                 </HorizontalStackLayout.IsVisible>
-                                
+
                                                 <BindableLayout.ItemTemplate>
                                                     <DataTemplate x:DataType="{x:Type models:CalEvent}">
                                                         <BoxView
@@ -135,9 +131,9 @@
                                                             WidthRequest="7" />
                                                     </DataTemplate>
                                                 </BindableLayout.ItemTemplate>
-                                
+
                                             </HorizontalStackLayout>
-                                
+
                                         </Grid>
                                     </ControlTemplate>
                                 </xc:DayView.ControlTemplate>
@@ -155,9 +151,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-        
+
             <CollectionView ItemsSource="{Binding SelectedEvents}">
-        
+
                 <CollectionView.EmptyView>
                     <Label
                         FontAttributes="Bold"
@@ -167,26 +163,26 @@
                         TextColor="{StaticResource ContentTextColor}"
                         VerticalTextAlignment="Center" />
                 </CollectionView.EmptyView>
-        
+
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="1" />
                 </CollectionView.ItemsLayout>
-        
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type models:CalEvent}">
                         <Border
                             BackgroundColor="Transparent"
                             Margin="5"
                             StrokeThickness="0">
-        
+
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-        
+
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}, Path=EventSelectedCommand}" CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
-        
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20" />
@@ -223,6 +219,5 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
-        <!-- <local:CustomTabBar Grid.Row="1"/> -->
     </Grid>
-</ContentPage>
+</controls:MyTabBar>

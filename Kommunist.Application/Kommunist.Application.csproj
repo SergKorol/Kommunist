@@ -67,12 +67,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="CustomControls\" />
-      <Folder Include="Popups\" />
+      <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
+      <Folder Include="Pages\" />
     </ItemGroup>
 
 </Project>

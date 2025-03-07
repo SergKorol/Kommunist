@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Core.Extensions;
 using Kommunist.Application.Helpers;
@@ -11,8 +7,6 @@ using Kommunist.Application.Models;
 using Kommunist.Application.Views;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Services.Interfaces;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
 using XCalendar.Core.Collections;
 using XCalendar.Core.Enums;
 using XCalendar.Core.Extensions;

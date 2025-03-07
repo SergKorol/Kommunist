@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kommunist.Application.Controls.MyTabBar"
+             x:Name="Menu">
+<ContentPage.Resources>
+    <ControlTemplate x:Key="SecondaryColorTemplate">
+    <Grid RowDefinitions="*,Auto">
+        <ContentPresenter Grid.Row="0" />
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource Secondary}"
+                HeightRequest="100"
+                Opacity="0.5"
+                Padding="15,0" 
+                StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="5" />
+            </Border.StrokeShape>
+        </Border>
+        <FlexLayout Direction="Row"
+                    Grid.Row="1"
+            JustifyContent="SpaceAround"
+            AlignItems="Center">
+            <VerticalStackLayout Spacing="4" Padding="10">
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToHomeCommand}" />
+                </VerticalStackLayout.GestureRecognizers>
+                <Image Source="icon_home1.png" HeightRequest="24" WidthRequest="24" />
+                <Label Text="Home" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
+            </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="4" Padding="10">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToCalendarCommand}" />
+                        </VerticalStackLayout.GestureRecognizers>
+                        <Image Source="icon_calendar1.png" HeightRequest="24" WidthRequest="24" />
+                        <Label Text="Calendar" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
+                    </VerticalStackLayout>
+            
+                    <VerticalStackLayout Spacing="4" Padding="10">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToFiltersCommand}" />
+                        </VerticalStackLayout.GestureRecognizers>
+                        <Image Source="icon_filters1.png" HeightRequest="24" WidthRequest="24" />
+                        <Label Text="Filters" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
+                    </VerticalStackLayout>
+            
+                    <VerticalStackLayout Spacing="4" Padding="10">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToSettingsCommand}" />
+                        </VerticalStackLayout.GestureRecognizers>
+                        <Image Source="icon_settings1.png" HeightRequest="24" WidthRequest="24" />
+                        <Label Text="Settings" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
+                    </VerticalStackLayout>
+        </FlexLayout>
+    </Grid>
+    </ControlTemplate>
+</ContentPage.Resources>
+</ContentPage>
