@@ -4,10 +4,7 @@ using Kommunist.Application.ViewModels;
 using Kommunist.Core.Configuration;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
 using MauiApp = Microsoft.Maui.Hosting.MauiApp;
 
 namespace Kommunist.Application;
@@ -41,6 +38,8 @@ public static class MauiProgram
                     handler.PlatformView.Image = handler.PlatformView.Image.ImageWithRenderingMode(UIKit.UIImageRenderingMode.AlwaysOriginal);
                 }
             });
+            
+            // handlers.AddHandler<WebView, CustomWebViewHandler>();
 #endif
         });
         

@@ -1,14 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
-using Markdig;
-using Markdig.Renderers;
 
 namespace Kommunist.Application.ViewModels;
 
@@ -33,48 +30,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
         CreateEventCalendarDetailPage().ConfigureAwait(false);
     }
     
-    private double _webViewHeight = 100; // Default height
-    public double WebViewHeight
-    {
-        get => _webViewHeight;
-        set
-        {
-            if (_webViewHeight != value)
-            {
-                _webViewHeight = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    
-    public string DescriptionWithNoScroll
-    {
-        get
-        {
-            if (string.IsNullOrWhiteSpace(SelectedEventDetail?.Description))
-                return string.Empty;
-
-            return $@"
-            <html>
-            <head>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        overflow: hidden; /* Hides scrolling */
-                    }}
-                </style>
-            </head>
-            <body>
-                {SelectedEventDetail.Description}
-            </body>
-            </html>";
-        }
-    }
-
     private async Task CreateEventCalendarDetailPage()
     {
         await GetHomePage(TappedEventId);
@@ -137,7 +92,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
         if (iconPointsPart != null)
         {
             var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
-            eventDetail.Description = $"<![CDATA[<HTML><BODY>{string.Join("\n", texts)}</BODY></HTML>";
+
+            eventDetail.Description = BuildHtmlContent(string.Join("\n", texts));
         }
     }
 
@@ -183,31 +139,38 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
             if (agendaItem?.Info?.DescriptionHtml != null)
             {
-                eventDetail.Description = $@"
-            <html>
-            <head>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        
-                    }}
-                </style>
-            </head>
-            <body>
-                {agendaItem.Info.DescriptionHtml}
-            </body>
-            </html>";
+                eventDetail.Description = BuildHtmlContent(agendaItem?.Info?.DescriptionHtml).Trim();
             }
         }
     }
-
+    
+    private string BuildHtmlContent(string text)
+    {
+        return $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden !important;
+                    font-family: -apple-system, system-ui;
+                }}
+            </style>
+        </head>
+        <body>
+            {text}
+        </body>
+        </html>";
+    }
+    
+    
     // public string ConvertHtmlToMarkdown(string htmlContent)
     // {
     //     var pipeline = new MarkdownPipelineBuilder().Build();
-    //     var markdownContent = Markdig.MarkdownExtensions;
+    //     
     //     return markdownContent;
     // }
 }

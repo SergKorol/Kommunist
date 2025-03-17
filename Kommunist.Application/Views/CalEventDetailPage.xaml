@@ -83,7 +83,7 @@
             
             <!-- Event Description -->
             <Grid IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <WebView HeightRequest="300">
+                <WebView PropertyChanged="WebView_OnLoaded" x:Name="DescriptionWebView" VerticalOptions="FillAndExpand">
                     <WebView.Source>
                         <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description}" />
                     </WebView.Source>
