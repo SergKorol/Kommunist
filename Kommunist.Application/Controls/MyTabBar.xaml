@@ -24,14 +24,14 @@
             AlignItems="Center">
             <VerticalStackLayout Spacing="4" Padding="10">
                 <VerticalStackLayout.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoToHomeCommand}" />
+                    <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Home" />
                 </VerticalStackLayout.GestureRecognizers>
                 <Image Source="icon_home1.png" HeightRequest="24" WidthRequest="24" />
                 <Label Text="Home" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
             </VerticalStackLayout>
                     <VerticalStackLayout Spacing="4" Padding="10">
                         <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoToCalendarCommand}" />
+                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Cal" />
                         </VerticalStackLayout.GestureRecognizers>
                         <Image Source="icon_calendar1.png" HeightRequest="24" WidthRequest="24" />
                         <Label Text="Calendar" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
@@ -39,7 +39,7 @@
             
                     <VerticalStackLayout Spacing="4" Padding="10">
                         <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoToFiltersCommand}" />
+                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Filters" />
                         </VerticalStackLayout.GestureRecognizers>
                         <Image Source="icon_filters1.png" HeightRequest="24" WidthRequest="24" />
                         <Label Text="Filters" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
@@ -47,7 +47,7 @@
             
                     <VerticalStackLayout Spacing="4" Padding="10">
                         <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoToSettingsCommand}" />
+                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Settings" />
                         </VerticalStackLayout.GestureRecognizers>
                         <Image Source="icon_settings1.png" HeightRequest="24" WidthRequest="24" />
                         <Label Text="Settings" HorizontalOptions="Center" FontSize="12" TextColor="Black" />

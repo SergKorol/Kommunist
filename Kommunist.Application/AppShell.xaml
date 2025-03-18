@@ -7,7 +7,16 @@
        xmlns:views="clr-namespace:Kommunist.Application.Views"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     
-    <ShellContent Route="Calendar" 
+    <ShellContent Route="Home" 
                   ContentTemplate="{DataTemplate views:EventCalendarPage}" />
+    
+    <ShellContent Route="Cal" 
+                  ContentTemplate="{DataTemplate views:CalGeneratorPage}" />
+    
+    <ShellContent Route="Filters" 
+                  ContentTemplate="{DataTemplate views:FiltersPage}" />
+    
+    <ShellContent Route="Settings" 
+                  ContentTemplate="{DataTemplate views:SettingsPage}" />
 </Shell>
 
