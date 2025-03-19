@@ -108,26 +108,27 @@
                     
                     <CollectionView
                         ItemsSource="{Binding SelectedEventDetail.Speakers}"
-                        IsVisible="{Binding SelectedEventDetail.Speakers, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        HeightRequest="150">
+                        IsVisible="{Binding SelectedEventDetail.Speakers, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" Span="1" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="{x:Type models:PersonCard}">
                                 <VerticalStackLayout Margin="5" HorizontalOptions="Center">
-                                    <Image
-                                        Aspect="AspectFit"
-                                        HeightRequest="40"
-                                        WidthRequest="40"
-                                        Source="{Binding Avatar}">
-                                        <Image.Clip>
-                                            <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20" />
-                                        </Image.Clip>
-                                    </Image>
-                                    <Label FontAttributes="Bold" FontSize="14" Text="{Binding Name}" />
-                                    <Label FontSize="12" Text="{Binding Company}" />
-                                    <Label FontSize="12" Text="{Binding Position}" />
+                                    <FlexLayout AlignItems="Center" Direction="Column" Margin="5">
+                                        <Image
+                                            Aspect="AspectFit"
+                                            HeightRequest="40"
+                                            WidthRequest="40"
+                                            Source="{Binding Avatar}">
+                                            <Image.Clip>
+                                                <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <Label FontAttributes="Bold" FontSize="14" Text="{Binding Name}" />
+                                        <Label FontSize="12" Text="{Binding Company}" />
+                                        <Label FontSize="12" Text="{Binding Position}" />
+                                    </FlexLayout>
                                 </VerticalStackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -146,26 +147,27 @@
                     
                     <CollectionView
                         ItemsSource="{Binding SelectedEventDetail.Moderators}"
-                        IsVisible="{Binding SelectedEventDetail.Moderators, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        HeightRequest="150">
+                        IsVisible="{Binding SelectedEventDetail.Moderators, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" Span="1" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="{x:Type models:PersonCard}">
                                 <VerticalStackLayout Margin="5" HorizontalOptions="Center">
-                                    <Image
-                                        Aspect="AspectFit"
-                                        HeightRequest="40"
-                                        WidthRequest="40"
-                                        Source="{Binding Avatar}">
-                                        <Image.Clip>
-                                            <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20" />
-                                        </Image.Clip>
-                                    </Image>
-                                    <Label FontAttributes="Bold" FontSize="14" Text="{Binding Name}" />
-                                    <Label FontSize="12" Text="{Binding Company}" />
-                                    <Label FontSize="12" Text="{Binding Position}" />
+                                    <FlexLayout AlignItems="Center" Direction="Column" Margin="5">
+                                        <Image
+                                            Aspect="AspectFit"
+                                            HeightRequest="40"
+                                            WidthRequest="40"
+                                            Source="{Binding Avatar}">
+                                            <Image.Clip>
+                                                <EllipseGeometry Center="20,20" RadiusX="20" RadiusY="20" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <Label FontAttributes="Bold" FontSize="14" Text="{Binding Name}" />
+                                        <Label FontSize="12" Text="{Binding Company}" />
+                                        <Label FontSize="12" Text="{Binding Position}" />
+                                    </FlexLayout>
                                 </VerticalStackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

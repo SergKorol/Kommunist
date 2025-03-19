@@ -21,12 +21,11 @@ public class Properties
     public bool WithoutDetails { get; set; }
 
     [JsonProperty("text")]
+    [JsonConverter(typeof(TextItemListConverter))]
     public List<TextItem> Text { get; set; }
 
     [JsonProperty("image")]
     [JsonConverter(typeof(ImageDetailsConverter))]
-    // public string Image { get; set; }
-    
     public ImageDetails Image { get; set; }
 
     [JsonProperty("details")]

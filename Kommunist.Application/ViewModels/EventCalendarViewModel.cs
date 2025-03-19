@@ -129,16 +129,20 @@ public class EventCalendarViewModel : BaseViewModel
         ServiceEvents = loadedDays.ToObservableCollection();
 
         var calEvents = (from e in ServiceEvents
-                         let location = e.ParticipationFormat.Online ? string.Empty : $"{e.ParticipationFormat.Location}"
-                         select new CalEvent
-                         {
-                             EventId = e.Id,
-                             Title = e.Title,
-                             Description = $"{e.Start.ToLocalDateTime()} - {e.End.ToLocalDateTime()}, {e.Language}, {location}",
-                             DateTime = e.Start.ToLocalDateTime(),
-                             Color = Colors[Random.Next(Colors.Count)],
-                             Url = "https://wearecommunity.io/events/net-talks-8"
-                         }).ToList();
+            let location = e.ParticipationFormat.Online ? string.Empty : e.ParticipationFormat.Location
+            let startDateFormatted = e.Start.ToLocalDateTime().ToString("dd.MM.yyyy")
+            let endDateFormatted = e.End.ToLocalDateTime().ToString("dd.MM.yyyy")
+            select new CalEvent
+            {
+                EventId = e.Id,
+                Title = e.Title,
+                Description = string.IsNullOrWhiteSpace(location)
+                    ? $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}"
+                    : $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}, {location}",
+                DateTime = e.Start.ToLocalDateTime(),
+                Color = Colors[Random.Next(Colors.Count)],
+                Url = $"https://wearecommunity.io/events/{e.EventUrl}"
+            }).ToList();
 
         CalEvents.ReplaceRange(calEvents);
     }
