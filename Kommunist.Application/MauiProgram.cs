@@ -47,6 +47,7 @@ public static class MauiProgram
         builder.Services.AddScoped<IEventService, EventService>();
         builder.Services.AddScoped<EventCalendarViewModel>();
         builder.Services.AddScoped<EventCalendarDetailViewModel>();
+        builder.Services.AddScoped<ICalConfigViewModel>();
         builder.Services.AddTransient<MainPage>();
         
         //add configuration

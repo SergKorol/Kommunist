@@ -23,8 +23,6 @@ public class EventCalendarViewModel : BaseViewModel
         SelectionType = SelectionType.Single
     };
 
-    public string URL { get; set; } = "https://wearecommunity.io/events/net-talks-8";
-
     public static readonly Random Random = new Random();
     public List<Color> Colors { get; } = new List<Color>()
     {
@@ -45,6 +43,8 @@ public class EventCalendarViewModel : BaseViewModel
     public ICommand NavigateCalendarCommand { get; set; }
     public ICommand ChangeDateSelectionCommand { get; set; }
     public ICommand EventSelectedCommand { get; }
+    
+    public ICommand OpenIcalConfigCommand { get; }
     #endregion
 
     private readonly IEventService _eventService;
@@ -61,6 +61,8 @@ public class EventCalendarViewModel : BaseViewModel
 
         EventCalendar.SelectedDates.CollectionChanged += SelectedDates_CollectionChanged;
         EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
+        
+        OpenIcalConfigCommand = new Command(OpenIcalConfig);
 
         GetEvents(EventCalendar.Days).ConfigureAwait(false);
 
@@ -117,6 +119,15 @@ public class EventCalendarViewModel : BaseViewModel
     {
         var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId);
         await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
+    }
+    
+    private async void OpenIcalConfig()
+    {
+        var navigationParams = new Dictionary<string, object>
+        {
+            { "SelectedEvents", SelectedEvents.ToList() }
+        };
+        await Shell.Current.GoToAsync("//ICalConfigPage", navigationParams);
     }
     #endregion
 
