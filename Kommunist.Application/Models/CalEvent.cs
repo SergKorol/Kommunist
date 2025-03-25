@@ -11,6 +11,9 @@ public class CalEvent : Event
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime DateTime { get; set; } = DateTime.Today;
+
+    public long Start { get; set; }
+    public long End { get; set; }
     public Color Color { get; set; }
     public string Url { get; set; }
 }

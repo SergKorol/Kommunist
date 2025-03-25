@@ -151,6 +151,8 @@ public class EventCalendarViewModel : BaseViewModel
                     ? $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}"
                     : $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}, {location}",
                 DateTime = e.Start.ToLocalDateTime(),
+                Start = e.Start,
+                End = e.End,
                 Color = Colors[Random.Next(Colors.Count)],
                 Url = $"https://wearecommunity.io/events/{e.EventUrl}"
             }).ToList();

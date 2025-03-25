@@ -2,6 +2,7 @@ using System.Text;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
+using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
@@ -34,21 +35,33 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
     private async void SaveIcalFile()
     {
         // Generate the iCal content
+
+        
         var calendar = new Ical.Net.Calendar();
+        calendar.Method = "PUBLISH";
+        calendar.Scale = "GREGORIAN";
+        calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
+        
         foreach (var ev in Events)
         {
             var alarm = new Alarm
             {
-                Trigger = new Ical.Net.DataTypes.Trigger(TimeSpan.FromMinutes(-AlarmMinutes).ToString())
+                Trigger = new Ical.Net.DataTypes.Trigger($"-PT{AlarmMinutes}M"),
+                Description = "Reminder",
+                Action = AlarmAction.Display,
             };
 
+            
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ev.DateTime),
                 Summary = ev.Title,
-                Description = $"{ev.Description}\n{Notes}"
+                Description = $"{ev.Description}\n{Notes}",
+                DtStart = new CalDateTime(ConvertDateTiem(ev.Start), TimeZoneInfo.Local.Id),
+                DtEnd = new CalDateTime(ConvertDateTiem(ev.End), TimeZoneInfo.Local.Id)
             };
             icalEvent.Alarms.Add(alarm);
+            icalEvent.Attendees.Add(new Attendee { CommonName = Invitees, Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
             calendar.Events.Add(icalEvent);
         }
 
@@ -68,6 +81,13 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
         {
             await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
         }
+    }
+
+    private string ConvertDateTiem(long dt)
+    {
+        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
+        
+        return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
     }
 
     
