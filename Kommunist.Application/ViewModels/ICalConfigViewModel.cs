@@ -7,11 +7,14 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Kommunist.Application.Models;
+using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.ViewModels;
 
 public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
 {
+    private readonly IFileHostingService _fileHostingService;
+    
     public List<CalEvent> Events { get; set; } = new();
     public string Invitees { get; set; } = string.Empty;
     public int AlarmMinutes { get; set; } = 10;
@@ -19,8 +22,9 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
 
     public ICommand GenerateIcalCommand { get; }
 
-    public ICalConfigViewModel()
+    public ICalConfigViewModel(IFileHostingService fileHostingService)
     {
+        _fileHostingService = fileHostingService;
         GenerateIcalCommand = new Command(SaveIcalFile);
     }
 
@@ -35,12 +39,13 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
     private async void SaveIcalFile()
     {
         // Generate the iCal content
-
+        
         
         var calendar = new Ical.Net.Calendar();
         calendar.Method = "PUBLISH";
         calendar.Scale = "GREGORIAN";
         calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
+        
         
         foreach (var ev in Events)
         {
@@ -58,7 +63,8 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
                 Summary = ev.Title,
                 Description = $"{ev.Description}\n{Notes}",
                 DtStart = new CalDateTime(ConvertDateTiem(ev.Start), TimeZoneInfo.Local.Id),
-                DtEnd = new CalDateTime(ConvertDateTiem(ev.End), TimeZoneInfo.Local.Id)
+                DtEnd = new CalDateTime(ConvertDateTiem(ev.End), TimeZoneInfo.Local.Id),
+                Transparency = TransparencyType.Opaque
             };
             icalEvent.Alarms.Add(alarm);
             icalEvent.Attendees.Add(new Attendee { CommonName = Invitees, Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
@@ -81,6 +87,11 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
         {
             await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
         }
+        
+        var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
+        
+        // iOSFileOpener.OpenICSFile(fileUrl.Trim());
+        await Launcher.OpenAsync(fileUrl.Trim());
     }
 
     private string ConvertDateTiem(long dt)

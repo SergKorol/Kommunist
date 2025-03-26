@@ -8,6 +8,7 @@ public static class HttpClientConfiguration
     public static IServiceCollection AddHttpClientConfiguration(this IServiceCollection services)
     {
         services.AddHttpClient<IEventService, EventService>(client => client.BaseAddress = new Uri("https://wearecommunity.io"));
+        services.AddHttpClient<IFileHostingService, FileHostingService>();
         
         return services;
     }
