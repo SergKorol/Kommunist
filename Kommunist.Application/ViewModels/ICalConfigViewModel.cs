@@ -14,17 +14,33 @@ namespace Kommunist.Application.ViewModels;
 public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IFileHostingService _fileHostingService;
+    private readonly IEmailService _emailService;
     
     public List<CalEvent> Events { get; set; } = new();
     public string Invitees { get; set; } = string.Empty;
     public int AlarmMinutes { get; set; } = 10;
-    public string Notes { get; set; } = string.Empty;
+    
+    private bool _sendEmail;
+    public bool SendEmail
+    {
+        get => _sendEmail;
+        set => SetProperty(ref _sendEmail, value);
+    }
+
+    private bool _isSendEmailEnabled;
+    public bool IsSendEmailEnabled
+    {
+        get => _isSendEmailEnabled;
+        set => SetProperty(ref _isSendEmailEnabled, value);
+    }
+
 
     public ICommand GenerateIcalCommand { get; }
 
-    public ICalConfigViewModel(IFileHostingService fileHostingService)
+    public ICalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService)
     {
         _fileHostingService = fileHostingService;
+        _emailService = emailService;
         GenerateIcalCommand = new Command(SaveIcalFile);
     }
 
@@ -39,8 +55,6 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
     private async void SaveIcalFile()
     {
         // Generate the iCal content
-        
-        
         var calendar = new Ical.Net.Calendar();
         calendar.Method = "PUBLISH";
         calendar.Scale = "GREGORIAN";
@@ -61,13 +75,17 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
             {
                 Start = new CalDateTime(ev.DateTime),
                 Summary = ev.Title,
-                Description = $"{ev.Description}\n{Notes}",
+                Description = $"{ev.Description}\n{ev.Url}",
                 DtStart = new CalDateTime(ConvertDateTiem(ev.Start), TimeZoneInfo.Local.Id),
                 DtEnd = new CalDateTime(ConvertDateTiem(ev.End), TimeZoneInfo.Local.Id),
-                Transparency = TransparencyType.Opaque
+                Transparency = TransparencyType.Opaque,
+                
             };
             icalEvent.Alarms.Add(alarm);
-            icalEvent.Attendees.Add(new Attendee { CommonName = Invitees, Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+            if (!string.IsNullOrEmpty(Invitees))
+            {
+                icalEvent.Attendees.Add(new Attendee { CommonName = Invitees, Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+            }
             calendar.Events.Add(icalEvent);
         }
 
@@ -82,16 +100,22 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
         if (fileSaverResult.IsSuccessful)
         {
             await Toast.Make($"The file was saved successfully to location: {fileSaverResult.FilePath}").Show();
+            if (SendEmail)
+            {
+                await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "Find attached your iCal event.", fileSaverResult.FilePath);
+            }
+            else
+            {
+                var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
+        
+                await Launcher.OpenAsync(fileUrl.Trim());
+            }
         }
         else
         {
             await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
+            
         }
-        
-        var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
-        
-        // iOSFileOpener.OpenICSFile(fileUrl.Trim());
-        await Launcher.OpenAsync(fileUrl.Trim());
     }
 
     private string ConvertDateTiem(long dt)
@@ -100,43 +124,4 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
         
         return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
     }
-
-    
-    // private async void GenerateIcal()
-    // {
-    //     var calendar = new Ical.Net.Calendar();
-    //     foreach (var ev in Events)
-    //     {
-    //         var alarm = new Alarm
-    //         {
-    //             Trigger = new Ical.Net.DataTypes.Trigger(TimeSpan.FromMinutes(-AlarmMinutes).ToString())
-    //         };
-    //         
-    //         
-    //         var icalEvent = new CalendarEvent
-    //         {
-    //             Start = new CalDateTime(ev.DateTime),
-    //             Summary = ev.Title,
-    //             Description = $"{ev.Description}\n{Notes}"
-    //         };
-    //         icalEvent.Alarms.Add(alarm);
-    //         calendar.Events.Add(icalEvent);
-    //     }
-    //
-    //     var serializer = new CalendarSerializer();
-    //     var icalString = serializer.SerializeToString(calendar);
-    //
-    //     var eventsFolder = Path.Combine(FileSystem.AppDataDirectory, "Events");
-    //
-    //     if (!Directory.Exists(eventsFolder))
-    //     {
-    //         Directory.CreateDirectory(eventsFolder);
-    //     }
-    //
-    //     var filePath = Path.Combine(eventsFolder, "events.ics");
-    //     await File.WriteAllTextAsync(filePath, icalString);
-    //
-    //
-    //     await Shell.Current.DisplayAlert("Success", "iCal file generated!", "OK");
-    // }
 }

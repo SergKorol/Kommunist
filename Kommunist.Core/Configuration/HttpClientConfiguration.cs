@@ -9,7 +9,7 @@ public static class HttpClientConfiguration
     {
         services.AddHttpClient<IEventService, EventService>(client => client.BaseAddress = new Uri("https://wearecommunity.io"));
         services.AddHttpClient<IFileHostingService, FileHostingService>();
-        
+        services.AddSingleton<IEmailService, EmailService>();
         return services;
     }
 }
