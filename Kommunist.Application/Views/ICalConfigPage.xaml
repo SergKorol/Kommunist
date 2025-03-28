@@ -8,37 +8,46 @@
              x:DataType="{x:Type viewModels:ICalConfigViewModel}"
              Title="iCal Configuration"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
-    <controls:MyTabBar.Content>
-        <VerticalStackLayout Padding="20">
-            <Label Text="Invitees (comma-separated emails):" />
-            <HorizontalStackLayout>
-                <Entry Text="{Binding Invitees}" 
-                       Placeholder="example@email.com" 
-                       Keyboard="Email" 
-                       TextChanged="OnInviteesTextChanged" />
-                <CheckBox IsChecked="{Binding SendEmail}" 
-                          IsEnabled="{Binding IsSendEmailEnabled}" />
-                <Label VerticalTextAlignment="Center" Text="Send email" />
-            </HorizontalStackLayout>
-            
+       <controls:MyTabBar.Content>
+              <VerticalStackLayout Padding="20" Spacing="10">
+                     <Grid ColumnDefinitions="*,Auto,Auto" 
+                           ColumnSpacing="10"
+                           VerticalOptions="Center">
+                            <Entry Grid.Column="0"
+                                   Text="{Binding Invitees}"
+                                   Placeholder="example@email.com"
+                                   Keyboard="Email"
+                                   HorizontalOptions="Fill"
+                                   TextChanged="OnInviteesTextChanged"
+                                   BackgroundColor="White"
+                                   TextColor="Black"
+                                   PlaceholderColor="Gray"/>
 
-            <Label Text="Alarm (minutes before event):" />
-            <Entry Text="{Binding AlarmMinutes}" 
-                   Keyboard="Numeric" 
-                   Placeholder="10"
-                   MaxLength="3"
-                   TextChanged="OnAlarmMinutesChanged" />
+                            <CheckBox Grid.Column="1"
+                                      IsChecked="{Binding SendEmail}"
+                                      IsEnabled="{Binding IsSendEmailEnabled}"
+                                      VerticalOptions="Center"
+                                      Color="#6A5ACD"/>
 
-            <Button Text="Generate iCal" Command="{Binding GenerateIcalCommand}" />
-        </VerticalStackLayout>
-        <!-- <VerticalStackLayout Padding="20"> -->
-        <!--     <Label Text="Invitees (comma-separated emails):" /> -->
-        <!--     <Entry Text="{Binding Invitees}" Placeholder="example@email.com" Keyboard="Email" /> -->
-        <!-- -->
-        <!--     <Label Text="Alarm (minutes before event):" /> -->
-        <!--     <Entry Text="{Binding AlarmMinutes}" Keyboard="Numeric" Placeholder="10" /> -->
-        <!-- -->
-        <!--     <Button Text="Generate iCal" Command="{Binding GenerateIcalCommand}" /> -->
-        <!-- </VerticalStackLayout> -->
-    </controls:MyTabBar.Content>
+                            <Label Grid.Column="2"
+                                   VerticalTextAlignment="Center" 
+                                   Text="Send email"
+                                   VerticalOptions="Center"/>
+                     </Grid>
+    
+                     <Label Text="Alarm (minutes before event):"
+                            Margin="0,10,0,0"/>
+                     <Entry Text="{Binding AlarmMinutes}"
+                            Keyboard="Numeric"
+                            Placeholder="10"
+                            MaxLength="3"
+                            TextChanged="OnAlarmMinutesChanged" />
+    
+                     <Button Text="Generate iCal"
+                             Command="{Binding GenerateIcalCommand}"
+                             Margin="0,10,0,0"
+                             BackgroundColor="#6A5ACD"
+                             TextColor="White"/>
+              </VerticalStackLayout>
+       </controls:MyTabBar.Content>
 </controls:MyTabBar>
