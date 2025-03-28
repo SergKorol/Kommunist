@@ -10,6 +10,8 @@
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
        <controls:MyTabBar.Content>
               <VerticalStackLayout Padding="20" Spacing="10">
+                     <Label Text="Email:"
+                            Margin="0,10,0,0"/>
                      <Grid ColumnDefinitions="*,Auto,Auto" 
                            ColumnSpacing="10"
                            VerticalOptions="Center">
