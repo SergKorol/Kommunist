@@ -73,7 +73,7 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
             
             var icalEvent = new CalendarEvent
             {
-                Start = new CalDateTime(ev.DateTime),
+                Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
                 Summary = ev.Title,
                 Description = $"{ev.Description}\n{ev.Url}",
                 DtStart = new CalDateTime(ConvertDateTiem(ev.Start), TimeZoneInfo.Local.Id),
