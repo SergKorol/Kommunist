@@ -1,16 +1,13 @@
-using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using Google.Apis.Auth.OAuth2;
-using Google.Cloud.Storage.V1;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Kommunist.Core.Services.Interfaces;
-using Newtonsoft.Json;
 
 namespace Kommunist.Core.Services;
 
-public class FileHostingService(HttpClient httpClient) : IFileHostingService
+public class FileHostingService() : IFileHostingService
 {
     // public async Task<string> UploadFileAsync(string filePath)
     // {
@@ -27,51 +24,43 @@ public class FileHostingService(HttpClient httpClient) : IFileHostingService
     //     
     //     return url;
     // }
-    
 
 
     public async Task<string> UploadFileAsync(string filePath)
     {
+        string containerName = "ical-events-container";
+        string fileName = Path.GetFileName(filePath);
+
         try
         {
-            string bucketName = "ical-events.firebasestorage.app";
-            // var bucketName = Guid.NewGuid().ToString();
-            string objectName = Path.GetFileName(filePath);
-        
-            // Path to your service account JSON file
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string credentialsPath = Path.Combine(baseDirectory, "service-account.json");
-            
-            var path = await FileSystem.OpenAppPackageFileAsync("service-account.json");
-        
-            // Create Storage client with explicit credentials
-            StorageClient client = await StorageClient.CreateAsync(
-                GoogleCredential.FromFile(credentialsPath));
-            
-            var existingBucket = await client.GetBucketAsync(bucketName);
-            if (existingBucket == null)
-            {
-                var bucket = await client.CreateBucketAsync("ical-events", bucketName);
-            }
+            string connectionString = "";
 
+            var blobServiceClient = new BlobServiceClient(connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            // Ensure the container exists and is publicly accessible
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var blobClient = containerClient.GetBlobClient(fileName);
 
             await using var fileStream = File.OpenRead(filePath);
-            var uploadedObject = await client.UploadObjectAsync(
-                bucketName,
-                objectName,
-                "application/octet-stream",
-                fileStream
-            );
-            
-            var file = await client.GetObjectAsync(bucketName, objectName);
-            // Get public download URL
-            string downloadUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(objectName)}?alt=media";
-            
-            return downloadUrl;
+            await blobClient.UploadAsync(fileStream, overwrite: true);
+
+            var blobHttpHeaders = new BlobHttpHeaders
+            {
+                ContentType = "text/calendar"
+            };
+            await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+
+            return blobClient.Uri.ToString();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Upload failed: {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+            }
             throw;
         }
     }

@@ -93,29 +93,44 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
         var icalString = serializer.SerializeToString(calendar);
         
         // Convert the iCal string to a stream
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
+        // var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
+        var path = await SaveIcalToInternalStorageAsync(icalString);
+        var fileUrl = await _fileHostingService.UploadFileAsync(path);
+        await Launcher.OpenAsync(fileUrl.Trim());
+        // Save the file
+        // var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
+        // if (fileSaverResult.IsSuccessful)
+        // {
+        //     await Toast.Make($"The file was saved successfully to location: {fileSaverResult.FilePath}").Show();
+        //     if (SendEmail)
+        //     {
+        //         await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "Find attached your iCal event.", fileSaverResult.FilePath);
+        //     }
+        //     else
+        //     {
+        //         var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
+        //
+        //         await Launcher.OpenAsync(fileUrl.Trim());
+        //     }
+        // }
+        // else
+        // {
+        //     await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
+        //     
+        // }
+    }
+    
+    public async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    {
+        // Get internal app data folder
+        string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
         // Save the file
-        var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
-        if (fileSaverResult.IsSuccessful)
-        {
-            await Toast.Make($"The file was saved successfully to location: {fileSaverResult.FilePath}").Show();
-            if (SendEmail)
-            {
-                await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "Find attached your iCal event.", fileSaverResult.FilePath);
-            }
-            else
-            {
-                var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
-        
-                await Launcher.OpenAsync(fileUrl.Trim());
-            }
-        }
-        else
-        {
-            await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
-            
-        }
+        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        using var writer = new StreamWriter(stream, Encoding.UTF8);
+        await writer.WriteAsync(icalString);
+
+        return filePath;
     }
 
     private string ConvertDateTiem(long dt)

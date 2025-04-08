@@ -1,3 +1,4 @@
+using System;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.Enums;
 using Kommunist.Core.Entities.PageProperties.Agenda;
