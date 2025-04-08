@@ -38,7 +38,6 @@ public class FileHostingService() : IFileHostingService
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
-            // Ensure the container exists and is publicly accessible
             await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
             var blobClient = containerClient.GetBlobClient(fileName);
