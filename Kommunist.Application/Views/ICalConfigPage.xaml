@@ -16,14 +16,14 @@
                            ColumnSpacing="10"
                            VerticalOptions="Center">
                             <Entry Grid.Column="0"
-                                   Text="{Binding Invitees}"
+                                   Text="{Binding Invitees, Mode=TwoWay}"
                                    Placeholder="example@email.com"
                                    Keyboard="Email"
                                    HorizontalOptions="Fill"
                                    TextChanged="OnInviteesTextChanged"
                                    BackgroundColor="White"
                                    TextColor="Black"
-                                   PlaceholderColor="Gray"/>
+                                   PlaceholderColor="Gray" />
 
                             <CheckBox Grid.Column="1"
                                       IsChecked="{Binding SendEmail}"

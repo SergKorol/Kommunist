@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -11,13 +13,17 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.ViewModels;
 
-public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
+public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributable
 {
     private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
     
     public List<CalEvent> Events { get; set; } = new();
-    public string Invitees { get; set; } = string.Empty;
+    
+    [ObservableProperty]
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email format.")]
+    private string _invitees;
     public int AlarmMinutes { get; set; } = 10;
     
     private bool _sendEmail;
@@ -54,7 +60,22 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
 
     private async void SaveIcalFile()
     {
-        // Generate the iCal content
+        ValidateAllProperties();
+        if (HasErrors)
+        {
+            var firstError = GetErrors(nameof(Invitees)).FirstOrDefault()?.ErrorMessage;
+
+            if (!string.IsNullOrEmpty(firstError))
+            {
+                await Toast.Make(firstError).Show();
+            }
+            else
+            {
+                await Toast.Make("Validation failed.").Show();
+            }
+            return;
+        }
+        
         var calendar = new Ical.Net.Calendar();
         calendar.Method = "PUBLISH";
         calendar.Scale = "GREGORIAN";
@@ -122,10 +143,8 @@ public class ICalConfigViewModel : BaseViewModel, IQueryAttributable
     
     public async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
-        // Get internal app data folder
         string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
-        // Save the file
         using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         using var writer = new StreamWriter(stream, Encoding.UTF8);
         await writer.WriteAsync(icalString);
