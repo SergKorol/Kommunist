@@ -30,16 +30,29 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
     public bool SendEmail
     {
         get => _sendEmail;
-        set => SetProperty(ref _sendEmail, value);
+        set
+        {
+            if (_sendEmail != value)
+            {
+                _sendEmail = value;
+                OnPropertyChanged();
+            }
+        }
     }
-
-    private bool _isSendEmailEnabled;
-    public bool IsSendEmailEnabled
+    
+    private bool _saveFile;
+    public bool SaveFile
     {
-        get => _isSendEmailEnabled;
-        set => SetProperty(ref _isSendEmailEnabled, value);
+        get => _saveFile;
+        set
+        {
+            if (_saveFile != value)
+            {
+                _saveFile = value;
+                OnPropertyChanged();
+            }
+        }
     }
-
 
     public ICommand GenerateIcalCommand { get; }
 
@@ -113,34 +126,44 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
         var serializer = new CalendarSerializer();
         var icalString = serializer.SerializeToString(calendar);
         
-        // Convert the iCal string to a stream
-        // var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
-        var path = await SaveIcalToInternalStorageAsync(icalString);
-        var fileUrl = await _fileHostingService.UploadFileAsync(path);
-        await Launcher.OpenAsync(fileUrl.Trim());
-        // Save the file
-        // var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
-        // if (fileSaverResult.IsSuccessful)
-        // {
-        //     await Toast.Make($"The file was saved successfully to location: {fileSaverResult.FilePath}").Show();
-        //     if (SendEmail)
-        //     {
-        //         await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "Find attached your iCal event.", fileSaverResult.FilePath);
-        //     }
-        //     else
-        //     {
-        //         var fileUrl = await _fileHostingService.UploadFileAsync(fileSaverResult.FilePath);
-        //
-        //         await Launcher.OpenAsync(fileUrl.Trim());
-        //     }
-        // }
-        // else
-        // {
-        //     await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
-        //     
-        // }
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
+        
+        
+        if (SaveFile)
+        {
+            var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
+            if (fileSaverResult.IsSuccessful)
+            {
+                await UploadOrSendFile(fileSaverResult.FilePath);
+            }
+            else
+            {
+                await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
+            
+            }
+        }
+        else
+        {
+            var path = await SaveIcalToInternalStorageAsync(icalString);
+            await UploadOrSendFile(path);
+        }
     }
-    
+
+    private async Task UploadOrSendFile(string path)
+    {
+        if (SendEmail)
+        {
+            await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "<p>Find attached your iCal event</p><br>.", path);
+            await Toast.Make($"The file was sent successfully").Show();
+        }
+        else
+        {
+            var fileUrl = await _fileHostingService.UploadFileAsync(path);
+            await Toast.Make($"The file was uploaded successfully").Show();
+            await Launcher.OpenAsync(fileUrl.Trim());
+        }
+    }
+
     public async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
         string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
