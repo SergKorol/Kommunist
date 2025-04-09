@@ -1,14 +1,13 @@
-using System;
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using Kommunist.Core.Services.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace Kommunist.Core.Services;
 
 public class EmailService : IEmailService
 {
-    public async Task SendEmailAsync(string to, string subject, string body, string attachmentPath)
+    public async Task SendEmailAsync(string to, string subject, string body, string attachmentPath, string email)
     {
         try
         {
@@ -18,10 +17,8 @@ public class EmailService : IEmailService
                 Credentials = new NetworkCredential("88fdc6001@smtp-brevo.com", "LCO1jMtG7Kv9FyID"),
                 EnableSsl = true
             };
-
-            var mailMessage = new MailMessage
+            var mailMessage = new MailMessage("korols83@gmail.com", email)
             {
-                From = new MailAddress("korols83@gmail.com"),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true

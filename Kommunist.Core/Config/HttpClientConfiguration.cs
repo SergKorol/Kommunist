@@ -1,9 +1,7 @@
-using System;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Kommunist.Core.Configuration;
+namespace Kommunist.Core.Config;
 
 public static class HttpClientConfiguration
 {

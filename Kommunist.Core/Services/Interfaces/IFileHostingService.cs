@@ -4,5 +4,5 @@ namespace Kommunist.Core.Services.Interfaces;
 
 public interface IFileHostingService
 {
-    Task<string> UploadFileAsync(string filePath);
+    Task<string> UploadFileAsync(string filePath, string email);
 }

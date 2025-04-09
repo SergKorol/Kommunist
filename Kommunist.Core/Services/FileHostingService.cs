@@ -1,8 +1,8 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Kommunist.Core.Helpers;
 using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Core.Services;
@@ -26,14 +26,15 @@ public class FileHostingService() : IFileHostingService
     // }
 
 
-    public async Task<string> UploadFileAsync(string filePath)
+    public async Task<string> UploadFileAsync(string filePath, string email)
     {
-        string containerName = "ical-events-container";
-        string fileName = Path.GetFileName(filePath);
+        
 
         try
         {
-            string connectionString = "";
+            string containerName = EmailTokenGenerator.EncryptForBlobName(email);
+            string fileName = Path.GetFileName(filePath);
+            string connectionString = "DefaultEndpointsProtocol=https;AccountName=kommunist;AccountKey=SfVJK6GlUAa/Hx+8mgZgvRoGdU6V943Sp6ySDPwhTP+TKxqBv+me0J0fg5m6HvZcIlVx+mOVpePo+AStv/HsoQ==;EndpointSuffix=core.windows.net";
 
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);

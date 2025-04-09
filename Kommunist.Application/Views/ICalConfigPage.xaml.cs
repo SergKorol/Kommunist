@@ -20,4 +20,12 @@ public partial class ICalConfigPage : MyTabBar
             viewModel.AlarmMinutes = Math.Max(0, value);
         }
     }
+
+    private void OnAlarmEmailChanged(object sender, TextChangedEventArgs e)
+    {
+        if (BindingContext is ICalConfigViewModel viewModel)
+        {
+            viewModel.Email = e.NewTextValue;
+        }
+    }
 }

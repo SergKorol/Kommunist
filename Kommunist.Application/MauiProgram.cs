@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.ViewModels;
-using Kommunist.Core.Configuration;
+using Kommunist.Core.Config;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;

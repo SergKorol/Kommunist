@@ -16,6 +16,7 @@
                      <Entry Text="{Binding Invitees, Mode=TwoWay}"
                             Placeholder="example@email.com"
                             Keyboard="Email"
+                            TextChanged="OnAlarmEmailChanged"
                             HorizontalOptions="Fill"
                             BackgroundColor="White"
                             TextColor="Black"

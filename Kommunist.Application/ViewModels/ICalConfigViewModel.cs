@@ -26,6 +26,8 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
     private string _invitees;
     public int AlarmMinutes { get; set; } = 10;
     
+    public string Email { get; set; }
+    
     private bool _sendEmail;
     public bool SendEmail
     {
@@ -153,12 +155,12 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
     {
         if (SendEmail)
         {
-            await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "<p>Find attached your iCal event</p><br>.", path);
+            await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "<p>Find attached your iCal event</p><br>.", path, Email);
             await Toast.Make($"The file was sent successfully").Show();
         }
         else
         {
-            var fileUrl = await _fileHostingService.UploadFileAsync(path);
+            var fileUrl = await _fileHostingService.UploadFileAsync(path, Email);
             await Toast.Make($"The file was uploaded successfully").Show();
             await Launcher.OpenAsync(fileUrl.Trim());
         }
