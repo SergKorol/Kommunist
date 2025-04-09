@@ -34,7 +34,7 @@ public class FileHostingService() : IFileHostingService
         {
             string containerName = EmailTokenGenerator.EncryptForBlobName(email);
             string fileName = Path.GetFileName(filePath);
-            string connectionString = "DefaultEndpointsProtocol=https;AccountName=kommunist;AccountKey=SfVJK6GlUAa/Hx+8mgZgvRoGdU6V943Sp6ySDPwhTP+TKxqBv+me0J0fg5m6HvZcIlVx+mOVpePo+AStv/HsoQ==;EndpointSuffix=core.windows.net";
+            string connectionString = "";
 
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
