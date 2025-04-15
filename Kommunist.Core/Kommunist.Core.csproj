@@ -23,4 +23,11 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Build\Secrets.cs">
+        <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+      </Compile>
+    </ItemGroup>
+
+    <Import Project="Build/Secrets.targets" Condition="Exists('Build/Secrets.targets')" />
 </Project>

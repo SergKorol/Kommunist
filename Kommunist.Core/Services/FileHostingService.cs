@@ -1,7 +1,9 @@
-using System.Security.Cryptography;
-using System.Text;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Kommunist.Core.Build;
 using Kommunist.Core.Helpers;
 using Kommunist.Core.Services.Interfaces;
 
@@ -28,13 +30,13 @@ public class FileHostingService() : IFileHostingService
 
     public async Task<string> UploadFileAsync(string filePath, string email)
     {
-        
-
         try
         {
             string containerName = EmailTokenGenerator.EncryptForBlobName(email);
             string fileName = Path.GetFileName(filePath);
-            string connectionString = "";
+            string connectionString = Secrets.ConnectionString;
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException("Blob Storage connection string is missing.");
 
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
