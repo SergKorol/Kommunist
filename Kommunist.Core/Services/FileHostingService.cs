@@ -1,40 +1,20 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Kommunist.Core.Build;
 using Kommunist.Core.Helpers;
 using Kommunist.Core.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace Kommunist.Core.Services;
 
-public class FileHostingService() : IFileHostingService
+public class FileHostingService(IConfiguration config) : IFileHostingService
 {
-    // public async Task<string> UploadFileAsync(string filePath)
-    // {
-    //     var client = new HttpClient();
-    //     var request = new HttpRequestMessage(HttpMethod.Post, "https://0x0.st");
-    //     var content = new MultipartFormDataContent();
-    //     content.Add(new StreamContent(File.OpenRead(filePath)), "file", "events.ics");
-    //     content.Add(new StringContent("720"), "expires");
-    //     request.Content = content;
-    //     var response = await client.SendAsync(request);
-    //     response.EnsureSuccessStatusCode();
-    //     
-    //     var url = await response.Content.ReadAsStringAsync();
-    //     
-    //     return url;
-    // }
-
-
     public async Task<string> UploadFileAsync(string filePath, string email)
     {
         try
         {
             string containerName = EmailTokenGenerator.EncryptForBlobName(email);
             string fileName = Path.GetFileName(filePath);
-            string connectionString = Secrets.ConnectionString;
+            string connectionString = config["BlobStorage:ConnectionString"];
             if (string.IsNullOrEmpty(connectionString))
                 throw new InvalidOperationException("Blob Storage connection string is missing.");
 

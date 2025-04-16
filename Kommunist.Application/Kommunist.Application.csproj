@@ -50,7 +50,6 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-        
     </ItemGroup>
 
     <ItemGroup>
@@ -60,6 +59,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="Ical.Net" Version="5.0.0-pre.41" />
         <PackageReference Include="Markdig" Version="0.40.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0-preview.3.25171.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
         <PackageReference Include="Microsoft.Maui.Graphics.Text.Markdig" Version="9.0.14" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
@@ -77,9 +77,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Resources\Settings\service-account.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <EmbeddedResource Include="appsettings.Development.json" />
     </ItemGroup>
 
 </Project>

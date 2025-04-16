@@ -1,9 +1,11 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Reflection;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MauiApp = Microsoft.Maui.Hosting.MauiApp;
 
@@ -14,7 +16,8 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
-        
+        var assembly = Assembly.GetExecutingAssembly();
+        var configurationBuilder = new ConfigurationBuilder();
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
@@ -56,6 +59,18 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+        string environmentName = Environment.GetEnvironmentVariable("MAUI_ENVIRONMENT") ?? "Development";
+        var stream = assembly.GetManifestResourceStream($"Kommunist.Application.appsettings.{environmentName}.json");
+        if (stream == null) return builder.Build();
+        configurationBuilder.AddJsonStream(stream);
+        var config = new ConfigurationBuilder()
+            .AddJsonStream(stream)
+            .Build();
+
+        builder.Configuration.AddConfiguration(config);
+
+        builder.Services.AddSingleton<IConfiguration>(config);
+
 
         return builder.Build();
     }
