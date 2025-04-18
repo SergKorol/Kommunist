@@ -29,13 +29,13 @@
                 <Image Source="icon_home1.png" HeightRequest="24" WidthRequest="24" />
                 <Label Text="Home" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
             </VerticalStackLayout>
-                    <VerticalStackLayout Spacing="4" Padding="10">
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Cal" />
-                        </VerticalStackLayout.GestureRecognizers>
-                        <Image Source="icon_calendar1.png" HeightRequest="24" WidthRequest="24" />
-                        <Label Text="Calendar" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
-                    </VerticalStackLayout>
+                    <!-- <VerticalStackLayout Spacing="4" Padding="10"> -->
+                    <!--     <VerticalStackLayout.GestureRecognizers> -->
+                    <!--         <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Cal" /> -->
+                    <!--     </VerticalStackLayout.GestureRecognizers> -->
+                    <!--     <Image Source="icon_calendar1.png" HeightRequest="24" WidthRequest="24" /> -->
+                    <!--     <Label Text="Calendar" HorizontalOptions="Center" FontSize="12" TextColor="Black" /> -->
+                    <!-- </VerticalStackLayout> -->
             
                     <VerticalStackLayout Spacing="4" Padding="10">
                         <VerticalStackLayout.GestureRecognizers>

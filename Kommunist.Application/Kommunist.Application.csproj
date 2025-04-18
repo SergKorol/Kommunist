@@ -12,7 +12,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
 
         <!-- Display name -->
-        <ApplicationTitle>Kommunist.Application</ApplicationTitle>
+        <ApplicationTitle>Kommunist</ApplicationTitle>
 
         <!-- App Identifier -->
         <ApplicationId>ical-events</ApplicationId>
@@ -70,10 +70,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Pages\" />
     </ItemGroup>
 
     <ItemGroup>
