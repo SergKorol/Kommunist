@@ -40,5 +40,17 @@
     <Color x:Key="Blue100Accent">#3E8EED</Color>
     <Color x:Key="Blue200Accent">#72ACF1</Color>
     <Color x:Key="Blue300Accent">#A7CBF6</Color>
+    
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="ShadowColor">#20000000</Color>
+    <Color x:Key="TextSecondaryColor">#4B5563</Color>
+    <Color x:Key="PrimaryColor">#2962FF</Color>
+    <Color x:Key="SecondaryColor">#FF6D00</Color>
+    <Color x:Key="AccentColor">#00C853</Color>
+    <Color x:Key="BackgroundColor">#F5F7FA</Color>
+    <Color x:Key="TextPrimaryColor">#1F2937</Color>
+    <Color x:Key="TextTertiaryColor">#9CA3AF</Color>
+    <Color x:Key="SelectedDayBackgroundColor">#2962FF</Color>
+    <Color x:Key="TodayIndicatorColor">#FF6D00</Color>
 
 </ResourceDictionary>

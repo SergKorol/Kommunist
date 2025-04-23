@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kommunist.Application.Controls.MyTabBar"
@@ -8,51 +7,60 @@
     <ControlTemplate x:Key="SecondaryColorTemplate">
     <Grid RowDefinitions="*,Auto">
         <ContentPresenter Grid.Row="0" />
-        <Border Grid.Row="1"
-                BackgroundColor="{StaticResource Secondary}"
-                HeightRequest="100"
-                Opacity="0.5"
-                Padding="15,0" 
-                StrokeThickness="0">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="5" />
-            </Border.StrokeShape>
-        </Border>
-        <FlexLayout Direction="Row"
-                    Grid.Row="1"
-            JustifyContent="SpaceAround"
-            AlignItems="Center">
-            <VerticalStackLayout Spacing="4" Padding="10">
-                <VerticalStackLayout.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Home" />
-                </VerticalStackLayout.GestureRecognizers>
-                <Image Source="icon_home1.png" HeightRequest="24" WidthRequest="24" />
-                <Label Text="Home" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
-            </VerticalStackLayout>
-                    <!-- <VerticalStackLayout Spacing="4" Padding="10"> -->
-                    <!--     <VerticalStackLayout.GestureRecognizers> -->
-                    <!--         <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Cal" /> -->
-                    <!--     </VerticalStackLayout.GestureRecognizers> -->
-                    <!--     <Image Source="icon_calendar1.png" HeightRequest="24" WidthRequest="24" /> -->
-                    <!--     <Label Text="Calendar" HorizontalOptions="Center" FontSize="12" TextColor="Black" /> -->
-                    <!-- </VerticalStackLayout> -->
-            
-                    <VerticalStackLayout Spacing="4" Padding="10">
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Filters" />
-                        </VerticalStackLayout.GestureRecognizers>
-                        <Image Source="icon_filters1.png" HeightRequest="24" WidthRequest="24" />
-                        <Label Text="Filters" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
-                    </VerticalStackLayout>
-            
-                    <VerticalStackLayout Spacing="4" Padding="10">
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnTabBarNavigation" CommandParameter="//Settings" />
-                        </VerticalStackLayout.GestureRecognizers>
-                        <Image Source="icon_settings1.png" HeightRequest="24" WidthRequest="24" />
-                        <Label Text="Settings" HorizontalOptions="Center" FontSize="12" TextColor="Black" />
-                    </VerticalStackLayout>
-        </FlexLayout>
+        <Grid Grid.Row="1" VerticalOptions="End">
+            <Border HeightRequest="72"
+                    BackgroundColor="{StaticResource SurfaceColor}"
+                    StrokeThickness="0"
+                    VerticalOptions="End">
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource ShadowColor}"
+                            Offset="0,-2"
+                            Radius="8"
+                            Opacity="0.2" />
+                </Border.Shadow>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20,20,0,0" />
+                </Border.StrokeShape>
+                
+                <Grid ColumnDefinitions="*, *, *" Padding="8,0">
+                    <Button Grid.Column="0"
+                            Text="Home"
+                            FontSize="12"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource TextSecondaryColor}"
+                            HorizontalOptions="Center"
+                            ContentLayout="Top,8"
+                            ImageSource="icon_home1.png"
+                            Command="{Binding NavigateToCommand, Source={x:Reference Menu}}"
+                            CommandParameter="HomePage">
+                    </Button>
+                    
+                    <Button Grid.Column="1"
+                            Text="Filters"
+                            FontSize="12"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource TextSecondaryColor}"
+                            HorizontalOptions="Center"
+                            ContentLayout="Top,8"
+                            ImageSource="icon_filters1.png"
+                            Command="{Binding NavigateToCommand, Source={x:Reference Menu}}"
+                            CommandParameter="FiltersPage">
+                    </Button>
+                    
+                    <Button Grid.Column="2"
+                            Text="Settings"
+                            FontSize="12"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource TextSecondaryColor}"
+                            HorizontalOptions="Center"
+                            ContentLayout="Top,8"
+                            ImageSource="icon_settings1.png"
+                            Command="{Binding NavigateToCommand, Source={x:Reference Menu}}"
+                            CommandParameter="SettingsPage">
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
     </ControlTemplate>
 </ContentPage.Resources>
