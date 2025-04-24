@@ -39,6 +39,11 @@ public class EventCalendarDetailViewModel : BaseViewModel
         
         SelectedEventDetail = eventDetail;
     }
+    
+    public bool HasParticipants => 
+        SelectedEventDetail != null && 
+        ((SelectedEventDetail.Speakers != null && SelectedEventDetail.Speakers.Count > 0) || 
+         (SelectedEventDetail.Moderators != null && SelectedEventDetail.Moderators.Count > 0));
 
     private async Task GetAgenda(int eventId)
     {
@@ -78,22 +83,47 @@ public class EventCalendarDetailViewModel : BaseViewModel
     {
         var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
+        
         eventDetail.EventId = TappedEventId;
         eventDetail.Title = mainPart.Properties?.Text?.First()?.Text;
         eventDetail.BgImageUrl = mainPart.Properties?.Image.Url;
         eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
+        eventDetail.Date = mainPart.Properties?.Details.DatesTimestamp.Start.ToLocalDateTime().Date.ToString("d MMM");
         eventDetail.Url = mainPart.Properties?.EventUrl;
         if (mainPart.Properties != null && mainPart.Properties.Languages.Any())
             eventDetail.Language = string.Join(", ", mainPart.Properties.Languages);
         eventDetail.FormatEvent = mainPart.Properties!.Details.ParticipationFormat.Online ? "Online" : "Offline";
         eventDetail.Location = mainPart.Properties.Details.ParticipationFormat.Location ?? "World";
+
+        string text = string.Empty;
+        var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
+        if (unlimitedText != null)
+        {
+            text = unlimitedText.Properties?.UnlimitedText;
+        }
         
         var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
         if (iconPointsPart != null)
         {
             var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
+            var icons = iconPointsPart.Properties.Icons.Select(x => x.Text).ToList();
+            if (string.IsNullOrEmpty(text))
+            {
+                text = string.Join("\n", texts);
+            }
+            else if (icons.Any())
+            {
+                text = icons.Aggregate(text, (current, iconText) => current + ("\n<h5>" + iconText.Main + ":</h5><span>" + iconText.Description + "</span>"));
+            }
+            else
+            {
+                text += "\n" + string.Join("\n", texts);
+            }
+        }
 
-            eventDetail.Description = BuildHtmlContent(string.Join("\n", texts));
+        if (!string.IsNullOrEmpty(text))
+        {
+            eventDetail.Description = BuildHtmlContent(text);
         }
     }
 

@@ -24,6 +24,12 @@ public class Properties
     [JsonConverter(typeof(TextItemListConverter))]
     public List<TextItem> Text { get; set; }
 
+    [JsonProperty("unlimitedText")]
+    public string UnlimitedText { get; set; }
+
+    [JsonProperty("icons")]
+    public IEnumerable<Icon> Icons { get; set; }
+
     [JsonProperty("image")]
     [JsonConverter(typeof(ImageDetailsConverter))]
     public ImageDetails Image { get; set; }
