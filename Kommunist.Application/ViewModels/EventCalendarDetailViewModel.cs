@@ -30,6 +30,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
     private readonly IEventService _eventService;
     
     public ICommand AddToCalendar { get; }
+    public ICommand JoinToEvent { get; }
 
     public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId, IFileHostingService fileHostingService)
     {
@@ -39,6 +40,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
         CreateEventCalendarDetailPage().ConfigureAwait(false);
         AddToCalendar = new Command(GenerateEventAndUpload);
+        JoinToEvent = new Command(OpenEventPage);
     }
     
     private async Task CreateEventCalendarDetailPage()
@@ -63,6 +65,11 @@ public class EventCalendarDetailViewModel : BaseViewModel
             AgendaPage= await _eventService.GetAgenda(eventId);
         }
         
+    }
+
+    private async void OpenEventPage()
+    {
+        await Launcher.OpenAsync(SelectedEventDetail.Url.Trim());
     }
 
     private async void GenerateEventAndUpload()

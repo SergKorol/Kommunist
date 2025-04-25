@@ -4,8 +4,10 @@
     x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:models="clr-namespace:Kommunist.Application.Models"
+    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:DataType="{x:Type viewModels:EventCalendarDetailViewModel}"
     xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
 
@@ -296,7 +298,7 @@
                         CornerRadius="8"
                         HeightRequest="50"
                         Margin="0,5,0,15"
-                        />
+                        Command="{Binding JoinToEvent}"/>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>
