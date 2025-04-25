@@ -48,13 +48,14 @@ public class EventCalendarViewModel : BaseViewModel
     #endregion
 
     private readonly IEventService _eventService;
+    private readonly IFileHostingService _fileHostingService;
     private Task _getEvents;
 
     #region Constructors
-    public EventCalendarViewModel(IEventService eventService)
+    public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService)
     {
         _eventService = eventService;
-
+        _fileHostingService = fileHostingService;
         NavigateCalendarCommand = new Command<int>(NavigateCalendar);
         ChangeDateSelectionCommand = new Command<DateTime>(ChangeDateSelection);
         EventSelectedCommand = new Command<CalEvent>(OnEventSelected);
@@ -117,7 +118,7 @@ public class EventCalendarViewModel : BaseViewModel
 
     private async void OnEventSelected(CalEvent selectedEvent)
     {
-        var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId);
+        var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId, _fileHostingService);;
         await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
     }
     

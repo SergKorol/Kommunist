@@ -1,16 +1,23 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Text;
+using System.Windows.Input;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
+using Attendee = Ical.Net.DataTypes.Attendee;
 
 namespace Kommunist.Application.ViewModels;
 
 public class EventCalendarDetailViewModel : BaseViewModel
 {
+    private readonly IFileHostingService _fileHostingService;
+    
     public CalEventDetail SelectedEventDetail { get; set; }
     public ServiceEvent TappedServiceEvent { get; set; }
     public IEnumerable<EventPage> EventPages { get; set; }
@@ -21,13 +28,17 @@ public class EventCalendarDetailViewModel : BaseViewModel
     public int TappedEventId { get; set; }
     
     private readonly IEventService _eventService;
+    
+    public ICommand AddToCalendar { get; }
 
-    public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId)
+    public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId, IFileHostingService fileHostingService)
     {
         _eventService = eventService;
+        _fileHostingService = fileHostingService;
         TappedEventId = tappedEventId;
 
         CreateEventCalendarDetailPage().ConfigureAwait(false);
+        AddToCalendar = new Command(GenerateEventAndUpload);
     }
     
     private async Task CreateEventCalendarDetailPage()
@@ -53,6 +64,64 @@ public class EventCalendarDetailViewModel : BaseViewModel
         }
         
     }
+
+    private async void GenerateEventAndUpload()
+    {
+        var properties = PageItems.FirstOrDefault(x => x.Type == "Main")?.Properties;
+        if (properties == null) return;
+        
+        var calendar = new Ical.Net.Calendar
+        {
+            Method = "PUBLISH",
+            Scale = "GREGORIAN"
+        };
+        calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
+        
+        var alarm = new Alarm
+        {
+            Trigger = new Ical.Net.DataTypes.Trigger("-PT5M"),
+            Description = "Reminder",
+            Action = AlarmAction.Display,
+        };
+        var datesStamp = properties?.Details.DatesTimestamp;
+        var icalEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
+            Summary = SelectedEventDetail.Title,
+            Description = $"{HtmlConverter.HtmlToPlainText(SelectedEventDetail.Description)}" + "\n\n" + $"{SelectedEventDetail.Url}",
+            DtStart = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
+            DtEnd = new CalDateTime(ConvertDateTime(datesStamp.End), TimeZoneInfo.Local.Id),
+            Transparency = TransparencyType.Opaque,
+            
+                
+        };
+        icalEvent.Alarms.Add(alarm);
+        icalEvent.Attendees.Add(new Attendee { CommonName = "Guest", Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+        calendar.Events.Add(icalEvent);
+        
+        var serializer = new CalendarSerializer();
+        var icalString = serializer.SerializeToString(calendar);
+        
+        var path = await SaveIcalToInternalStorageAsync(icalString);
+        await UploadOrSendFile(path);
+    }
+    
+    private async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    {
+        string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+
+        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        using var writer = new StreamWriter(stream, Encoding.UTF8);
+        await writer.WriteAsync(icalString);
+
+        return filePath;
+    }
+    
+    private async Task UploadOrSendFile(string path)
+    {
+        var fileUrl = await _fileHostingService.UploadFileAsync(path, "guest@kommunist.dev");
+        await Launcher.OpenAsync(fileUrl.Trim());
+    }
     
     private async Task GetHomePage(int eventId)
     {
@@ -77,6 +146,13 @@ public class EventCalendarDetailViewModel : BaseViewModel
             return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
         }
         return string.Empty;
+    }
+
+    private string ConvertDateTime(long dt)
+    {
+        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
+        
+        return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
     }
 
     void SetMainCalEventDetail(CalEventDetail eventDetail)
@@ -113,7 +189,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
             }
             else if (icons.Any())
             {
-                text = icons.Aggregate(text, (current, iconText) => current + ("\n<h5>" + iconText.Main + ":</h5><span>" + iconText.Description + "</span>"));
+                text += "<ul>";
+                text = icons.Aggregate(text, (current, icon) => current + ("<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>"));
+                text += "</ul>";
             }
             else
             {
@@ -195,12 +273,4 @@ public class EventCalendarDetailViewModel : BaseViewModel
         </body>
         </html>";
     }
-    
-    
-    // public string ConvertHtmlToMarkdown(string htmlContent)
-    // {
-    //     var pipeline = new MarkdownPipelineBuilder().Build();
-    //     
-    //     return markdownContent;
-    // }
 }

@@ -91,9 +91,11 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
             return;
         }
         
-        var calendar = new Ical.Net.Calendar();
-        calendar.Method = "PUBLISH";
-        calendar.Scale = "GREGORIAN";
+        var calendar = new Ical.Net.Calendar
+        {
+            Method = "PUBLISH",
+            Scale = "GREGORIAN"
+        };
         calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
         
         
@@ -112,8 +114,8 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
                 Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
                 Summary = ev.Title,
                 Description = $"{ev.Description}\n{ev.Url}",
-                DtStart = new CalDateTime(ConvertDateTiem(ev.Start), TimeZoneInfo.Local.Id),
-                DtEnd = new CalDateTime(ConvertDateTiem(ev.End), TimeZoneInfo.Local.Id),
+                DtStart = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
+                DtEnd = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
                 Transparency = TransparencyType.Opaque,
                 
             };
@@ -177,7 +179,7 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
         return filePath;
     }
 
-    private string ConvertDateTiem(long dt)
+    private string ConvertDateTime(long dt)
     {
         DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
         
