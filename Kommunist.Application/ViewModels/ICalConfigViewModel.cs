@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
@@ -27,6 +28,13 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
     public int AlarmMinutes { get; set; } = 10;
     
     public string Email { get; set; }
+
+    public string FirstEventDateTime { get; set; }
+    public string LastEventDateTime { get; set; }
+    
+    public ICommand IncrementAlarmCommand => new Command(() => AlarmMinutes = Math.Min(120, AlarmMinutes + 5));
+    public ICommand DecrementAlarmCommand => new Command(() => AlarmMinutes = Math.Max(0, AlarmMinutes - 5));
+    
     
     private bool _sendEmail;
     public bool SendEmail
@@ -67,8 +75,11 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.ContainsKey("SelectedEvents"))
-            Events = query["SelectedEvents"] as List<CalEvent> ?? new List<CalEvent>();
+        if (!query.ContainsKey("SelectedEvents")) return;
+        Events = query["SelectedEvents"] as List<CalEvent> ?? new List<CalEvent>();
+        var dates = Events.Select(x => x.DateTime).ToList(); 
+        FirstEventDateTime = dates.Min().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
+        LastEventDateTime = dates.Max().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
     }
     
     

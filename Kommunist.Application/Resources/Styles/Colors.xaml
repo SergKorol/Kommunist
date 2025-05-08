@@ -58,5 +58,9 @@
     <Color x:Key="PrimaryLight">#6750A4</Color>
     <Color x:Key="PrimaryDark">#D0BCFF</Color>
     <Color x:Key="Success">#4CAF50</Color>
+    
+    <Color x:Key="PrimaryDarkColor">#5B4ABE</Color>
+    <Color x:Key="TextColor">#333333</Color>
+    <Color x:Key="BorderColor">#DDDDDD</Color>
 
 </ResourceDictionary>
