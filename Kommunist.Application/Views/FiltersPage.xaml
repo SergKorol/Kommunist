@@ -3,9 +3,131 @@
 <controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Kommunist.Application.Controls"
+             xmlns:viewmodels="clr-namespace:Kommunist.Application.ViewModels"
              x:Class="Kommunist.Application.Views.FiltersPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
+    
+    <controls:MyTabBar.BindingContext>
+        <viewmodels:EventFiltersViewModel />
+    </controls:MyTabBar.BindingContext>
     <controls:MyTabBar.Content>
-        <Label Text="Filters Page"></Label>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <Label 
+                    Text="Filters" 
+                    FontSize="24" 
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    Margin="0,0,0,10"/>
+
+                <!-- Tag Search -->
+                <Border 
+                    Stroke="{StaticResource Gray300}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8,8,8,8">
+                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                        <Image 
+                            Source="search_icon.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            VerticalOptions="Center"
+                            Margin="0,0,8,0"/>
+                        <Entry 
+                            Grid.Column="1"
+                            Placeholder="Search by tag"
+                            Text="{Binding TagFilter}"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Speaker Search -->
+                <Border 
+                    Stroke="{StaticResource Gray300}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8,8,8,8">
+                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                        <Image 
+                            Source="person_icon.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            VerticalOptions="Center"
+                            Margin="0,0,8,0"/>
+                        <Entry 
+                            Grid.Column="1"
+                            Placeholder="Search by speaker"
+                            Text="{Binding SpeakerFilter}"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Country Dropdown -->
+                <Label Text="Country" FontSize="16" FontAttributes="Bold" Margin="5,0,0,0"/>
+                <Border 
+                    Stroke="{StaticResource Gray300}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8,8,8,8">
+                    <Picker 
+                        ItemsSource="{Binding Countries}"
+                        SelectedIndex="{Binding SelectedCountryIndex}"
+                        Title="Select a country"
+                        Margin="12,0"/>
+                </Border>
+
+                <!-- Community Search -->
+                <Border 
+                    Stroke="{StaticResource Gray300}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8,8,8,8">
+                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                        <Image 
+                            Source="community_icon.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            VerticalOptions="Center"
+                            Margin="0,0,8,0"/>
+                        <Entry 
+                            Grid.Column="1"
+                            Placeholder="Search by community"
+                            Text="{Binding CommunityFilter}"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Online/Offline Switch -->
+                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" Margin="0,10,0,0">
+                    <Label 
+                        Text="Show Online Only" 
+                        VerticalOptions="Center"
+                        FontSize="16"/>
+                    <Switch 
+                        Grid.Column="1" 
+                        IsToggled="{Binding OnlineOnly}"
+                        OnColor="{StaticResource Primary}"
+                        ThumbColor="White"/>
+                </Grid>
+
+                <!-- Apply Filters Button -->
+                <Button 
+                    Text="Apply Filters"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Margin="0,20,0,0"
+                    Command="{Binding ApplyFiltersCommand}"/>
+
+                <!-- Clear Filters Button -->
+                <Button 
+                    Text="Clear All"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource Primary}"
+                    BorderColor="{StaticResource Primary}"
+                    BorderWidth="1"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Command="{Binding ClearFiltersCommand}"/>
+            </VerticalStackLayout>
+        </ScrollView>
     </controls:MyTabBar.Content>
 </controls:MyTabBar>
