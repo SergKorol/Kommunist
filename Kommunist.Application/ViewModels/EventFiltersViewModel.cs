@@ -4,11 +4,13 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.Models;
+using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.ViewModels;
 
 public class EventFiltersViewModel : BaseViewModel
 {
+    private readonly ISearchService _searchService;
     private string _tagFilter;
     private string _speakerFilter;
     private string _countryFilter;
@@ -16,19 +18,26 @@ public class EventFiltersViewModel : BaseViewModel
     private bool _onlineOnly;
     private int _selectedCountryIndex = -1;
     
-    private readonly Action<string, string> _showAlert;
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public ObservableCollection<string> Countries { get; private set; }
+    public ObservableCollection<string> TagSearchResults { get; } = new();
+    public ObservableCollection<string> TagSuggestions { get; } = new();
+
+    private CancellationTokenSource _debounceCts;
 
     public ICommand ApplyFiltersCommand { get; private set; }
     public ICommand ClearFiltersCommand { get; private set; }
-
-    public EventFiltersViewModel(Action<string, string> showAlert)
+    
+    public Command<string> SelectTagCommand => new Command<string>(tag =>
     {
-        _showAlert = showAlert;
+        TagFilter = tag;
+        TagSuggestions.Clear();
+    });
+
+    public EventFiltersViewModel(ISearchService searchService)
+    {
         InitializeCountries();
+        _searchService = searchService;
         ApplyFiltersCommand = new Command(ExecuteApplyFilters);
         ClearFiltersCommand = new Command(ExecuteClearFilters);
     }
@@ -38,11 +47,10 @@ public class EventFiltersViewModel : BaseViewModel
         get => _tagFilter;
         set
         {
-            if (_tagFilter != value)
-            {
-                _tagFilter = value;
-                OnPropertyChanged();
-            }
+            if (_tagFilter == value) return;
+            _tagFilter = value;
+            OnPropertyChanged();
+            DebounceSearchTags();
         }
     }
 
@@ -192,9 +200,43 @@ public class EventFiltersViewModel : BaseViewModel
         // Implement your actual filter clearing logic here
         // For example: FilterService.ClearFilters();
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    
+    private void DebounceSearchTags()
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        _debounceCts?.Cancel();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(300, token); // debounce delay
+                if (!token.IsCancellationRequested)
+                {
+                    await SearchTags();
+                }
+            }
+            catch (TaskCanceledException) { }
+        }, token);
+    }
+
+
+    private async Task SearchTags()
+    {
+        if (string.IsNullOrWhiteSpace(TagFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => TagSuggestions.Clear());
+            return;
+        }
+
+        var tags = await _searchService.GetTags(TagFilter);
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            TagSuggestions.Clear();
+            foreach (var tag in tags)
+                TagSuggestions.Add(tag);
+        });
     }
 }

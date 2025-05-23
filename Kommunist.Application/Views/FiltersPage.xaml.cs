@@ -9,9 +9,9 @@ public partial class FiltersPage : MyTabBar
     public FiltersPage()
     {
         InitializeComponent();
-        // var serviceProvider = MauiProgram.CreateMauiApp().Services;
-        // var eventFiltersViewModel = serviceProvider?.GetRequiredService<EventFiltersViewModel>();
-        // BindingContext = eventFiltersViewModel;
+        var serviceProvider = MauiProgram.CreateMauiApp().Services;
+        var eventFiltersViewModel = serviceProvider?.GetRequiredService<EventFiltersViewModel>();
+        BindingContext = eventFiltersViewModel;
     }
     
     // private void InitializeCountries()
@@ -72,5 +72,12 @@ public partial class FiltersPage : MyTabBar
     //
     //     // Notify the user
     //     DisplayAlert("Filters Cleared", "All filters have been reset.", "OK");
+    // }
+    // private void InputView_OnTextChanged(object sender, TextChangedEventArgs e)
+    // {
+    //     if (BindingContext is EventFiltersViewModel viewModel)
+    //     {
+    //         viewModel.Email = e.NewTextValue;
+    //     }
     // }
 }

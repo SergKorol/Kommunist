@@ -3,14 +3,15 @@
 <controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Kommunist.Application.Controls"
-             xmlns:viewmodels="clr-namespace:Kommunist.Application.ViewModels"
+             xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
+             xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
              x:Class="Kommunist.Application.Views.FiltersPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
     
-    <controls:MyTabBar.BindingContext>
-        <viewmodels:EventFiltersViewModel />
-    </controls:MyTabBar.BindingContext>
+    <controls:MyTabBar.Resources>
+        <helpers:IsGreaterThanZeroConverter x:Key="IsGreaterThanZeroConverter"/>
+    </controls:MyTabBar.Resources>
     <controls:MyTabBar.Content>
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="16">
@@ -40,6 +41,27 @@
                             VerticalOptions="Center"/>
                     </Grid>
                 </Border>
+                
+                <!-- Tag Suggestions -->
+                <CollectionView 
+                    ItemsSource="{Binding TagSuggestions}"
+                    IsVisible="{Binding TagSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectTagCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <!-- Speaker Search -->
                 <Border 

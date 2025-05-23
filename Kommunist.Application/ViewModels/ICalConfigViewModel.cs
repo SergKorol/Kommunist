@@ -42,11 +42,9 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
         get => _sendEmail;
         set
         {
-            if (_sendEmail != value)
-            {
-                _sendEmail = value;
-                OnPropertyChanged();
-            }
+            if (_sendEmail == value) return;
+            _sendEmail = value;
+            OnPropertyChanged();
         }
     }
     
