@@ -5,6 +5,7 @@ using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.Models;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Types;
 
 namespace Kommunist.Application.ViewModels;
 
@@ -23,6 +24,8 @@ public class EventFiltersViewModel : BaseViewModel
     public ObservableCollection<string> TagSearchResults { get; } = new();
     public ObservableCollection<string> TagSuggestions { get; } = new();
 
+    public ObservableHashSet<string> SelectedTags { get; set; } = new();
+
     private CancellationTokenSource _debounceCts;
 
     public ICommand ApplyFiltersCommand { get; private set; }
@@ -31,8 +34,17 @@ public class EventFiltersViewModel : BaseViewModel
     public Command<string> SelectTagCommand => new Command<string>(tag =>
     {
         TagFilter = tag;
+        SelectedTagFilter = tag;
+        SelectedTags.Add(tag);
         TagSuggestions.Clear();
     });
+    
+    public Command<string> DeselectTagCommand => new Command<string>(tag =>
+    {
+        SelectedTags.Remove(tag);
+    });
+    
+    public Command ClearTextCommand => new Command(_ => TagFilter = string.Empty);
 
     public EventFiltersViewModel(ISearchService searchService)
     {
@@ -41,6 +53,8 @@ public class EventFiltersViewModel : BaseViewModel
         ApplyFiltersCommand = new Command(ExecuteApplyFilters);
         ClearFiltersCommand = new Command(ExecuteClearFilters);
     }
+    
+    public bool IsTagFilterNotEmpty => !string.IsNullOrEmpty(TagFilter);
 
     public string TagFilter
     {
@@ -48,22 +62,29 @@ public class EventFiltersViewModel : BaseViewModel
         set
         {
             if (_tagFilter == value) return;
+            if (!string.IsNullOrWhiteSpace(SelectedTagFilter))
+            {
+                if (SelectedTagFilter != value)
+                {
+                    SelectedTagFilter = null;
+                }
+            }
             _tagFilter = value;
             OnPropertyChanged();
             DebounceSearchTags();
         }
     }
 
+    private string SelectedTagFilter { get; set; }
+
     public string SpeakerFilter
     {
         get => _speakerFilter;
         set
         {
-            if (_speakerFilter != value)
-            {
-                _speakerFilter = value;
-                OnPropertyChanged();
-            }
+            if (_speakerFilter == value) return;
+            _speakerFilter = value;
+            OnPropertyChanged();
         }
     }
 
@@ -72,20 +93,18 @@ public class EventFiltersViewModel : BaseViewModel
         get => _selectedCountryIndex;
         set
         {
-            if (_selectedCountryIndex != value)
+            if (_selectedCountryIndex == value) return;
+            _selectedCountryIndex = value;
+            if (_selectedCountryIndex >= 0 && _selectedCountryIndex < Countries.Count)
             {
-                _selectedCountryIndex = value;
-                if (_selectedCountryIndex >= 0 && _selectedCountryIndex < Countries.Count)
-                {
-                    _countryFilter = Countries[_selectedCountryIndex];
-                }
-                else
-                {
-                    _countryFilter = null;
-                }
-
-                OnPropertyChanged();
+                _countryFilter = Countries[_selectedCountryIndex];
             }
+            else
+            {
+                _countryFilter = null;
+            }
+
+            OnPropertyChanged();
         }
     }
 
@@ -94,11 +113,9 @@ public class EventFiltersViewModel : BaseViewModel
         get => _countryFilter;
         private set
         {
-            if (_countryFilter != value)
-            {
-                _countryFilter = value;
-                OnPropertyChanged();
-            }
+            if (_countryFilter == value) return;
+            _countryFilter = value;
+            OnPropertyChanged();
         }
     }
 
@@ -107,11 +124,9 @@ public class EventFiltersViewModel : BaseViewModel
         get => _communityFilter;
         set
         {
-            if (_communityFilter != value)
-            {
-                _communityFilter = value;
-                OnPropertyChanged();
-            }
+            if (_communityFilter == value) return;
+            _communityFilter = value;
+            OnPropertyChanged();
         }
     }
 
@@ -120,17 +135,14 @@ public class EventFiltersViewModel : BaseViewModel
         get => _onlineOnly;
         set
         {
-            if (_onlineOnly != value)
-            {
-                _onlineOnly = value;
-                OnPropertyChanged();
-            }
+            if (_onlineOnly == value) return;
+            _onlineOnly = value;
+            OnPropertyChanged();
         }
     }
 
     private void InitializeCountries()
     {
-        // Sample list of countries - replace with your actual data source
         Countries = new ObservableCollection<string>
         {
             "United States",
@@ -146,7 +158,6 @@ public class EventFiltersViewModel : BaseViewModel
             "India",
             "Brazil",
             "Australia"
-            // Add more countries as needed
         };
     }
 
@@ -224,6 +235,12 @@ public class EventFiltersViewModel : BaseViewModel
 
     private async Task SearchTags()
     {
+        if (!string.IsNullOrWhiteSpace(SelectedTagFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => TagSuggestions.Clear());
+            return;
+        }
+        
         if (string.IsNullOrWhiteSpace(TagFilter))
         {
             MainThread.BeginInvokeOnMainThread(() => TagSuggestions.Clear());

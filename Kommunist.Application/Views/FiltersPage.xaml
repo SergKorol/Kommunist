@@ -27,20 +27,37 @@
                     Stroke="{StaticResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
-                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
+                        <!-- Search Icon (left) -->
                         <Image 
-                            Source="search_icon.png" 
+                            Source="icon_filters1.png" 
                             HeightRequest="20" 
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
+
+                        <!-- Entry (center) -->
                         <Entry 
                             Grid.Column="1"
                             Placeholder="Search by tag"
                             Text="{Binding TagFilter}"
                             VerticalOptions="Center"/>
+
+                        <!-- Clear Icon (right) -->
+                        <ImageButton 
+                            Grid.Column="2"
+                            Source="icon_trashcan.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            BackgroundColor="Transparent"
+                            VerticalOptions="Center"
+                            Margin="8,0,0,0"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearTextCommand}"
+                            CommandParameter="{Binding .}" 
+                            IsVisible="{Binding IsTagFilterNotEmpty}"/>
                     </Grid>
                 </Border>
+
                 
                 <!-- Tag Suggestions -->
                 <CollectionView 
@@ -56,6 +73,27 @@
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectTagCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <!--Selected Tags -->
+                <CollectionView 
+                    ItemsSource="{Binding SelectedTags}"
+                    IsVisible="{Binding SelectedTags.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectTagCommand}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
