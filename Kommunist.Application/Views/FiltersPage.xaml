@@ -30,7 +30,7 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
                         <!-- Search Icon (left) -->
                         <Image 
-                            Source="icon_filters1.png" 
+                            Source="icon_tag.png" 
                             HeightRequest="20" 
                             WidthRequest="20"
                             VerticalOptions="Center"
@@ -52,9 +52,9 @@
                             BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Margin="8,0,0,0"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearTextCommand}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearTagFilterCommand}"
                             CommandParameter="{Binding .}" 
-                            IsVisible="{Binding IsTagFilterNotEmpty}"/>
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsTagFilterNotEmpty}"/>
                     </Grid>
                 </Border>
 
@@ -106,20 +106,78 @@
                     Stroke="{StaticResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
-                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
+                        <!-- Search Icon (left) -->
                         <Image 
-                            Source="person_icon.png" 
+                            Source="icon_mic.png" 
                             HeightRequest="20" 
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
+
+                        <!-- Entry (center) -->
                         <Entry 
                             Grid.Column="1"
                             Placeholder="Search by speaker"
                             Text="{Binding SpeakerFilter}"
                             VerticalOptions="Center"/>
+
+                        <!-- Clear Icon (right) -->
+                        <ImageButton 
+                            Grid.Column="2"
+                            Source="icon_trashcan.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            BackgroundColor="Transparent"
+                            VerticalOptions="Center"
+                            Margin="8,0,0,0"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearSpeakerFilterCommand}"
+                            CommandParameter="{Binding .}" 
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsSpeakerFilterNotEmpty}"/>
                     </Grid>
                 </Border>
+                
+                <!-- Speaker Suggestions -->
+                <CollectionView 
+                    ItemsSource="{Binding SpeakerSuggestions}"
+                    IsVisible="{Binding SpeakerSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectSpeakerCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <!--Selected Speakers -->
+                <CollectionView 
+                    ItemsSource="{Binding SelectedSpeakers}"
+                    IsVisible="{Binding SelectedSpeakers.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectSpeakerCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <!-- Country Dropdown -->
                 <Label Text="Country" FontSize="16" FontAttributes="Bold" Margin="5,0,0,0"/>

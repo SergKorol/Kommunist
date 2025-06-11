@@ -23,8 +23,10 @@ public class EventFiltersViewModel : BaseViewModel
     public ObservableCollection<string> Countries { get; private set; }
     public ObservableCollection<string> TagSearchResults { get; } = new();
     public ObservableCollection<string> TagSuggestions { get; } = new();
+    public ObservableCollection<string> SpeakerSuggestions { get; } = new();
 
     public ObservableHashSet<string> SelectedTags { get; set; } = new();
+    public ObservableHashSet<string> SelectedSpeakers { get; set; } = new();
 
     private CancellationTokenSource _debounceCts;
 
@@ -44,8 +46,23 @@ public class EventFiltersViewModel : BaseViewModel
         SelectedTags.Remove(tag);
     });
     
-    public Command ClearTextCommand => new Command(_ => TagFilter = string.Empty);
+    public Command ClearTagFilterCommand => new Command(_ => TagFilter = string.Empty);
 
+    public Command<string> SelectSpeakerCommand => new Command<string>(speaker =>
+    {
+        SpeakerFilter = speaker;
+        SelectedSpeakerFilter = speaker;
+        SelectedSpeakers.Add(speaker);
+        SpeakerSuggestions.Clear();
+    });
+    
+    public Command<string> DeselectSpeakerCommand => new Command<string>(speaker =>
+    {
+        SelectedSpeakers.Remove(speaker);
+    });
+    
+    public Command ClearSpeakerFilterCommand => new Command(_ => SpeakerFilter = string.Empty);
+    
     public EventFiltersViewModel(ISearchService searchService)
     {
         InitializeCountries();
@@ -55,6 +72,7 @@ public class EventFiltersViewModel : BaseViewModel
     }
     
     public bool IsTagFilterNotEmpty => !string.IsNullOrEmpty(TagFilter);
+    public bool IsSpeakerFilterNotEmpty => !string.IsNullOrEmpty(SpeakerFilter);
 
     public string TagFilter
     {
@@ -83,10 +101,20 @@ public class EventFiltersViewModel : BaseViewModel
         set
         {
             if (_speakerFilter == value) return;
+            if (!string.IsNullOrWhiteSpace(SelectedSpeakerFilter))
+            {
+                if (SelectedSpeakerFilter != value)
+                {
+                    SelectedSpeakerFilter = null;
+                }
+            }
             _speakerFilter = value;
             OnPropertyChanged();
+            DebounceSearchSpeakers();
         }
     }
+    
+    private string SelectedSpeakerFilter { get; set; }
 
     public int SelectedCountryIndex
     {
@@ -191,7 +219,8 @@ public class EventFiltersViewModel : BaseViewModel
         SelectedCountryIndex = -1;
         CommunityFilter = string.Empty;
         OnlineOnly = false;
-
+        SelectedTags.Clear();
+        SelectedSpeakers.Clear();
         // Clear filters in your service if needed
         ClearFilters();
 
@@ -231,6 +260,26 @@ public class EventFiltersViewModel : BaseViewModel
             catch (TaskCanceledException) { }
         }, token);
     }
+    
+    private void DebounceSearchSpeakers()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(300, token); // debounce delay
+                if (!token.IsCancellationRequested)
+                {
+                    await SearchSpeakers();
+                }
+            }
+            catch (TaskCanceledException) { }
+        }, token);
+    }
 
 
     private async Task SearchTags()
@@ -254,6 +303,30 @@ public class EventFiltersViewModel : BaseViewModel
             TagSuggestions.Clear();
             foreach (var tag in tags)
                 TagSuggestions.Add(tag);
+        });
+    }
+    
+    private async Task SearchSpeakers()
+    {
+        if (!string.IsNullOrWhiteSpace(SelectedSpeakerFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => SpeakerSuggestions.Clear());
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(SpeakerFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => SpeakerSuggestions.Clear());
+            return;
+        }
+
+        var speakers = await _searchService.GetSpeakers(SpeakerFilter);
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            SpeakerSuggestions.Clear();
+            foreach (var speaker in speakers)
+                SpeakerSuggestions.Add(speaker);
         });
     }
 }
