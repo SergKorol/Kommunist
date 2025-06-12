@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.Models;
@@ -17,17 +15,18 @@ public class EventFiltersViewModel : BaseViewModel
     private string _countryFilter;
     private string _communityFilter;
     private bool _onlineOnly;
-    private int _selectedCountryIndex = -1;
     
 
     public ObservableCollection<string> Countries { get; private set; }
     public ObservableCollection<string> TagSearchResults { get; } = new();
     public ObservableCollection<string> TagSuggestions { get; } = new();
     public ObservableCollection<string> SpeakerSuggestions { get; } = new();
+    public ObservableCollection<string> CountrySuggestions { get; } = new();
     public ObservableCollection<string> CommunitySuggestions { get; } = new();
 
     public ObservableHashSet<string> SelectedTags { get; set; } = new();
     public ObservableHashSet<string> SelectedSpeakers { get; set; } = new();
+    public ObservableHashSet<string> SelectedCountries { get; set; } = new();
     public ObservableHashSet<string> SelectedCommunities { get; set; } = new();
 
     private CancellationTokenSource _debounceCts;
@@ -64,6 +63,21 @@ public class EventFiltersViewModel : BaseViewModel
     });
     
     public Command ClearSpeakerFilterCommand => new Command(_ => SpeakerFilter = string.Empty);
+
+    public Command<string> SelectCountryCommand => new Command<string>(country =>
+    {
+        CountryFilter = country;
+        SelectedCountryFilter = country;
+        SelectedCountries.Add(country);
+        CountrySuggestions.Clear();
+    });
+    
+    public Command<string> DeselectCountryCommand => new Command<string>(country =>
+    {
+        SelectedCountries.Remove(country);
+    });
+    
+    public Command ClearCountryFilterCommand => new Command(_ => CountryFilter = string.Empty);
     
     public Command<string> SelectCommunityCommand => new Command<string>(community =>
     {
@@ -73,9 +87,9 @@ public class EventFiltersViewModel : BaseViewModel
         CommunitySuggestions.Clear();
     });
     
-    public Command<string> DeselectCommunityCommand => new Command<string>(speaker =>
+    public Command<string> DeselectCommunityCommand => new Command<string>(community =>
     {
-        SelectedCommunities.Remove(speaker);
+        SelectedCommunities.Remove(community);
     });
     
     public Command ClearCommunityFilterCommand => new Command(_ => CommunityFilter = string.Empty);
@@ -90,6 +104,7 @@ public class EventFiltersViewModel : BaseViewModel
     
     public bool IsTagFilterNotEmpty => !string.IsNullOrEmpty(TagFilter);
     public bool IsSpeakerFilterNotEmpty => !string.IsNullOrEmpty(SpeakerFilter);
+    public bool IsCountryFilterNotEmpty => !string.IsNullOrEmpty(CountryFilter);
     public bool IsCommunityFilterNotEmpty => !string.IsNullOrEmpty(CommunityFilter);
 
     public string TagFilter
@@ -107,6 +122,7 @@ public class EventFiltersViewModel : BaseViewModel
             }
             _tagFilter = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(IsTagFilterNotEmpty));
             DebounceSearchTags();
         }
     }
@@ -128,49 +144,41 @@ public class EventFiltersViewModel : BaseViewModel
             }
             _speakerFilter = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(IsSpeakerFilterNotEmpty));
             DebounceSearchSpeakers();
         }
     }
     
     private string SelectedSpeakerFilter { get; set; }
 
-    public int SelectedCountryIndex
-    {
-        get => _selectedCountryIndex;
-        set
-        {
-            if (_selectedCountryIndex == value) return;
-            _selectedCountryIndex = value;
-            if (_selectedCountryIndex >= 0 && _selectedCountryIndex < Countries.Count)
-            {
-                _countryFilter = Countries[_selectedCountryIndex];
-            }
-            else
-            {
-                _countryFilter = null;
-            }
-
-            OnPropertyChanged();
-        }
-    }
-
     public string CountryFilter
     {
         get => _countryFilter;
-        private set
+        set
         {
             if (_countryFilter == value) return;
+            if (!string.IsNullOrWhiteSpace(SelectedCountryFilter))
+            {
+                if (SelectedCountryFilter != value)
+                {
+                    SelectedCountryFilter = null;
+                }
+            }
             _countryFilter = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(IsCountryFilterNotEmpty));
+            DebounceSearchCountries();
         }
     }
+    
+    private string SelectedCountryFilter { get; set; }
 
     public string CommunityFilter
     {
         get => _communityFilter;
         set
         {
-            if (_speakerFilter == value) return;
+            if (_communityFilter == value) return;
             if (!string.IsNullOrWhiteSpace(SelectedCommunityFilter))
             {
                 if (SelectedCommunityFilter != value)
@@ -180,6 +188,7 @@ public class EventFiltersViewModel : BaseViewModel
             }
             _communityFilter = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(IsCommunityFilterNotEmpty));
             DebounceSearchCommunities();
         }
     }
@@ -224,7 +233,7 @@ public class EventFiltersViewModel : BaseViewModel
         {
             TagFilter = TagFilter,
             SpeakerFilter = SpeakerFilter,
-            CountryFilter = CountryFilter,
+            CountryFilters = SelectedCountries.ToList(), // Changed to list of countries
             CommunityFilter = CommunityFilter,
             OnlineOnly = OnlineOnly
         };
@@ -237,18 +246,18 @@ public class EventFiltersViewModel : BaseViewModel
         
     }
 
-
-
     private async void ExecuteClearFilters()
     {
         TagFilter = string.Empty;
         SpeakerFilter = string.Empty;
-        SelectedCountryIndex = -1;
+        CountryFilter = string.Empty;
         CommunityFilter = string.Empty;
         OnlineOnly = false;
         SelectedTags.Clear();
         SelectedSpeakers.Clear();
+        SelectedCountries.Clear();
         SelectedCommunities.Clear();
+        
         // Clear filters in your service if needed
         ClearFilters();
 
@@ -308,6 +317,26 @@ public class EventFiltersViewModel : BaseViewModel
             catch (TaskCanceledException) { }
         }, token);
     }
+
+    private void DebounceSearchCountries()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(300, token); // debounce delay
+                if (!token.IsCancellationRequested)
+                {
+                    await SearchCountries();
+                }
+            }
+            catch (TaskCanceledException) { }
+        }, token);
+    }
     
     private void DebounceSearchCommunities()
     {
@@ -328,7 +357,6 @@ public class EventFiltersViewModel : BaseViewModel
             catch (TaskCanceledException) { }
         }, token);
     }
-
 
     private async Task SearchTags()
     {
@@ -375,6 +403,33 @@ public class EventFiltersViewModel : BaseViewModel
             SpeakerSuggestions.Clear();
             foreach (var speaker in speakers)
                 SpeakerSuggestions.Add(speaker);
+        });
+    }
+
+    private async Task SearchCountries()
+    {
+        if (!string.IsNullOrWhiteSpace(SelectedCountryFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => CountrySuggestions.Clear());
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(CountryFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => CountrySuggestions.Clear());
+            return;
+        }
+
+        // Filter countries based on the search text
+        var filteredCountries = Countries
+            .Where(c => c.ToLower().Contains(CountryFilter.ToLower()) && !SelectedCountries.Contains(c))
+            .ToList();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            CountrySuggestions.Clear();
+            foreach (var country in filteredCountries)
+                CountrySuggestions.Add(country);
         });
     }
     

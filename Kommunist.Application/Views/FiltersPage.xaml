@@ -6,7 +6,6 @@
              xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
              xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
              x:Class="Kommunist.Application.Views.FiltersPage"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
     
     <controls:MyTabBar.Resources>
@@ -179,39 +178,85 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!-- Country Dropdown -->
-                <Label Text="Country" FontSize="16" FontAttributes="Bold" Margin="5,0,0,0"/>
+                <!-- Country Search -->
                 <Border 
                     Stroke="{StaticResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
-                    <Picker 
-                        ItemsSource="{Binding Countries}"
-                        SelectedIndex="{Binding SelectedCountryIndex}"
-                        Title="Select a country"
-                        Margin="12,0"/>
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
+                        <!-- Search Icon (left) -->
+                        <Image 
+                            Source="icon_globe.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            VerticalOptions="Center"
+                            Margin="0,0,8,0"/>
+
+                        <!-- Entry (center) -->
+                        <Entry 
+                            Grid.Column="1"
+                            Placeholder="Search by country"
+                            Text="{Binding CountryFilter}"
+                            VerticalOptions="Center"/>
+
+                        <!-- Clear Icon (right) -->
+                        <ImageButton 
+                            Grid.Column="2"
+                            Source="icon_trashcan.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            BackgroundColor="Transparent"
+                            VerticalOptions="Center"
+                            Margin="8,0,0,0"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearCountryFilterCommand}"
+                            CommandParameter="{Binding .}" 
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsCountryFilterNotEmpty}"/>
+                    </Grid>
                 </Border>
+                
+                <!-- Country Suggestions -->
+                <CollectionView 
+                    ItemsSource="{Binding CountrySuggestions}"
+                    IsVisible="{Binding CountrySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectCountryCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <!--Selected Countries -->
+                <CollectionView 
+                    ItemsSource="{Binding SelectedCountries}"
+                    IsVisible="{Binding SelectedCountries.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectCountryCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <!-- Community Search -->
-                <!-- <Border  -->
-                <!--     Stroke="{StaticResource Gray300}" -->
-                <!--     StrokeThickness="1" -->
-                <!--     StrokeShape="RoundRectangle 8,8,8,8"> -->
-                <!--     <Grid ColumnDefinitions="Auto,*" Padding="12,5"> -->
-                <!--         <Image  -->
-                <!--             Source="community_icon.png"  -->
-                <!--             HeightRequest="20"  -->
-                <!--             WidthRequest="20" -->
-                <!--             VerticalOptions="Center" -->
-                <!--             Margin="0,0,8,0"/> -->
-                <!--         <Entry  -->
-                <!--             Grid.Column="1" -->
-                <!--             Placeholder="Search by community" -->
-                <!--             Text="{Binding CommunityFilter}" -->
-                <!--             VerticalOptions="Center"/> -->
-                <!--     </Grid> -->
-                <!-- </Border> -->
-                
                 <Border 
                     Stroke="{StaticResource Gray300}"
                     StrokeThickness="1"
