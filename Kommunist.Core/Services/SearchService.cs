@@ -45,4 +45,24 @@ public class SearchService(HttpClient httpClient) : ISearchService
             return new List<string>();
         }
     }
+    
+    public async Task<IEnumerable<string>> GetCommunities(string query)
+    {
+        var url = $"/api/v2/communities/search?search_query={query}";
+
+        try
+        {
+            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var speakers = JsonConvert.DeserializeObject<List<string>>(json);
+            return speakers;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"An HTTP request error occurred: {e.Message}");
+            return new List<string>();
+        }
+    }
 }

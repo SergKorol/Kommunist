@@ -24,9 +24,11 @@ public class EventFiltersViewModel : BaseViewModel
     public ObservableCollection<string> TagSearchResults { get; } = new();
     public ObservableCollection<string> TagSuggestions { get; } = new();
     public ObservableCollection<string> SpeakerSuggestions { get; } = new();
+    public ObservableCollection<string> CommunitySuggestions { get; } = new();
 
     public ObservableHashSet<string> SelectedTags { get; set; } = new();
     public ObservableHashSet<string> SelectedSpeakers { get; set; } = new();
+    public ObservableHashSet<string> SelectedCommunities { get; set; } = new();
 
     private CancellationTokenSource _debounceCts;
 
@@ -63,6 +65,21 @@ public class EventFiltersViewModel : BaseViewModel
     
     public Command ClearSpeakerFilterCommand => new Command(_ => SpeakerFilter = string.Empty);
     
+    public Command<string> SelectCommunityCommand => new Command<string>(community =>
+    {
+        CommunityFilter = community;
+        SelectedCommunityFilter = community;
+        SelectedCommunities.Add(community);
+        CommunitySuggestions.Clear();
+    });
+    
+    public Command<string> DeselectCommunityCommand => new Command<string>(speaker =>
+    {
+        SelectedCommunities.Remove(speaker);
+    });
+    
+    public Command ClearCommunityFilterCommand => new Command(_ => CommunityFilter = string.Empty);
+    
     public EventFiltersViewModel(ISearchService searchService)
     {
         InitializeCountries();
@@ -73,6 +90,7 @@ public class EventFiltersViewModel : BaseViewModel
     
     public bool IsTagFilterNotEmpty => !string.IsNullOrEmpty(TagFilter);
     public bool IsSpeakerFilterNotEmpty => !string.IsNullOrEmpty(SpeakerFilter);
+    public bool IsCommunityFilterNotEmpty => !string.IsNullOrEmpty(CommunityFilter);
 
     public string TagFilter
     {
@@ -152,11 +170,21 @@ public class EventFiltersViewModel : BaseViewModel
         get => _communityFilter;
         set
         {
-            if (_communityFilter == value) return;
+            if (_speakerFilter == value) return;
+            if (!string.IsNullOrWhiteSpace(SelectedCommunityFilter))
+            {
+                if (SelectedCommunityFilter != value)
+                {
+                    SelectedCommunityFilter = null;
+                }
+            }
             _communityFilter = value;
             OnPropertyChanged();
+            DebounceSearchCommunities();
         }
     }
+    
+    private string SelectedCommunityFilter { get; set; }
 
     public bool OnlineOnly
     {
@@ -213,7 +241,6 @@ public class EventFiltersViewModel : BaseViewModel
 
     private async void ExecuteClearFilters()
     {
-        // Clear all filter properties
         TagFilter = string.Empty;
         SpeakerFilter = string.Empty;
         SelectedCountryIndex = -1;
@@ -221,6 +248,7 @@ public class EventFiltersViewModel : BaseViewModel
         OnlineOnly = false;
         SelectedTags.Clear();
         SelectedSpeakers.Clear();
+        SelectedCommunities.Clear();
         // Clear filters in your service if needed
         ClearFilters();
 
@@ -280,6 +308,26 @@ public class EventFiltersViewModel : BaseViewModel
             catch (TaskCanceledException) { }
         }, token);
     }
+    
+    private void DebounceSearchCommunities()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(300, token); // debounce delay
+                if (!token.IsCancellationRequested)
+                {
+                    await SearchCommunities();
+                }
+            }
+            catch (TaskCanceledException) { }
+        }, token);
+    }
 
 
     private async Task SearchTags()
@@ -327,6 +375,30 @@ public class EventFiltersViewModel : BaseViewModel
             SpeakerSuggestions.Clear();
             foreach (var speaker in speakers)
                 SpeakerSuggestions.Add(speaker);
+        });
+    }
+    
+    private async Task SearchCommunities()
+    {
+        if (!string.IsNullOrWhiteSpace(SelectedCommunityFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => CommunitySuggestions.Clear());
+            return;
+        }
+        
+        if (string.IsNullOrWhiteSpace(CommunityFilter))
+        {
+            MainThread.BeginInvokeOnMainThread(() => CommunitySuggestions.Clear());
+            return;
+        }
+
+        var communities = await _searchService.GetCommunities(CommunityFilter);
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            CommunitySuggestions.Clear();
+            foreach (var community in communities)
+                CommunitySuggestions.Add(community);
         });
     }
 }

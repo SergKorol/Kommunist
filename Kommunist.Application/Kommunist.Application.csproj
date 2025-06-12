@@ -50,6 +50,7 @@
         <MauiImage Update="Resources\Images\icon_trashcan.png" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\icon_tag.png" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\icon_mic.png" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\icon_comments.png" BaseSize="24,24" />
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />

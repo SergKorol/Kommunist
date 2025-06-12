@@ -193,24 +193,101 @@
                 </Border>
 
                 <!-- Community Search -->
+                <!-- <Border  -->
+                <!--     Stroke="{StaticResource Gray300}" -->
+                <!--     StrokeThickness="1" -->
+                <!--     StrokeShape="RoundRectangle 8,8,8,8"> -->
+                <!--     <Grid ColumnDefinitions="Auto,*" Padding="12,5"> -->
+                <!--         <Image  -->
+                <!--             Source="community_icon.png"  -->
+                <!--             HeightRequest="20"  -->
+                <!--             WidthRequest="20" -->
+                <!--             VerticalOptions="Center" -->
+                <!--             Margin="0,0,8,0"/> -->
+                <!--         <Entry  -->
+                <!--             Grid.Column="1" -->
+                <!--             Placeholder="Search by community" -->
+                <!--             Text="{Binding CommunityFilter}" -->
+                <!--             VerticalOptions="Center"/> -->
+                <!--     </Grid> -->
+                <!-- </Border> -->
+                
                 <Border 
                     Stroke="{StaticResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
-                    <Grid ColumnDefinitions="Auto,*" Padding="12,5">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
+                        <!-- Search Icon (left) -->
                         <Image 
-                            Source="community_icon.png" 
+                            Source="icon_comments.png" 
                             HeightRequest="20" 
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
+
+                        <!-- Entry (center) -->
                         <Entry 
                             Grid.Column="1"
                             Placeholder="Search by community"
                             Text="{Binding CommunityFilter}"
                             VerticalOptions="Center"/>
+
+                        <!-- Clear Icon (right) -->
+                        <ImageButton 
+                            Grid.Column="2"
+                            Source="icon_trashcan.png" 
+                            HeightRequest="20" 
+                            WidthRequest="20"
+                            BackgroundColor="Transparent"
+                            VerticalOptions="Center"
+                            Margin="8,0,0,0"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearCommunityFilterCommand}"
+                            CommandParameter="{Binding .}" 
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsCommunityFilterNotEmpty}"/>
                     </Grid>
                 </Border>
+                
+                <!-- Community Suggestions -->
+                <CollectionView 
+                    ItemsSource="{Binding CommunitySuggestions}"
+                    IsVisible="{Binding CommunitySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectCommunityCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+                <!--Selected Communities -->
+                <CollectionView 
+                    ItemsSource="{Binding SelectedCommunities}"
+                    IsVisible="{Binding SelectedCommunities.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label 
+                                Text="{Binding .}" 
+                                Padding="10"
+                                BackgroundColor="LightGray"
+                                Margin="5">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectCommunityCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <!-- Online/Offline Switch -->
                 <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" Margin="0,10,0,0">
