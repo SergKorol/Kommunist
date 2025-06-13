@@ -25,6 +25,11 @@ public partial class CalEventDetailPage : ContentPage
 
         try
         {
+            if (!DescriptionWebView.IsVisible)
+            {
+                ArgumentNullException.ThrowIfNull("The Description shouldn't be NULL");
+            }
+            
             string heightStr = await DescriptionWebView.EvaluateJavaScriptAsync("document.documentElement.getBoundingClientRect().height");
             Debug.WriteLine($"WebView Height (JS): {heightStr}"); // ✅ Debug output
 

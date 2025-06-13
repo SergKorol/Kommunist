@@ -169,7 +169,7 @@
                         <BoxView Style="{StaticResource SeparatorStyle}" />
                         
 
-                        <WebView PropertyChanged="WebView_OnLoaded" x:Name="DescriptionWebView" VerticalOptions="FillAndExpand">
+                        <WebView IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}" PropertyChanged="WebView_OnLoaded" x:Name="DescriptionWebView" VerticalOptions="FillAndExpand">
                             <WebView.Source>
                                 <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description}" />
                             </WebView.Source>
