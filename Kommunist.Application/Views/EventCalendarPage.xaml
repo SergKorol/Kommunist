@@ -29,7 +29,8 @@
                 BackgroundColor="{StaticResource SurfaceColor}" 
                 Margin="12,16,12,8" 
                 Padding="8"
-                StrokeThickness="0">
+                StrokeThickness="0"
+                Loaded="VisualElement_OnLoaded">
             <Border.Shadow>
                 <Shadow Brush="{StaticResource ShadowColor}"
                         Offset="0,2"

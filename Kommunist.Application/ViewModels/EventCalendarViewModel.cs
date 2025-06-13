@@ -134,30 +134,57 @@ public class EventCalendarViewModel : BaseViewModel
 
     private async Task GetEvents(ObservableCollection<EventDay> days)
     {
-        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
-        var startDate = daysByNavMonth.First().DateTime;
-        var endDate = daysByNavMonth.Last().DateTime;
-        var loadedDays = await _eventService.LoadEvents(startDate, endDate);
-        ServiceEvents = loadedDays.ToObservableCollection();
-
-        var calEvents = (from e in ServiceEvents
-            let location = e.ParticipationFormat.Online ? string.Empty : e.ParticipationFormat.Location
-            let startDateFormatted = e.Start.ToLocalDateTime().ToString("dd.MM.yyyy")
-            let endDateFormatted = e.End.ToLocalDateTime().ToString("dd.MM.yyyy")
-            select new CalEvent
-            {
-                EventId = e.Id,
-                Title = e.Title,
-                Description = string.IsNullOrWhiteSpace(location)
-                    ? $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}"
-                    : $"{startDateFormatted} - {endDateFormatted}, {string.Join("/", e.Languages).ToUpper()}, {location}",
-                DateTime = e.Start.ToLocalDateTime(),
-                Start = e.Start,
-                End = e.End,
-                Color = Colors[Random.Next(Colors.Count)],
-                Url = $"https://wearecommunity.io/events/{e.EventUrl}"
-            }).ToList();
-
+        var dateRange = GetDateRangeForNavigatedMonth(days);
+        var serviceEvents = await LoadServiceEvents(dateRange.StartDate, dateRange.EndDate);
+        var calEvents = ConvertToCalEvents(serviceEvents);
+        
         CalEvents.ReplaceRange(calEvents);
+    }
+
+    private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth(ObservableCollection<EventDay> days)
+    {
+        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
+        return (daysByNavMonth.First().DateTime, daysByNavMonth.Last().DateTime);
+    }
+
+    private async Task<ObservableCollection<ServiceEvent>> LoadServiceEvents(DateTime startDate, DateTime endDate)
+    {
+        var loadedEvents = await _eventService.LoadEvents(startDate, endDate);
+        ServiceEvents = loadedEvents.ToObservableCollection();
+        return ServiceEvents;
+    }
+
+    private List<CalEvent> ConvertToCalEvents(ObservableCollection<ServiceEvent> serviceEvents)
+    {
+        return serviceEvents.Select(e => new CalEvent
+        {
+            EventId = e.Id,
+            Title = e.Title,
+            Description = BuildEventDescription(e),
+            DateTime = e.Start.ToLocalDateTime(),
+            Start = e.Start,
+            End = e.End,
+            Color = Colors[Random.Next(Colors.Count)],
+            Url = $"https://wearecommunity.io/events/{e.EventUrl}"
+        }).ToList();
+    }
+
+    private string BuildEventDescription(ServiceEvent serviceEvent)
+    {
+        var startDateFormatted = serviceEvent.Start.ToLocalDateTime().ToString("dd.MM.yyyy");
+        var endDateFormatted = serviceEvent.End.ToLocalDateTime().ToString("dd.MM.yyyy");
+        var languages = string.Join("/", serviceEvent.Languages).ToUpper();
+        var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
+        
+        var baseDescription = $"{startDateFormatted} - {endDateFormatted}, {languages}";
+        
+        return string.IsNullOrWhiteSpace(location) 
+            ? baseDescription 
+            : $"{baseDescription}, {location}";
+    }
+
+    public void LoadEvents()
+    {
+        GetEvents(EventCalendar.Days).ConfigureAwait(false);
     }
 }

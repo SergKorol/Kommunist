@@ -13,4 +13,12 @@ public partial class EventCalendarPage : MyTabBar
         var eventCalendarViewModel = serviceProvider?.GetRequiredService<EventCalendarViewModel>();
         BindingContext = eventCalendarViewModel;
     }
+
+    private void VisualElement_OnLoaded(object sender, EventArgs e)
+    {
+        if (BindingContext is EventCalendarViewModel viewModel)
+        {
+            viewModel.LoadEvents();
+        }
+    }
 }
