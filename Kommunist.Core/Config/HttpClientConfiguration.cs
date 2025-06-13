@@ -13,6 +13,7 @@ public static class HttpClientConfiguration
         services.AddHttpClient<ISearchService, SearchService>(client => client.BaseAddress = new Uri("https://wearecommunity.io"));
         services.AddSingleton<IFileHostingService, FileHostingService>();
         services.AddSingleton<IEmailService, EmailService>();
+        services.AddSingleton<IFilterService, FilterService>();
         return services;
     }
 }

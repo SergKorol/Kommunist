@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
-using Kommunist.Application.Models;
+using CommunityToolkit.Maui.Core.Extensions;
+using Kommunist.Core.Helpers;
+using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Kommunist.Core.Types;
 
@@ -9,7 +11,11 @@ namespace Kommunist.Application.ViewModels;
 
 public class EventFiltersViewModel : BaseViewModel
 {
+
+    #region Properties
+
     private readonly ISearchService _searchService;
+    private readonly IFilterService _filterService;
     private string _tagFilter;
     private string _speakerFilter;
     private string _countryFilter;
@@ -18,21 +24,26 @@ public class EventFiltersViewModel : BaseViewModel
     
 
     public ObservableCollection<string> Countries { get; private set; }
-    public ObservableCollection<string> TagSearchResults { get; } = new();
     public ObservableCollection<string> TagSuggestions { get; } = new();
     public ObservableCollection<string> SpeakerSuggestions { get; } = new();
     public ObservableCollection<string> CountrySuggestions { get; } = new();
     public ObservableCollection<string> CommunitySuggestions { get; } = new();
 
     public ObservableHashSet<string> SelectedTags { get; set; } = new();
+    public ObservableCollection<string> SelectedTags2 { get; set; } = new();
+    
     public ObservableHashSet<string> SelectedSpeakers { get; set; } = new();
     public ObservableHashSet<string> SelectedCountries { get; set; } = new();
     public ObservableHashSet<string> SelectedCommunities { get; set; } = new();
 
     private CancellationTokenSource _debounceCts;
 
+    #endregion
+    
+
     public ICommand ApplyFiltersCommand { get; private set; }
     public ICommand ClearFiltersCommand { get; private set; }
+    public ICommand DeleteFiltersCommand { get; private set; }
     
     public Command<string> SelectTagCommand => new Command<string>(tag =>
     {
@@ -94,12 +105,14 @@ public class EventFiltersViewModel : BaseViewModel
     
     public Command ClearCommunityFilterCommand => new Command(_ => CommunityFilter = string.Empty);
     
-    public EventFiltersViewModel(ISearchService searchService)
+    public EventFiltersViewModel(ISearchService searchService, IFilterService filterService)
     {
         InitializeCountries();
         _searchService = searchService;
+        _filterService = filterService;
         ApplyFiltersCommand = new Command(ExecuteApplyFilters);
         ClearFiltersCommand = new Command(ExecuteClearFilters);
+        DeleteFiltersCommand = new Command(ExecuteDeleteFilters);
     }
     
     public bool IsTagFilterNotEmpty => !string.IsNullOrEmpty(TagFilter);
@@ -231,10 +244,10 @@ public class EventFiltersViewModel : BaseViewModel
         // Create a filter object with all the values
         var filters = new FilterOptions
         {
-            TagFilter = TagFilter,
-            SpeakerFilter = SpeakerFilter,
-            CountryFilters = SelectedCountries.ToList(), // Changed to list of countries
-            CommunityFilter = CommunityFilter,
+            TagFilters = SelectedTags.ToList(),
+            SpeakerFilters = SelectedSpeakers.ToList(),
+            CountryFilters = SelectedCountries.ToList(),
+            CommunityFilters = SelectedCommunities.ToList(),
             OnlineOnly = OnlineOnly
         };
 
@@ -264,12 +277,32 @@ public class EventFiltersViewModel : BaseViewModel
         // Show a confirmation message
         await Toast.Make("Filters Cleared").Show();
     }
+    
+    private async void ExecuteDeleteFilters()
+    {
+        TagFilter = string.Empty;
+        SpeakerFilter = string.Empty;
+        CountryFilter = string.Empty;
+        CommunityFilter = string.Empty;
+        OnlineOnly = false;
+        SelectedTags.Clear();
+        SelectedSpeakers.Clear();
+        SelectedCountries.Clear();
+        SelectedCommunities.Clear();
+        
+        // Clear filters in your service if needed
+        DeleteFilters();
+
+        // Show a confirmation message
+        await Toast.Make("Filters Deleted").Show();
+    }
 
     // Methods to be implemented with your actual filtering logic
     private void ApplyFilters(FilterOptions filters)
     {
         // Implement your actual filter application logic here
         // For example: FilterService.ApplyFilters(filters);
+        _filterService.SetFilters(filters);
     }
 
     private void ClearFilters()
@@ -455,5 +488,24 @@ public class EventFiltersViewModel : BaseViewModel
             foreach (var community in communities)
                 CommunitySuggestions.Add(community);
         });
+    }
+    
+    public void LoadFilters()
+    {
+        // Load filters from your service here
+        // For example: FilterService.LoadFilters();
+        var filters = _filterService.GetFilters();
+        if (filters == null) return;
+        
+        if (filters.TagFilters.Any()) SelectedTags = filters.TagFilters.ToObservableHashSet();
+        if (filters.SpeakerFilters.Any()) SelectedSpeakers = filters.SpeakerFilters.ToObservableHashSet();
+        if (filters.CountryFilters.Any()) SelectedCountries = filters.CountryFilters.ToObservableHashSet();
+        if (filters.CommunityFilters.Any()) SelectedCommunities = filters.CommunityFilters.ToObservableHashSet();
+        if (filters.OnlineOnly) OnlineOnly = true;
+    }
+
+    private void DeleteFilters()
+    {
+        _filterService.ClearFilters();
     }
 }

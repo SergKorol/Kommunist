@@ -80,4 +80,11 @@ public partial class FiltersPage : MyTabBar
     //         viewModel.Email = e.NewTextValue;
     //     }
     // }
+    private void BindableObject_OnBindingContextChanged(object sender, EventArgs e)
+    {
+        if (BindingContext is EventFiltersViewModel viewModel)
+        {
+            viewModel.LoadFilters();
+        }
+    }
 }

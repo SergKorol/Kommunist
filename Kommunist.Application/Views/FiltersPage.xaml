@@ -12,7 +12,7 @@
         <helpers:IsGreaterThanZeroConverter x:Key="IsGreaterThanZeroConverter"/>
     </controls:MyTabBar.Resources>
     <controls:MyTabBar.Content>
-        <ScrollView>
+        <ScrollView Loaded="BindableObject_OnBindingContextChanged">
             <VerticalStackLayout Padding="20" Spacing="16">
                 <Label 
                     Text="Filters" 
@@ -367,6 +367,15 @@
                     CornerRadius="8"
                     HeightRequest="50"
                     Command="{Binding ClearFiltersCommand}"/>
+                
+                <!-- Delete Filters Button -->
+                <Button 
+                    Text="Delete Stored Filters"
+                    BackgroundColor="{StaticResource Warning}"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Command="{Binding DeleteFiltersCommand}"/>
             </VerticalStackLayout>
         </ScrollView>
     </controls:MyTabBar.Content>
