@@ -68,8 +68,8 @@
                                               RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               HeightRequest="48"
+                                              Text="{Binding Text, Source={RelativeSource TemplatedParent}}"
                                               Style="{StaticResource DefaultNavigationViewStyle}">
-
                                 <xc:NavigationView.TextColor>
                                     <StaticResource Key="TextPrimaryColor" />
                                 </xc:NavigationView.TextColor>
@@ -88,6 +88,7 @@
                                     </OnPlatform>
                                 </xc:NavigationView.FontSize>
                             </xc:NavigationView>
+                            
                         </Grid>
                     </ControlTemplate>
                 </xc:CalendarView.NavigationViewTemplate>
