@@ -14,11 +14,11 @@ public partial class EventCalendarPage : MyTabBar
         BindingContext = eventCalendarViewModel;
     }
 
-    private void VisualElement_OnLoaded(object sender, EventArgs e)
+    private async void VisualElement_OnLoaded(object sender, EventArgs e)
     {
         if (BindingContext is EventCalendarViewModel viewModel)
         {
-            viewModel.LoadEvents();
+            await viewModel.RefreshCalendarEvents();
         }
     }
 }

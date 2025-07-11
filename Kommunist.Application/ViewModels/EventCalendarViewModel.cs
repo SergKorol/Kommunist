@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core.Extensions;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
@@ -49,7 +50,6 @@ public class EventCalendarViewModel : BaseViewModel
 
     private readonly IEventService _eventService;
     private readonly IFileHostingService _fileHostingService;
-    private Task _getEvents;
 
     #region Constructors
     public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService)
@@ -139,6 +139,42 @@ public class EventCalendarViewModel : BaseViewModel
         var calEvents = ConvertToCalEvents(serviceEvents);
         
         CalEvents.ReplaceRange(calEvents);
+    }
+
+    public async Task RefreshCalendarEvents()
+    {
+        try
+        {
+            // Get fresh events with current filters applied
+            await GetEvents(EventCalendar.Days);
+        
+            // Update all calendar days with the new filtered events
+            foreach (var day in EventCalendar.Days)
+            {
+                day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
+            }
+        
+            // Update selected events if any dates are currently selected
+            if (EventCalendar.SelectedDates.Any())
+            {
+                SelectedEvents.ReplaceRange(CalEvents
+                    .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
+                    .OrderByDescending(x => x.DateTime));
+            }
+        
+            // Trigger property changed notifications to update UI
+            OnPropertyChanged(nameof(CalEvents));
+            OnPropertyChanged(nameof(SelectedEvents));
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors that might occur during refresh
+            // Log the error or show a user-friendly message
+            System.Diagnostics.Debug.WriteLine($"Error refreshing calendar events: {ex.Message}");
+        
+            // Optionally show a toast or alert to the user
+            await Toast.Make("Failed to refresh events. Please try again.").Show();
+        }
     }
 
     private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth(ObservableCollection<EventDay> days)
