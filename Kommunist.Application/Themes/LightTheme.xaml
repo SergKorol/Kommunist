@@ -1,14 +1,19 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<?xaml-comp compile="true" ?>
-<ResourceDictionary 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<?xml version="1.0" encoding="utf-8"?>
 
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kommunist.Application.Themes.LightTheme">
+
+    <Color x:Key="PrimaryColor">#2060FF</Color>
+    <Color x:Key="PageBackgroundColor">#F0F0F4</Color>
+    <Color x:Key="ContentTextColor">Black</Color>
+    
     <Color x:Key="Primary">#512BD4</Color>
     <Color x:Key="Warning">Red</Color>
     <Color x:Key="Secondary">#DFD8F7</Color>
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
+    
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
     <Color x:Key="Gray300">#ACACAC</Color>
@@ -18,6 +23,7 @@
     <Color x:Key="Gray800">#424242</Color>
     <Color x:Key="Gray900">#212121</Color>
     <Color x:Key="Gray950">#141414</Color>
+    
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
     <Color x:Key="ShadowColor">#20000000</Color>
     <Color x:Key="TextSecondaryColor">#4B5563</Color>
@@ -30,5 +36,5 @@
     <Color x:Key="PrimaryDarkColor">#5B4ABE</Color>
     <Color x:Key="TextColor">#333333</Color>
     <Color x:Key="BorderColor">#DDDDDD</Color>
-
+    
 </ResourceDictionary>

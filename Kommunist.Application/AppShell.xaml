@@ -10,16 +10,14 @@
     <ShellContent Route="Home" 
                   ContentTemplate="{DataTemplate views:EventCalendarPage}" />
     
-    <ShellContent Route="Cal" 
-                  ContentTemplate="{DataTemplate views:CalGeneratorPage}" />
-    
     <ShellContent Route="Filters" 
                   ContentTemplate="{DataTemplate views:FiltersPage}" />
     
     <ShellContent Route="Settings" 
                   ContentTemplate="{DataTemplate views:SettingsPage}" />
     
-    <ShellContent Route="ICalConfigPage" ContentTemplate="{DataTemplate views:ICalConfigPage}" />
+    <ShellContent Route="ICalConfigPage" 
+                  ContentTemplate="{DataTemplate views:ICalConfigPage}" />
 
 </Shell>
 

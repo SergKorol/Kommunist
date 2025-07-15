@@ -2,22 +2,7 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <Color x:Key="PrimaryColor">#2060FF</Color>
-    <Color x:Key="TertiaryColor">#A0A0FF</Color>
-    <Color x:Key="SeparatorColor">#E0E0E0</Color>
-    <Color x:Key="OutlineColor">#B0B0B0</Color>
-
     <Color x:Key="PageBackgroundColor">#F0F0F4</Color>
-    <Color x:Key="ContentBackgroundColor">White</Color>
-    <!--    -->
-    <Color x:Key="PrimaryTextColor">White</Color>
     <Color x:Key="ContentTextColor">Black</Color>
     <Color x:Key="PageTextColor">Black</Color>
-
-    <Color x:Key="CalendarPrimaryColor">#E00000</Color>
-    <Color x:Key="CalendarBackgroundColor">White</Color>
-    <Color x:Key="CalendarTertiaryColor">#FFA0A0</Color>
-    <Color x:Key="CalendarPrimaryTextColor">White</Color>
-    <Color x:Key="CalendarBackgroundTextColor">Black</Color>
-
-    <Color x:Key="TappableSettingTextColor">#0080E0</Color>
 </ResourceDictionary>

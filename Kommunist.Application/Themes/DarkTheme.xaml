@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kommunist.Application.Themes.DarkTheme">
+
+    <!-- Primary Colors -->
+    <Color x:Key="PrimaryColor">#82B1FF</Color> <!-- Lighter shade of blue -->
+    <Color x:Key="PrimaryDarkColor">#8C9EFF</Color>
+    <Color x:Key="Secondary">#2A2A2E</Color>
+    <Color x:Key="Warning">#FF6E6E</Color>
+    <Color x:Key="Success">#66BB6A</Color>
+
+    <!-- Text Colors -->
+    <Color x:Key="ContentTextColor">White</Color>
+    <Color x:Key="TextPrimaryColor">#EDEDED</Color>
+    <Color x:Key="TextSecondaryColor">#B0B0B0</Color>
+    <Color x:Key="TextTertiaryColor">#7E7E7E</Color>
+    <Color x:Key="TextColor">#DDDDDD</Color>
+
+    <!-- Background & Surface -->
+    <Color x:Key="PageBackgroundColor">#121212</Color>
+    <Color x:Key="BackgroundColor">#1E1E1E</Color>
+    <Color x:Key="SurfaceColor">#1C1C1C</Color>
+    <Color x:Key="ShadowColor">#66000000</Color>
+
+    <!-- Basic Colors -->
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+
+    <!-- Gray Scale (inverted) -->
+    <Color x:Key="Gray100">#1E1E1E</Color>
+    <Color x:Key="Gray200">#2C2C2C</Color>
+    <Color x:Key="Gray300">#3A3A3A</Color>
+    <Color x:Key="Gray400">#4A4A4A</Color>
+    <Color x:Key="Gray500">#5A5A5A</Color>
+    <Color x:Key="Gray600">#6A6A6A</Color>
+    <Color x:Key="Gray800">#A0A0A0</Color>
+    <Color x:Key="Gray900">#C0C0C0</Color>
+    <Color x:Key="Gray950">#E0E0E0</Color>
+
+    <!-- Other Colors -->
+    <Color x:Key="SelectedDayBackgroundColor">#82B1FF</Color>
+    <Color x:Key="TodayIndicatorColor">#FF9100</Color>
+    <Color x:Key="BorderColor">#333333</Color>
+    
+</ResourceDictionary>
