@@ -24,13 +24,13 @@
     <x:Boolean x:Key="FalseValue">False</x:Boolean>
 
     <Style TargetType="{x:Type xc:CalendarView}" x:Key="DefaultCalendarViewStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource CalendarBackgroundColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource CalendarBackgroundColor}" />
     </Style>
 
     <Style TargetType="{x:Type xc:NavigationView}" x:Key="DefaultNavigationViewStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource CalendarPrimaryColor}" />
-        <Setter Property="ArrowColor" Value="{StaticResource CalendarPrimaryTextColor}" />
-        <Setter Property="TextColor" Value="{StaticResource CalendarPrimaryTextColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource CalendarPrimaryColor}" />
+        <Setter Property="ArrowColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
         <Setter Property="HeightRequest" Value="50" />
     </Style>
 
@@ -43,33 +43,33 @@
     <!-- </Style> -->
 
     <Style TargetType="{x:Type ContentPage}" x:Key="DefaultPageStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource PageBackgroundColor}" />
-        <Setter Property="Shell.BackgroundColor" Value="{StaticResource PrimaryColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}" />
+        <Setter Property="Shell.BackgroundColor" Value="{DynamicResource PrimaryColor}" />
     </Style>
 
     <Style TargetType="{x:Type Label}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Entry}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Editor}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
         <Setter Property="AutoSize" Value="TextChanges" />
     </Style>
 
     <Style TargetType="{x:Type Picker}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Switch}">
-        <Setter Property="OnColor" Value="{StaticResource PrimaryColor}" />
+        <Setter Property="OnColor" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="ThumbColor" Value="#EEEEEF" />
     </Style>
 

@@ -2,10 +2,7 @@
 <Application
     x:Class="Kommunist.Application.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:local="clr-namespace:Kommunist.Application"
-    xmlns:views="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:xc="clr-namespace:CalendarView.MAUI;assembly=CalendarView.MAUI">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,8 +12,6 @@
                 <ResourceDictionary Source="Resources/Styles/ApplicationStyles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/FontAwesome.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <!-- <Color x:Key="PrimaryColor" /> -->
-            <!-- <Color x:Key="ContentBackgroundColor" /> -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

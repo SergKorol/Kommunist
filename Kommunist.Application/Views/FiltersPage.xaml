@@ -23,7 +23,7 @@
 
                 <!-- Tag Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -102,7 +102,7 @@
 
                 <!-- Speaker Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -180,7 +180,7 @@
 
                 <!-- Country Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -258,7 +258,7 @@
 
                 <!-- Community Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -343,14 +343,14 @@
                     <Switch 
                         Grid.Column="1" 
                         IsToggled="{Binding OnlineOnly}"
-                        OnColor="{StaticResource Primary}"
+                        OnColor="{DynamicResource Primary}"
                         ThumbColor="White"/>
                 </Grid>
 
                 <!-- Apply Filters Button -->
                 <Button 
                     Text="Apply Filters"
-                    BackgroundColor="{StaticResource Primary}"
+                    BackgroundColor="{DynamicResource Primary}"
                     TextColor="White"
                     CornerRadius="8"
                     HeightRequest="50"
@@ -361,8 +361,8 @@
                 <Button 
                     Text="Clear All"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource Primary}"
-                    BorderColor="{StaticResource Primary}"
+                    TextColor="{DynamicResource Primary}"
+                    BorderColor="{DynamicResource Primary}"
                     BorderWidth="1"
                     CornerRadius="8"
                     HeightRequest="50"
@@ -371,7 +371,7 @@
                 <!-- Delete Filters Button -->
                 <Button 
                     Text="Delete Stored Filters"
-                    BackgroundColor="{StaticResource Warning}"
+                    BackgroundColor="{DynamicResource Warning}"
                     TextColor="White"
                     CornerRadius="8"
                     HeightRequest="50"

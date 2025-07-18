@@ -128,7 +128,7 @@
                         <VerticalStackLayout Spacing="8">
                             <Label Text="Event Summary" Style="{StaticResource LabelStyle}" FontSize="18"/>
                             <Label Text="{Binding Events.Count, StringFormat='{0} events selected'}"
-                                   TextColor="{StaticResource TextColor}"
+                                   TextColor="{DynamicResource TextColor}"
                                    FontSize="15"
                                    Margin="0,0,0,5"/>
                             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="5">

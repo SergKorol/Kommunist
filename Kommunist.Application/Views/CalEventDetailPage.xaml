@@ -9,7 +9,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:DataType="{x:Type viewModels:EventCalendarDetailViewModel}"
     xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
+    BackgroundColor="{DynamicResource ContentPageColor}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -22,13 +22,13 @@
                 <Setter Property="Margin" Value="0,10,0,5" />
             </Style>
             <Style x:Key="EventCardStyle" TargetType="Border">
-                <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                <Setter Property="Stroke" Value="{DynamicResource BorderColor}" />
                 <Setter Property="StrokeShape" Value="RoundRectangle 12" />
                 <Setter Property="StrokeThickness" Value="1" />
-                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}" />
+                <Setter Property="BackgroundColor" Value="{DynamicResource BorderBackgroundColor}" />
                 <Setter Property="Shadow">
                     <Setter.Value>
-                        <Shadow Brush="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray950}}"
+                        <Shadow Brush="{DynamicResource BorderShadowColor}"
                                 Offset="0,2"
                                 Radius="4"
                                 Opacity="0.5" />
@@ -36,7 +36,7 @@
                 </Setter>
             </Style>
             <Style x:Key="SeparatorStyle" TargetType="BoxView">
-                <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                <Setter Property="Color" Value="{DynamicResource BoxViewColor}" />
                 <Setter Property="HeightRequest" Value="1" />
                 <Setter Property="Margin" Value="0,10,0,10" />
             </Style>
@@ -92,7 +92,7 @@
                             <Label HorizontalTextAlignment="Center" FontSize="16">
                                 <Label.FormattedText>
                                     <FormattedString>
-                                        <Span FontFamily="FAS" Text="{StaticResource IconTowerBroadcast}" />
+                                        <Span FontFamily="FAS" Text="{DynamicResource IconTowerBroadcast}" />
                                         <Span Text=" " />
                                         <Span Text="{Binding SelectedEventDetail.FormatEvent}" />
                                     </FormattedString>
@@ -151,7 +151,7 @@
                         
                         <!-- Add to Calendar Button -->
                         <Button Text="Add to Calendar" 
-                                BackgroundColor="{StaticResource Primary}"
+                                BackgroundColor="{DynamicResource Primary}"
                                 TextColor="White"
                                 HorizontalOptions="Fill"
                                 CornerRadius="8"
