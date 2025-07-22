@@ -16,11 +16,22 @@ public partial class SettingsPage : MyTabBar
         Picker picker = sender as Picker;
         Theme theme = (Theme)picker.SelectedItem;
 
-        ICollection<ResourceDictionary> mergedDictionaries = Microsoft.Maui.Controls.Application.Current.Resources.MergedDictionaries;
-        if (mergedDictionaries != null)
+        var app = Microsoft.Maui.Controls.Application.Current;
+        if (app?.Resources?.MergedDictionaries != null)
         {
-            mergedDictionaries.Clear();
+            var mergedDictionaries = app.Resources.MergedDictionaries;
+            
+            // Find and remove only the theme-specific dictionaries (DarkTheme or LightTheme)
+            var themesToRemove = mergedDictionaries
+                .Where(d => d is DarkTheme || d is LightTheme)
+                .ToList();
+            
+            foreach (var themeDict in themesToRemove)
+            {
+                mergedDictionaries.Remove(themeDict);
+            }
 
+            // Add the selected theme
             switch (theme)
             {
                 case Theme.Dark:
@@ -31,7 +42,8 @@ public partial class SettingsPage : MyTabBar
                     mergedDictionaries.Add(new LightTheme());
                     break;
             }
-            StatusLabel.Text = $"{theme.ToString()} theme loaded. Close this page.";
+            
+            StatusLabel.Text = $"{theme} theme loaded. Close this page.";
         }
     }
 

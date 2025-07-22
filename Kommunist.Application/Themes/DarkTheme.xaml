@@ -74,7 +74,12 @@
     
     <Color x:Key="ContentPageColor">#141414</Color>
     
+    <Color x:Key="CalendarBackgroundColor">Black</Color>
     
+    
+    <!-- <Style TargetType="{x:Type ContentPage}" x:Key="ColorTemplate"> -->
+    <!--     <Setter Property="ControlTemplate" Value="{StaticResource SecondaryColorTemplate}"></Setter> -->
+    <!-- </Style> -->
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
     <x:String x:Key="IconExclamation">&#x21;</x:String>

@@ -9,7 +9,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:DataType="{x:Type viewModels:EventCalendarDetailViewModel}"
     xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
-    BackgroundColor="{DynamicResource ContentPageColor}">
+    Style="{StaticResource DefaultPageStyle}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
