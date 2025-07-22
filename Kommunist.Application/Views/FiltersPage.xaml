@@ -2,25 +2,33 @@
 
 <controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:Kommunist.Application.Controls"
              xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
+             xmlns:controls="clr-namespace:Kommunist.Application.Controls"
              xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
              x:Class="Kommunist.Application.Views.FiltersPage"
+             x:DataType="{x:Type viewModels:EventFiltersViewModel}"
+             Title="Filters"
+             Style="{StaticResource DefaultPageStyle}"
+             x:Name="Filters"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
     
     <controls:MyTabBar.Resources>
-        <helpers:IsGreaterThanZeroConverter x:Key="IsGreaterThanZeroConverter"/>
+        <ResourceDictionary>
+            <helpers:IsGreaterThanZeroConverter x:Key="IsGreaterThanZeroConverter"/>
+        </ResourceDictionary>
+        
     </controls:MyTabBar.Resources>
     <controls:MyTabBar.Content>
-        <ScrollView Loaded="BindableObject_OnBindingContextChanged">
+        <Grid RowDefinitions="Auto,*">
+            <ScrollView Loaded="BindableObject_OnBindingContextChanged">
             <VerticalStackLayout Padding="20" Spacing="16">
-                <Label 
-                    Text="Filters" 
-                    FontSize="24" 
+                <Label
+                    Text="Filters"
+                    FontSize="24"
                     FontAttributes="Bold"
                     HorizontalOptions="Center"
                     Margin="0,0,0,10"/>
-
+    
                 <!-- Tag Search -->
                 <Border 
                     Stroke="{StaticResource Gray300}"
@@ -28,45 +36,45 @@
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
                         <!-- Search Icon (left) -->
-                        <Image 
-                            Source="icon_tag.png" 
-                            HeightRequest="20" 
+                        <Image
+                            Source="icon_tag.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
-
+    
                         <!-- Entry (center) -->
-                        <Entry 
+                        <Entry
                             Grid.Column="1"
                             Placeholder="Search by tag"
                             Text="{Binding TagFilter}"
                             VerticalOptions="Center"/>
-
+    
                         <!-- Clear Icon (right) -->
-                        <ImageButton 
+                        <ImageButton
                             Grid.Column="2"
-                            Source="icon_trashcan.png" 
-                            HeightRequest="20" 
+                            Source="icon_trashcan.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Margin="8,0,0,0"
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearTagFilterCommand}"
-                            CommandParameter="{Binding .}" 
+                            CommandParameter="{Binding .}"
                             IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsTagFilterNotEmpty}"/>
                     </Grid>
                 </Border>
-
-                
+    
+    
                 <!-- Tag Suggestions -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding TagSuggestions}"
                     IsVisible="{Binding TagSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -78,16 +86,16 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
+    
                 <!--Selected Tags -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding SelectedTags}"
                     IsVisible="{Binding SelectedTags.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -99,7 +107,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
+    
                 <!-- Speaker Search -->
                 <Border 
                     Stroke="{StaticResource Gray300}"
@@ -107,44 +115,44 @@
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
                         <!-- Search Icon (left) -->
-                        <Image 
-                            Source="icon_mic.png" 
-                            HeightRequest="20" 
+                        <Image
+                            Source="icon_mic.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
-
+    
                         <!-- Entry (center) -->
-                        <Entry 
+                        <Entry
                             Grid.Column="1"
                             Placeholder="Search by speaker"
                             Text="{Binding SpeakerFilter}"
                             VerticalOptions="Center"/>
-
+    
                         <!-- Clear Icon (right) -->
-                        <ImageButton 
+                        <ImageButton
                             Grid.Column="2"
-                            Source="icon_trashcan.png" 
-                            HeightRequest="20" 
+                            Source="icon_trashcan.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Margin="8,0,0,0"
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearSpeakerFilterCommand}"
-                            CommandParameter="{Binding .}" 
+                            CommandParameter="{Binding .}"
                             IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsSpeakerFilterNotEmpty}"/>
                     </Grid>
                 </Border>
-                
+    
                 <!-- Speaker Suggestions -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding SpeakerSuggestions}"
                     IsVisible="{Binding SpeakerSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -156,16 +164,16 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
+    
                 <!--Selected Speakers -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding SelectedSpeakers}"
                     IsVisible="{Binding SelectedSpeakers.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -177,7 +185,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
+    
                 <!-- Country Search -->
                 <Border 
                     Stroke="{StaticResource Gray300}"
@@ -185,44 +193,44 @@
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
                         <!-- Search Icon (left) -->
-                        <Image 
-                            Source="icon_globe.png" 
-                            HeightRequest="20" 
+                        <Image
+                            Source="icon_globe.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
-
+    
                         <!-- Entry (center) -->
-                        <Entry 
+                        <Entry
                             Grid.Column="1"
                             Placeholder="Search by country"
                             Text="{Binding CountryFilter}"
                             VerticalOptions="Center"/>
-
+    
                         <!-- Clear Icon (right) -->
-                        <ImageButton 
+                        <ImageButton
                             Grid.Column="2"
-                            Source="icon_trashcan.png" 
-                            HeightRequest="20" 
+                            Source="icon_trashcan.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Margin="8,0,0,0"
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearCountryFilterCommand}"
-                            CommandParameter="{Binding .}" 
+                            CommandParameter="{Binding .}"
                             IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsCountryFilterNotEmpty}"/>
                     </Grid>
                 </Border>
-                
+    
                 <!-- Country Suggestions -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding CountrySuggestions}"
                     IsVisible="{Binding CountrySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -234,16 +242,16 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
+    
                 <!--Selected Countries -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding SelectedCountries}"
                     IsVisible="{Binding SelectedCountries.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -255,7 +263,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
+    
                 <!-- Community Search -->
                 <Border 
                     Stroke="{StaticResource Gray300}"
@@ -263,44 +271,44 @@
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
                         <!-- Search Icon (left) -->
-                        <Image 
-                            Source="icon_comments.png" 
-                            HeightRequest="20" 
+                        <Image
+                            Source="icon_comments.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             VerticalOptions="Center"
                             Margin="0,0,8,0"/>
-
+    
                         <!-- Entry (center) -->
-                        <Entry 
+                        <Entry
                             Grid.Column="1"
                             Placeholder="Search by community"
                             Text="{Binding CommunityFilter}"
                             VerticalOptions="Center"/>
-
+    
                         <!-- Clear Icon (right) -->
-                        <ImageButton 
+                        <ImageButton
                             Grid.Column="2"
-                            Source="icon_trashcan.png" 
-                            HeightRequest="20" 
+                            Source="icon_trashcan.png"
+                            HeightRequest="20"
                             WidthRequest="20"
                             BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Margin="8,0,0,0"
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=ClearCommunityFilterCommand}"
-                            CommandParameter="{Binding .}" 
+                            CommandParameter="{Binding .}"
                             IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=IsCommunityFilterNotEmpty}"/>
                     </Grid>
                 </Border>
-                
+    
                 <!-- Community Suggestions -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding CommunitySuggestions}"
                     IsVisible="{Binding CommunitySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -312,16 +320,16 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
+    
                 <!--Selected Communities -->
-                <CollectionView 
+                <CollectionView
                     ItemsSource="{Binding SelectedCommunities}"
                     IsVisible="{Binding SelectedCommunities.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label 
-                                Text="{Binding .}" 
+                            <Label
+                                Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="LightGray"
                                 Margin="5">
@@ -333,50 +341,52 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
+    
                 <!-- Online/Offline Switch -->
                 <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center" Margin="0,10,0,0">
-                    <Label 
-                        Text="Show Online Only" 
+                    <Label
+                        Text="Show Online Only"
                         VerticalOptions="Center"
                         FontSize="16"/>
-                    <Switch 
-                        Grid.Column="1" 
+                    <Switch
+                        Grid.Column="1"
                         IsToggled="{Binding OnlineOnly}"
-                        OnColor="{StaticResource Primary}"
+                        OnColor="{DynamicResource Primary}"
                         ThumbColor="White"/>
                 </Grid>
-
+    
                 <!-- Apply Filters Button -->
-                <Button 
+                <Button
                     Text="Apply Filters"
-                    BackgroundColor="{StaticResource Primary}"
+                    BackgroundColor="{DynamicResource Primary}"
                     TextColor="White"
                     CornerRadius="8"
                     HeightRequest="50"
                     Margin="0,20,0,0"
                     Command="{Binding ApplyFiltersCommand}"/>
-
+    
                 <!-- Clear Filters Button -->
-                <Button 
+                <Button
                     Text="Clear All"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource Primary}"
-                    BorderColor="{StaticResource Primary}"
+                    TextColor="{DynamicResource Primary}"
+                    BorderColor="{DynamicResource Primary}"
                     BorderWidth="1"
                     CornerRadius="8"
                     HeightRequest="50"
                     Command="{Binding ClearFiltersCommand}"/>
-                
+    
                 <!-- Delete Filters Button -->
-                <Button 
+                <Button
                     Text="Delete Stored Filters"
-                    BackgroundColor="{StaticResource Warning}"
+                    BackgroundColor="{DynamicResource Warning}"
                     TextColor="White"
                     CornerRadius="8"
                     HeightRequest="50"
                     Command="{Binding DeleteFiltersCommand}"/>
             </VerticalStackLayout>
         </ScrollView>
+        </Grid>
+        
     </controls:MyTabBar.Content>
 </controls:MyTabBar>

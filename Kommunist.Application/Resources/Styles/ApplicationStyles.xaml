@@ -24,13 +24,13 @@
     <x:Boolean x:Key="FalseValue">False</x:Boolean>
 
     <Style TargetType="{x:Type xc:CalendarView}" x:Key="DefaultCalendarViewStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource CalendarBackgroundColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource CalendarBackgroundColor}" />
     </Style>
 
     <Style TargetType="{x:Type xc:NavigationView}" x:Key="DefaultNavigationViewStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource CalendarPrimaryColor}" />
-        <Setter Property="ArrowColor" Value="{StaticResource CalendarPrimaryTextColor}" />
-        <Setter Property="TextColor" Value="{StaticResource CalendarPrimaryTextColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource CalendarPrimaryColor}" />
+        <Setter Property="ArrowColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
         <Setter Property="HeightRequest" Value="50" />
     </Style>
 
@@ -41,35 +41,98 @@
     <!--     <Setter Property="SelectedBackgroundColor" Value="{StaticResource CalendarPrimaryColor}" /> -->
     <!--     <Setter Property="SelectedTextColor" Value="{StaticResource CalendarPrimaryTextColor}" /> -->
     <!-- </Style> -->
+    
+    <ControlTemplate x:Key="SecondaryColorTemplate">
+        <Grid RowDefinitions="*,Auto">
+            <ContentPresenter Grid.Row="0" />
+            <Grid Grid.Row="1" VerticalOptions="End">
+                <Border HeightRequest="72"
+                        BackgroundColor="{DynamicResource SurfaceColor}"
+                        StrokeThickness="0"
+                        VerticalOptions="End">
+                    <Border.Shadow>
+                        <Shadow Brush="{DynamicResource ShadowColor}"
+                                Offset="0,-2"
+                                Radius="8"
+                                Opacity="0.2" />
+                    </Border.Shadow>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20,20,0,0" />
+                    </Border.StrokeShape>
+                    
+                    <Grid ColumnDefinitions="*, *, *" Padding="8,0">
+                        <Button Grid.Column="0"
+                                Text="Home"
+                                FontSize="12"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource TextSecondaryColor}"
+                                HorizontalOptions="Center"
+                                ContentLayout="Top,8"
+                                ImageSource="icon_home1.png"
+                                Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
+                                CommandParameter="HomePage">
+                        </Button>
+                        
+                        <Button Grid.Column="1"
+                                Text="Filters"
+                                FontSize="12"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource TextSecondaryColor}"
+                                HorizontalOptions="Center"
+                                ContentLayout="Top,8"
+                                ImageSource="icon_filters1.png"
+                                Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
+                                CommandParameter="FiltersPage">
+                        </Button>
+                        
+                        <Button Grid.Column="2"
+                                Text="Settings"
+                                FontSize="12"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource TextSecondaryColor}"
+                                HorizontalOptions="Center"
+                                ContentLayout="Top,8"
+                                ImageSource="icon_settings1.png"
+                                Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
+                                CommandParameter="SettingsPage">
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+
+
+
 
     <Style TargetType="{x:Type ContentPage}" x:Key="DefaultPageStyle">
-        <Setter Property="BackgroundColor" Value="{StaticResource PageBackgroundColor}" />
-        <Setter Property="Shell.BackgroundColor" Value="{StaticResource PrimaryColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}" />
+        <!-- <Setter Property="BackgroundColor" Value="{DynamicResource PrimaryColor}" /> -->
     </Style>
 
     <Style TargetType="{x:Type Label}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Entry}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Editor}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
         <Setter Property="AutoSize" Value="TextChanges" />
     </Style>
 
     <Style TargetType="{x:Type Picker}">
-        <Setter Property="TextColor" Value="{StaticResource ContentTextColor}" />
+        <Setter Property="TextColor" Value="{DynamicResource ContentTextColor}" />
         <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
     </Style>
 
     <Style TargetType="{x:Type Switch}">
-        <Setter Property="OnColor" Value="{StaticResource PrimaryColor}" />
+        <Setter Property="OnColor" Value="{DynamicResource PrimaryColor}" />
         <Setter Property="ThumbColor" Value="#EEEEEF" />
     </Style>
 

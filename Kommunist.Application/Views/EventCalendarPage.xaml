@@ -18,7 +18,7 @@
         <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </controls:MyTabBar.Resources>
 
-    <Grid BackgroundColor="{StaticResource BackgroundColor}">
+    <Grid BackgroundColor="{DynamicResource BackgroundColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -26,13 +26,13 @@
 
         <!-- Calendar Section -->
         <Border Grid.Row="0" 
-                BackgroundColor="{StaticResource SurfaceColor}" 
+                BackgroundColor="{DynamicResource SurfaceColor}" 
                 Margin="12,16,12,8" 
                 Padding="8"
                 StrokeThickness="0"
                 Loaded="VisualElement_OnLoaded">
             <Border.Shadow>
-                <Shadow Brush="{StaticResource ShadowColor}"
+                <Shadow Brush="{DynamicResource ShadowColor}"
                         Offset="0,2"
                         Radius="8"
                         Opacity="0.2" />
@@ -61,7 +61,7 @@
                 <xc:CalendarView.NavigationViewTemplate>
                     <ControlTemplate>
                         <Grid Padding="4,8">
-                            <xc:NavigationView ArrowColor="{StaticResource PrimaryColor}"
+                            <xc:NavigationView ArrowColor="{DynamicResource PrimaryColor}"
                                               BackgroundColor="Transparent"
                                               LeftArrowCommand="{Binding LeftArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               LeftArrowCommandParameter="{Binding LeftArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
@@ -124,13 +124,13 @@
                                                 
                                                 <!-- Day background and selection indicators -->
                                                 <Ellipse Grid.RowSpan="2"
-                                                         Fill="{StaticResource SurfaceColor}"
+                                                         Fill="{DynamicResource SurfaceColor}"
                                                          IsVisible="False">
                                                     <Ellipse.Triggers>
                                                         <DataTrigger TargetType="Ellipse"
                                                                     Binding="{Binding IsSelected}"
                                                                     Value="True">
-                                                            <Setter Property="Fill" Value="{StaticResource SelectedDayBackgroundColor}" />
+                                                            <Setter Property="Fill" Value="{DynamicResource SelectedDayBackgroundColor}" />
                                                             <Setter Property="IsVisible" Value="True" />
                                                         </DataTrigger>
                                                     </Ellipse.Triggers>
@@ -142,7 +142,7 @@
                                                        HorizontalOptions="Center"
                                                        VerticalOptions="Center"
                                                        FontSize="16"
-                                                       TextColor="{StaticResource TextPrimaryColor}">
+                                                       TextColor="{DynamicResource TextPrimaryColor}">
                                                     <Label.Triggers>
                                                         <DataTrigger TargetType="Label"
                                                                     Binding="{Binding IsSelected}"
@@ -154,14 +154,14 @@
                                                                     Binding="{Binding IsToday}"
                                                                     Value="True">
                                                             <Setter Property="FontAttributes" Value="Bold" />
-                                                            <Setter Property="TextColor" Value="{StaticResource TodayIndicatorColor}" />
+                                                            <Setter Property="TextColor" Value="{DynamicResource TodayIndicatorColor}" />
                                                         </DataTrigger>
                                                         <MultiTrigger TargetType="Label">
                                                             <MultiTrigger.Conditions>
                                                                 <BindingCondition Binding="{Binding IsCurrentMonth}" Value="False" />
                                                                 <BindingCondition Binding="{Binding IsSelected}" Value="False" />
                                                             </MultiTrigger.Conditions>
-                                                            <Setter Property="TextColor" Value="{StaticResource TextTertiaryColor}" />
+                                                            <Setter Property="TextColor" Value="{DynamicResource TextTertiaryColor}" />
                                                             <Setter Property="Opacity" Value="0.6" />
                                                         </MultiTrigger>
                                                     </Label.Triggers>
@@ -210,11 +210,11 @@
 
         <!-- Events List Section -->
         <Grid Grid.Row="1" Margin="0,8,0,0">
-            <Border BackgroundColor="{StaticResource SurfaceColor}"
+            <Border BackgroundColor="{DynamicResource SurfaceColor}"
                     Margin="12,0,12,12"
                     StrokeThickness="0">
                 <Border.Shadow>
-                    <Shadow Brush="{StaticResource ShadowColor}"
+                    <Shadow Brush="{DynamicResource ShadowColor}"
                             Offset="0,2"
                             Radius="8"
                             Opacity="0.2" />
@@ -232,7 +232,7 @@
                     <!-- Selected date header -->
                     <Label Grid.Row="0"
                            Text="{Binding EventCalendar.SelectedDates[0], StringFormat='Events for {0:dddd, MMMM d}'}"
-                           TextColor="{StaticResource TextPrimaryColor}"
+                           TextColor="{DynamicResource TextPrimaryColor}"
                            FontSize="18"
                            FontAttributes="Bold"
                            Margin="12,8,12,4" />
@@ -252,7 +252,7 @@
                                     <Label Text="No Events"
                                            FontAttributes="Bold"
                                            FontSize="18"
-                                           TextColor="{StaticResource TextSecondaryColor}"
+                                           TextColor="{DynamicResource TextSecondaryColor}"
                                            HorizontalTextAlignment="Center"
                                            Margin="0,12,0,0" />
                                 </VerticalStackLayout>
@@ -266,10 +266,10 @@
                                 <Border Margin="8,0"
                                         Padding="0"
                                         StrokeThickness="0"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
                                         >
                                     <Border.Shadow>
-                                        <Shadow Brush="{StaticResource ShadowColor}"
+                                        <Shadow Brush="{DynamicResource ShadowColor}"
                                                 Offset="0,2"
                                                 Radius="6"
                                                 Opacity="0.15" />
@@ -314,7 +314,7 @@
                                                   FontSize="18"
                                                   FontAttributes="Bold"
                                                   Text="{Binding Title}"
-                                                  TextColor="{StaticResource TextPrimaryColor}"
+                                                  TextColor="{DynamicResource TextPrimaryColor}"
                                                   LineBreakMode="TailTruncation" />
                                             
                                             <!-- Event time -->
@@ -322,7 +322,7 @@
                                                 <Image Source="clock" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"/>
                                                 <Label FontSize="16"
                                                       Text="{Binding DateTime, StringFormat='{0:dd MMMM HH:mm}'}"
-                                                      TextColor="{StaticResource TextSecondaryColor}"
+                                                      TextColor="{DynamicResource TextSecondaryColor}"
                                                       LineBreakMode="TailTruncation"
                                                       VerticalOptions="Center" />
                                             </HorizontalStackLayout>
@@ -331,7 +331,7 @@
                                             <Label Grid.Row="2"
                                                   FontSize="14"
                                                   Text="{Binding Description}"
-                                                  TextColor="{StaticResource TextTertiaryColor}"
+                                                  TextColor="{DynamicResource TextTertiaryColor}"
                                                   LineBreakMode="TailTruncation"
                                                   MaxLines="2"
                                                   Margin="0,8,0,0" />
@@ -351,14 +351,14 @@
                     CornerRadius="32"
                     WidthRequest="64"
                     HeightRequest="64"
-                    BackgroundColor="{StaticResource PrimaryColor}"
+                    BackgroundColor="{DynamicResource PrimaryColor}"
                     TextColor="White"
                     HorizontalOptions="End"
                     VerticalOptions="End"
                     Margin="0,0,24,24"
                     Command="{Binding OpenIcalConfigCommand}">
                 <Button.Shadow>
-                    <Shadow Brush="{StaticResource PrimaryColor}"
+                    <Shadow Brush="{DynamicResource PrimaryColor}"
                             Offset="0,4"
                             Radius="12"
                             Opacity="0.4" />
