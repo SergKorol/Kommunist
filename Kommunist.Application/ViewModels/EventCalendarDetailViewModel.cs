@@ -208,7 +208,15 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
         if (!string.IsNullOrEmpty(text))
         {
-            eventDetail.Description = BuildHtmlContent(text);
+            bool isDark = Microsoft.Maui.Controls.Application.Current.RequestedTheme == AppTheme.Dark;
+            if (isDark)
+            {
+                eventDetail.Description = BuildDarkHtmlContent(text);
+            }
+            else
+            {
+                eventDetail.Description = BuildLightHtmlContent(text);
+            }
         }
     }
 
@@ -254,12 +262,28 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
             if (agendaItem?.Info?.DescriptionHtml != null)
             {
-                eventDetail.Description = BuildHtmlContent(agendaItem?.Info?.DescriptionHtml).Trim();
+                bool isDark = IsDarkMode();
+                if (isDark)
+                {
+                    eventDetail.Description = BuildDarkHtmlContent(agendaItem?.Info?.DescriptionHtml);
+                }
+                else
+                {
+                    eventDetail.Description = BuildLightHtmlContent(agendaItem?.Info?.DescriptionHtml);
+                }
             }
         }
     }
     
-    private string BuildHtmlContent(string text)
+    private bool IsDarkMode()
+    {
+        var theme = Microsoft.Maui.Controls.Application.Current.UserAppTheme;
+        if (theme == AppTheme.Unspecified)
+            theme = Microsoft.Maui.Controls.Application.Current.RequestedTheme;
+        return theme == AppTheme.Dark;
+    }
+    
+    private string BuildLightHtmlContent(string text)
     {
         return $@"
         <!DOCTYPE html>
@@ -279,5 +303,35 @@ public class EventCalendarDetailViewModel : BaseViewModel
             {text}
         </body>
         </html>";
+    }
+    
+    private string BuildDarkHtmlContent(string text)
+    {
+        return $@"
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+        <style>
+            body {{
+                margin: 0;
+                padding: 0;
+                overflow: hidden !important;
+                font-family: -apple-system, system-ui;
+                background-color: #121212;
+                color: #e0e0e0;
+            }}
+            a {{
+                color: #bb86fc;
+            }}
+            img {{
+                filter: brightness(0.8) contrast(1.2);
+            }}
+        </style>
+    </head>
+    <body>
+        {text}
+    </body>
+    </html>";
     }
 }

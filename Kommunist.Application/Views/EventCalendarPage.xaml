@@ -71,7 +71,7 @@
                                               Text="{Binding Text, Source={RelativeSource TemplatedParent}}"
                                               Style="{StaticResource DefaultNavigationViewStyle}">
                                 <xc:NavigationView.TextColor>
-                                    <StaticResource Key="TextPrimaryColor" />
+                                    <x:DynamicResource Key="TextPrimaryColor" />
                                 </xc:NavigationView.TextColor>
                                 <xc:NavigationView.FontFamily>
                                     <OnPlatform x:TypeArguments="x:String">

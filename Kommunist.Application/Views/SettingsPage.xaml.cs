@@ -36,10 +36,12 @@ public partial class SettingsPage : MyTabBar
             {
                 case Theme.Dark:
                     mergedDictionaries.Add(new DarkTheme());
+                    Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Dark;
                     break;
                 case Theme.Light:
                 default:
                     mergedDictionaries.Add(new LightTheme());
+                    Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
                     break;
             }
             

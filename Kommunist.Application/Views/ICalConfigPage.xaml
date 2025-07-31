@@ -103,7 +103,7 @@
                                                 CornerRadius="18"
                                                 Command="{Binding DecrementAlarmCommand}"
                                                 BackgroundColor="#F0F0F5"
-                                                TextColor="#333333"
+                                                TextColor="{DynamicResource TextColor}"
                                                 FontAttributes="Bold"
                                                 Padding="0"/>
                                         <Button Text="+" 
@@ -113,7 +113,7 @@
                                                 CornerRadius="18"
                                                 Command="{Binding IncrementAlarmCommand}"
                                                 BackgroundColor="#F0F0F5"
-                                                TextColor="#333333"
+                                                TextColor="{DynamicResource TextColor}"
                                                 FontAttributes="Bold"
                                                 Padding="0"
                                                 Margin="0,0,5,0"/>
@@ -132,10 +132,10 @@
                                    FontSize="15"
                                    Margin="0,0,0,5"/>
                             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="5">
-                                <Label Grid.Row="0" Grid.Column="0" Text="Start:" FontAttributes="Bold" TextColor="#666666"/>
-                                <Label Grid.Row="0" Grid.Column="1" Text="{Binding FirstEventDateTime}" TextColor="#666666"/>
-                                <Label Grid.Row="1" Grid.Column="0" Text="End:" FontAttributes="Bold" TextColor="#666666"/>
-                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding LastEventDateTime}" TextColor="#666666"/>
+                                <Label Grid.Row="0" Grid.Column="0" Text="Start:" FontAttributes="Bold" TextColor="{DynamicResource LabelTextColor}"/>
+                                <Label Grid.Row="0" Grid.Column="1" Text="{Binding FirstEventDateTime}" TextColor="{DynamicResource LabelTextColor}"/>
+                                <Label Grid.Row="1" Grid.Column="0" Text="End:" FontAttributes="Bold" TextColor="{DynamicResource LabelTextColor}"/>
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding LastEventDateTime}" TextColor="{DynamicResource LabelTextColor}"/>
                             </Grid>
                         </VerticalStackLayout>
                     </Border>
@@ -151,7 +151,7 @@
                             <Label Text="About iCal Files" 
                                    FontSize="16" 
                                    FontAttributes="Bold"
-                                   TextColor="{StaticResource TextColor}"/>
+                                   TextColor="{DynamicResource TextColor}"/>
                             <Label Text="iCal files (.ics) can be imported into most calendar applications including Google Calendar, Apple Calendar, and Microsoft Outlook."
                                    TextColor="#666666"
                                    FontSize="14"/>
