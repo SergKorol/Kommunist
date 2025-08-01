@@ -313,18 +313,31 @@
                                             <Label Grid.Row="0"
                                                   FontSize="18"
                                                   FontAttributes="Bold"
-                                                  Text="{Binding Title}"
                                                   TextColor="{DynamicResource TextPrimaryColor}"
-                                                  LineBreakMode="TailTruncation" />
+                                                  LineBreakMode="TailTruncation">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontFamily="FAS" Text="{DynamicResource IconStar}" FontSize="18" />
+                                                        <Span Text=" " />
+                                                        <Span Text="{Binding Title}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
                                             
                                             <!-- Event time -->
                                             <HorizontalStackLayout Grid.Row="1" Spacing="6" Margin="0,4,0,0">
-                                                <Image Source="clock" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"/>
                                                 <Label FontSize="16"
-                                                      Text="{Binding DateTime, StringFormat='{0:dd MMMM HH:mm}'}"
                                                       TextColor="{DynamicResource TextSecondaryColor}"
                                                       LineBreakMode="TailTruncation"
-                                                      VerticalOptions="Center" />
+                                                      VerticalOptions="Center">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span FontFamily="FAS" Text="{DynamicResource IconClock}" FontSize="16" />
+                                                            <Span Text=" " />
+                                                            <Span Text="{Binding DateTime, StringFormat='{0:dd MMMM HH:mm}'}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
                                             </HorizontalStackLayout>
                                             
                                             <!-- Event description -->
@@ -334,7 +347,15 @@
                                                   TextColor="{DynamicResource TextTertiaryColor}"
                                                   LineBreakMode="TailTruncation"
                                                   MaxLines="2"
-                                                  Margin="0,8,0,0" />
+                                                  Margin="0,8,0,0">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontFamily="FAS" Text="{DynamicResource IconTimeline}" FontSize="16" />
+                                                        <Span Text=" " />
+                                                        <Span Text="{Binding Description}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
                                         </Grid>
                                     </Grid>
                                 </Border>

@@ -41,7 +41,6 @@
                                         </Entry.Behaviors>
                                     </Entry>
                                     <Image Grid.Column="1" 
-                                           Source="email_icon.png" 
                                            HeightRequest="20" 
                                            WidthRequest="20"
                                            VerticalOptions="Center" 
