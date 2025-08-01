@@ -49,6 +49,8 @@
     <Color x:Key="TextButtonColor">#512BD4</Color>
     <Color x:Key="BackgroundButtonColor">White</Color>
     <Color x:Key="PrimaryBackgroundButtonColor">#BBBBBB</Color>
+    <Color x:Key="DecrementBackgroundButtonColor">#1E1E1E</Color>
+    <Color x:Key="IncrementBackgroundButtonColor">#1E1E1E</Color>
     <Color x:Key="VisualTextButtonColor">#C8C8C8</Color>
     <Color x:Key="VisualBackgroundButtonColor">#404040</Color>
     
@@ -68,8 +70,8 @@
     
     <Color x:Key="PickerTextColor">White</Color>
     <Color x:Key="PickerTitleColor">#C8C8C8</Color>
-    <Color x:Key="VisualPickerTextColor">#404040</Color>
-    <Color x:Key="VisualPickerTitleColor">#404040</Color>
+    <Color x:Key="VisualPickerTextColor">#3A2D78</Color>
+    <Color x:Key="VisualPickerTitleColor">#3A2D78</Color>
     
     <Color x:Key="BoxViewColor">#404040</Color>
     
@@ -96,6 +98,8 @@
     <Color x:Key="EntryBackgroundColor">Black</Color>
     
     <Color x:Key="PrimaryButtonTextColor">Black</Color>
+    
+
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
     <x:String x:Key="IconExclamation">&#x21;</x:String>

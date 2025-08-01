@@ -42,6 +42,8 @@
     <Color x:Key="TextButtonColor">White</Color>
     <Color x:Key="BackgroundButtonColor">#512BD4</Color>
     <Color x:Key="PrimaryBackgroundButtonColor">#BBBBBB</Color>
+    <Color x:Key="DecrementBackgroundButtonColor">#F0F0F5</Color>
+    <Color x:Key="IncrementBackgroundButtonColor">#F0F0F5</Color>
     <Color x:Key="VisualTextButtonColor">#141414</Color>
     <Color x:Key="VisualBackgroundButtonColor">#C8C8C8</Color>
     
@@ -88,9 +90,7 @@
     <Color x:Key="EntryBackgroundColor">White</Color>
     
     <Color x:Key="PrimaryButtonTextColor">White</Color>
-    
-    
-    
+
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
     <x:String x:Key="IconExclamation">&#x21;</x:String>

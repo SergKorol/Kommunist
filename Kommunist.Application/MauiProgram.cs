@@ -24,7 +24,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkitMarkup()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                // fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("Brands-Regular-400.otf", "FAB");
                 fonts.AddFont("Free-Regular-400.otf", "FAR");
@@ -42,7 +42,6 @@ public static class MauiProgram
                 }
             });
             
-            // handlers.AddHandler<WebView, CustomWebViewHandler>();
 #endif
         });
         

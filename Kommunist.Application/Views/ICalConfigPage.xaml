@@ -102,7 +102,7 @@
                                                 HeightRequest="36"
                                                 CornerRadius="18"
                                                 Command="{Binding DecrementAlarmCommand}"
-                                                BackgroundColor="#F0F0F5"
+                                                BackgroundColor="{DynamicResource DecrementBackgroundButtonColor}"
                                                 TextColor="{DynamicResource TextColor}"
                                                 FontAttributes="Bold"
                                                 Padding="0"/>
@@ -112,7 +112,7 @@
                                                 HeightRequest="36"
                                                 CornerRadius="18"
                                                 Command="{Binding IncrementAlarmCommand}"
-                                                BackgroundColor="#F0F0F5"
+                                                BackgroundColor="{DynamicResource IncrementBackgroundButtonColor}"
                                                 TextColor="{DynamicResource TextColor}"
                                                 FontAttributes="Bold"
                                                 Padding="0"

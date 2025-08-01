@@ -9,6 +9,7 @@ public partial class EventCalendarPage : MyTabBar
     public EventCalendarPage()
     {
         InitializeComponent();
+        var theme = Microsoft.Maui.Controls.Application.Current.RequestedTheme;
         var serviceProvider = MauiProgram.CreateMauiApp().Services;
         var eventCalendarViewModel = serviceProvider?.GetRequiredService<EventCalendarViewModel>();
         BindingContext = eventCalendarViewModel;

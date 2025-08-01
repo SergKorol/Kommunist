@@ -13,7 +13,17 @@ public class BoolToColorConverter : IValueConverter
                 var colors = colorParams.Split('|');
                 if (colors.Length == 2)
                 {
-                    string colorString = boolValue ? colors[0] : colors[1];
+                    string colorString = string.Empty;
+                    if (Microsoft.Maui.Controls.Application.Current.RequestedTheme == AppTheme.Dark)
+                    {
+                        Task.Delay(100);
+                        colorString = boolValue ? "#3A2D78" : "#1E1E1E";   
+                    }
+                    else
+                    {
+                        colorString = boolValue ? colors[0] : colors[1];
+                    }
+                    
                     if (Color.TryParse(colorString, out var color))
                     {
                         return color;
