@@ -2,16 +2,13 @@
 <Application
     x:Class="Kommunist.Application.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:themes="clr-namespace:Kommunist.Application.Themes">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <!-- <ResourceDictionary Source="Resources/Styles/ApplicationColors.xaml" /> -->
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/ApplicationStyles.xaml" />
-                <!-- <ResourceDictionary Source="Resources/Styles/FontAwesome.xaml" /> -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
