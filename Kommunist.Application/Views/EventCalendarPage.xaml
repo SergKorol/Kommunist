@@ -47,8 +47,7 @@
                              RightArrowCommand="{Binding NavigateCalendarCommand}"
                              NavigatedDate="{Binding EventCalendar.NavigatedDate}"
                              Style="{StaticResource DefaultCalendarViewStyle}"
-                             DaysViewHeightRequest="320"
-                             x:Name="MainCalendarView">
+                             DaysViewHeightRequest="320">
                 
                 <xc:CalendarView.RightArrowCommandParameter>
                     <x:Int32>1</x:Int32>

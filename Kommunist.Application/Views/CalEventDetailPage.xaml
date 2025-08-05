@@ -14,7 +14,6 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <Style x:Key="SectionHeaderStyle" TargetType="Label">
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="FontSize" Value="16" />

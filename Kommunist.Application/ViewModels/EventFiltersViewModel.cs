@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core.Extensions;
 using Kommunist.Core.Helpers;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
@@ -22,19 +21,18 @@ public class EventFiltersViewModel : BaseViewModel
     private string _communityFilter;
     private bool _onlineOnly;
     
+    public ObservableCollection<string> TagSuggestions { get; } = [];
+    public ObservableCollection<string> SpeakerSuggestions { get; } = [];
+    public ObservableCollection<string> CountrySuggestions { get; } = [];
+    public ObservableCollection<string> CommunitySuggestions { get; } = [];
 
-    public ObservableCollection<string> Countries { get; private set; }
-    public ObservableCollection<string> TagSuggestions { get; } = new();
-    public ObservableCollection<string> SpeakerSuggestions { get; } = new();
-    public ObservableCollection<string> CountrySuggestions { get; } = new();
-    public ObservableCollection<string> CommunitySuggestions { get; } = new();
-
-    public ObservableHashSet<string> SelectedTags { get; set; } = new();
-    public ObservableCollection<string> SelectedTags2 { get; set; } = new();
+    public ObservableHashSet<string> SelectedTags { get; set; } = [];
     
-    public ObservableHashSet<string> SelectedSpeakers { get; set; } = new();
-    public ObservableHashSet<string> SelectedCountries { get; set; } = new();
-    public ObservableHashSet<string> SelectedCommunities { get; set; } = new();
+    public ObservableHashSet<string> SelectedSpeakers { get; set; } = [];
+    public ObservableHashSet<string> SelectedCountries { get; set; } = [];
+    public ObservableHashSet<string> SelectedCommunities { get; set; } = [];
+    
+    private ObservableCollection<string> Countries { get; set; }
 
     private CancellationTokenSource _debounceCts;
 
@@ -45,7 +43,7 @@ public class EventFiltersViewModel : BaseViewModel
     public ICommand ClearFiltersCommand { get; private set; }
     public ICommand DeleteFiltersCommand { get; private set; }
     
-    public Command<string> SelectTagCommand => new Command<string>(tag =>
+    public Command<string> SelectTagCommand => new(tag =>
     {
         TagFilter = tag;
         SelectedTagFilter = tag;
@@ -53,14 +51,14 @@ public class EventFiltersViewModel : BaseViewModel
         TagSuggestions.Clear();
     });
     
-    public Command<string> DeselectTagCommand => new Command<string>(tag =>
+    public Command<string> DeselectTagCommand => new(tag =>
     {
         SelectedTags.Remove(tag);
     });
     
-    public Command ClearTagFilterCommand => new Command(_ => TagFilter = string.Empty);
+    public Command ClearTagFilterCommand => new(_ => TagFilter = string.Empty);
 
-    public Command<string> SelectSpeakerCommand => new Command<string>(speaker =>
+    public Command<string> SelectSpeakerCommand => new(speaker =>
     {
         SpeakerFilter = speaker;
         SelectedSpeakerFilter = speaker;
@@ -68,14 +66,14 @@ public class EventFiltersViewModel : BaseViewModel
         SpeakerSuggestions.Clear();
     });
     
-    public Command<string> DeselectSpeakerCommand => new Command<string>(speaker =>
+    public Command<string> DeselectSpeakerCommand => new(speaker =>
     {
         SelectedSpeakers.Remove(speaker);
     });
     
-    public Command ClearSpeakerFilterCommand => new Command(_ => SpeakerFilter = string.Empty);
+    public Command ClearSpeakerFilterCommand => new(_ => SpeakerFilter = string.Empty);
 
-    public Command<string> SelectCountryCommand => new Command<string>(country =>
+    public Command<string> SelectCountryCommand => new(country =>
     {
         CountryFilter = country;
         SelectedCountryFilter = country;
@@ -83,14 +81,14 @@ public class EventFiltersViewModel : BaseViewModel
         CountrySuggestions.Clear();
     });
     
-    public Command<string> DeselectCountryCommand => new Command<string>(country =>
+    public Command<string> DeselectCountryCommand => new(country =>
     {
         SelectedCountries.Remove(country);
     });
     
-    public Command ClearCountryFilterCommand => new Command(_ => CountryFilter = string.Empty);
+    public Command ClearCountryFilterCommand => new(_ => CountryFilter = string.Empty);
     
-    public Command<string> SelectCommunityCommand => new Command<string>(community =>
+    public Command<string> SelectCommunityCommand => new(community =>
     {
         CommunityFilter = community;
         SelectedCommunityFilter = community;
@@ -98,12 +96,12 @@ public class EventFiltersViewModel : BaseViewModel
         CommunitySuggestions.Clear();
     });
     
-    public Command<string> DeselectCommunityCommand => new Command<string>(community =>
+    public Command<string> DeselectCommunityCommand => new(community =>
     {
         SelectedCommunities.Remove(community);
     });
     
-    public Command ClearCommunityFilterCommand => new Command(_ => CommunityFilter = string.Empty);
+    public Command ClearCommunityFilterCommand => new(_ => CommunityFilter = string.Empty);
     
     public EventFiltersViewModel(ISearchService searchService, IFilterService filterService)
     {
@@ -221,8 +219,8 @@ public class EventFiltersViewModel : BaseViewModel
 
     private void InitializeCountries()
     {
-        Countries = new ObservableCollection<string>
-        {
+        Countries =
+        [
             "United States",
             "Canada",
             "United Kingdom",
@@ -236,79 +234,81 @@ public class EventFiltersViewModel : BaseViewModel
             "India",
             "Brazil",
             "Australia"
-        };
+        ];
     }
 
     private async void ExecuteApplyFilters()
     {
-        // Create a filter object with all the values
-        var filters = new FilterOptions
+        try
         {
-            TagFilters = SelectedTags.ToList(),
-            SpeakerFilters = SelectedSpeakers.ToList(),
-            CountryFilters = SelectedCountries.ToList(),
-            CommunityFilters = SelectedCommunities.ToList(),
-            OnlineOnly = OnlineOnly
-        };
+            var filters = new FilterOptions
+            {
+                TagFilters = SelectedTags.ToList(),
+                SpeakerFilters = SelectedSpeakers.ToList(),
+                CountryFilters = SelectedCountries.ToList(),
+                CommunityFilters = SelectedCommunities.ToList(),
+                OnlineOnly = OnlineOnly
+            };
 
-        // Apply the filters - in a real app, you would call your service here
-        ApplyFilters(filters);
+            ApplyFilters(filters);
 
-        // Show a confirmation message
-        await Toast.Make("Filters Applied").Show();
-        
+            await Toast.Make("Filters Applied").Show();
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Filters weren't applied: {e}").Show();
+        }
     }
 
     private async void ExecuteClearFilters()
     {
-        TagFilter = string.Empty;
-        SpeakerFilter = string.Empty;
-        CountryFilter = string.Empty;
-        CommunityFilter = string.Empty;
-        OnlineOnly = false;
-        SelectedTags.Clear();
-        SelectedSpeakers.Clear();
-        SelectedCountries.Clear();
-        SelectedCommunities.Clear();
+        try
+        {
+            TagFilter = string.Empty;
+            SpeakerFilter = string.Empty;
+            CountryFilter = string.Empty;
+            CommunityFilter = string.Empty;
+            OnlineOnly = false;
+            SelectedTags.Clear();
+            SelectedSpeakers.Clear();
+            SelectedCountries.Clear();
+            SelectedCommunities.Clear();
         
-        // Clear filters in your service if needed
-        ClearFilters();
-
-        // Show a confirmation message
-        await Toast.Make("Filters Cleared").Show();
+            await Toast.Make("Filters Cleared").Show();
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Filters weren't cleared: {e}").Show();
+        }
     }
     
     private async void ExecuteDeleteFilters()
     {
-        TagFilter = string.Empty;
-        SpeakerFilter = string.Empty;
-        CountryFilter = string.Empty;
-        CommunityFilter = string.Empty;
-        OnlineOnly = false;
-        SelectedTags.Clear();
-        SelectedSpeakers.Clear();
-        SelectedCountries.Clear();
-        SelectedCommunities.Clear();
+        try
+        {
+            TagFilter = string.Empty;
+            SpeakerFilter = string.Empty;
+            CountryFilter = string.Empty;
+            CommunityFilter = string.Empty;
+            OnlineOnly = false;
+            SelectedTags.Clear();
+            SelectedSpeakers.Clear();
+            SelectedCountries.Clear();
+            SelectedCommunities.Clear();
         
-        // Clear filters in your service if needed
-        DeleteFilters();
+            DeleteFilters();
 
-        // Show a confirmation message
-        await Toast.Make("Filters Deleted").Show();
+            await Toast.Make("Filters Deleted").Show();
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Filters weren't deleted: {e}").Show();
+        }
     }
 
-    // Methods to be implemented with your actual filtering logic
     private void ApplyFilters(FilterOptions filters)
     {
-        // Implement your actual filter application logic here
-        // For example: FilterService.ApplyFilters(filters);
         _filterService.SetFilters(filters);
-    }
-
-    private void ClearFilters()
-    {
-        // Implement your actual filter clearing logic here
-        // For example: FilterService.ClearFilters();
     }
     
     private void DebounceSearchTags()
@@ -361,7 +361,7 @@ public class EventFiltersViewModel : BaseViewModel
         {
             try
             {
-                await Task.Delay(300, token); // debounce delay
+                await Task.Delay(300, token);
                 if (!token.IsCancellationRequested)
                 {
                     await SearchCountries();
@@ -393,13 +393,7 @@ public class EventFiltersViewModel : BaseViewModel
 
     private async Task SearchTags()
     {
-        if (!string.IsNullOrWhiteSpace(SelectedTagFilter))
-        {
-            MainThread.BeginInvokeOnMainThread(() => TagSuggestions.Clear());
-            return;
-        }
-        
-        if (string.IsNullOrWhiteSpace(TagFilter))
+        if (!string.IsNullOrWhiteSpace(SelectedTagFilter) || string.IsNullOrWhiteSpace(TagFilter))
         {
             MainThread.BeginInvokeOnMainThread(() => TagSuggestions.Clear());
             return;
@@ -417,13 +411,7 @@ public class EventFiltersViewModel : BaseViewModel
     
     private async Task SearchSpeakers()
     {
-        if (!string.IsNullOrWhiteSpace(SelectedSpeakerFilter))
-        {
-            MainThread.BeginInvokeOnMainThread(() => SpeakerSuggestions.Clear());
-            return;
-        }
-        
-        if (string.IsNullOrWhiteSpace(SpeakerFilter))
+        if (!string.IsNullOrWhiteSpace(SelectedSpeakerFilter) || string.IsNullOrWhiteSpace(SpeakerFilter))
         {
             MainThread.BeginInvokeOnMainThread(() => SpeakerSuggestions.Clear());
             return;
@@ -439,23 +427,16 @@ public class EventFiltersViewModel : BaseViewModel
         });
     }
 
-    private async Task SearchCountries()
+    private Task SearchCountries()
     {
-        if (!string.IsNullOrWhiteSpace(SelectedCountryFilter))
+        if (!string.IsNullOrWhiteSpace(SelectedCountryFilter) || string.IsNullOrWhiteSpace(CountryFilter))
         {
             MainThread.BeginInvokeOnMainThread(() => CountrySuggestions.Clear());
-            return;
-        }
-        
-        if (string.IsNullOrWhiteSpace(CountryFilter))
-        {
-            MainThread.BeginInvokeOnMainThread(() => CountrySuggestions.Clear());
-            return;
+            return Task.CompletedTask;
         }
 
-        // Filter countries based on the search text
         var filteredCountries = Countries
-            .Where(c => c.ToLower().Contains(CountryFilter.ToLower()) && !SelectedCountries.Contains(c))
+            .Where(c => c.Contains(CountryFilter, StringComparison.CurrentCultureIgnoreCase) && !SelectedCountries.Contains(c))
             .ToList();
 
         MainThread.BeginInvokeOnMainThread(() =>
@@ -464,17 +445,12 @@ public class EventFiltersViewModel : BaseViewModel
             foreach (var country in filteredCountries)
                 CountrySuggestions.Add(country);
         });
+        return Task.CompletedTask;
     }
     
     private async Task SearchCommunities()
     {
-        if (!string.IsNullOrWhiteSpace(SelectedCommunityFilter))
-        {
-            MainThread.BeginInvokeOnMainThread(() => CommunitySuggestions.Clear());
-            return;
-        }
-        
-        if (string.IsNullOrWhiteSpace(CommunityFilter))
+        if (!string.IsNullOrWhiteSpace(SelectedCommunityFilter) || string.IsNullOrWhiteSpace(CommunityFilter))
         {
             MainThread.BeginInvokeOnMainThread(() => CommunitySuggestions.Clear());
             return;
@@ -492,15 +468,13 @@ public class EventFiltersViewModel : BaseViewModel
     
     public void LoadFilters()
     {
-        // Load filters from your service here
-        // For example: FilterService.LoadFilters();
         var filters = _filterService.GetFilters();
         if (filters == null) return;
         
-        if (filters.TagFilters.Any()) SelectedTags = filters.TagFilters.ToObservableHashSet();
-        if (filters.SpeakerFilters.Any()) SelectedSpeakers = filters.SpeakerFilters.ToObservableHashSet();
-        if (filters.CountryFilters.Any()) SelectedCountries = filters.CountryFilters.ToObservableHashSet();
-        if (filters.CommunityFilters.Any()) SelectedCommunities = filters.CommunityFilters.ToObservableHashSet();
+        if (filters.TagFilters.Count != 0) SelectedTags = filters.TagFilters.ToObservableHashSet();
+        if (filters.SpeakerFilters.Count != 0) SelectedSpeakers = filters.SpeakerFilters.ToObservableHashSet();
+        if (filters.CountryFilters.Count != 0) SelectedCountries = filters.CountryFilters.ToObservableHashSet();
+        if (filters.CommunityFilters.Count != 0) SelectedCommunities = filters.CommunityFilters.ToObservableHashSet();
         if (filters.OnlineOnly) OnlineOnly = true;
     }
 

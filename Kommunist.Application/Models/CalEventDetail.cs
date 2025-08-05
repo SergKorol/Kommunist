@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Kommunist.Application.Models;
 
 public record CalEventDetail
@@ -15,15 +13,15 @@ public record CalEventDetail
     public string FormatEvent { get; set; }
     public string Location { get; set; }
     public string Description { get; set; }
-    public List<PersonCard> Speakers { get; set; } = new List<PersonCard>();
-    public List<PersonCard> Moderators { get; set; } = new List<PersonCard>();
+    public List<PersonCard> Speakers { get; set; } = [];
+    public List<PersonCard> Moderators { get; set; } = [];
 }
 
 public record PersonCard
 {
     public string SpeakerId { get; set; }
     public string Name { get; set; }
-    public string? Avatar { get; set; }
+    public string Avatar { get; set; }
     public string Company { get; set; }
     public string Position { get; set; }
 }

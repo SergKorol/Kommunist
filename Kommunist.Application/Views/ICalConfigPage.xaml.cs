@@ -1,21 +1,20 @@
-using Kommunist.Application.Controls;
 using Kommunist.Application.ViewModels;
 
 namespace Kommunist.Application.Views;
 
-public partial class ICalConfigPage : MyTabBar
+public partial class CalConfigPage
 {
-    public ICalConfigPage()
+    public CalConfigPage()
     {
         InitializeComponent();
         var serviceProvider = MauiProgram.CreateMauiApp().Services;
-        var eventCalendarViewModel = serviceProvider?.GetRequiredService<ICalConfigViewModel>();
+        var eventCalendarViewModel = serviceProvider.GetRequiredService<CalConfigViewModel>();
         BindingContext = eventCalendarViewModel;
     }
     
     private void OnAlarmMinutesChanged(object sender, TextChangedEventArgs e)
     {
-        if (BindingContext is ICalConfigViewModel viewModel && int.TryParse(e.NewTextValue, out int value))
+        if (BindingContext is CalConfigViewModel viewModel && int.TryParse(e.NewTextValue, out var value))
         {
             viewModel.AlarmMinutes = Math.Max(0, value);
         }
@@ -23,7 +22,7 @@ public partial class ICalConfigPage : MyTabBar
 
     private void OnAlarmEmailChanged(object sender, TextChangedEventArgs e)
     {
-        if (BindingContext is ICalConfigViewModel viewModel)
+        if (BindingContext is CalConfigViewModel viewModel)
         {
             viewModel.Email = e.NewTextValue;
         }

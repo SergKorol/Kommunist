@@ -1,12 +1,12 @@
 using System.Text;
 using System.Windows.Input;
+using CommunityToolkit.Maui.Alerts;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
-using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
@@ -19,10 +19,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
     private readonly IFileHostingService _fileHostingService;
     
     public CalEventDetail SelectedEventDetail { get; set; }
-    public ServiceEvent TappedServiceEvent { get; set; }
-    public IEnumerable<EventPage> EventPages { get; set; }
-    public IEnumerable<PageItem> PageItems { get; set; }
-    public AgendaPage AgendaPage { get; set; }
+    private IEnumerable<PageItem> PageItems { get; set; }
+    private AgendaPage AgendaPage { get; set; }
     
 
     public int TappedEventId { get; set; }
@@ -55,8 +53,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
     
     public bool HasParticipants => 
         SelectedEventDetail != null && 
-        ((SelectedEventDetail.Speakers != null && SelectedEventDetail.Speakers.Count > 0) || 
-         (SelectedEventDetail.Moderators != null && SelectedEventDetail.Moderators.Count > 0));
+        (SelectedEventDetail.Speakers is { Count: > 0 } || 
+         SelectedEventDetail.Moderators is { Count: > 0 });
 
     private async Task GetAgenda(int eventId)
     {
@@ -69,56 +67,70 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
     private async void OpenEventPage()
     {
-        await Launcher.OpenAsync(SelectedEventDetail.Url.Trim());
+        try
+        {
+            await Launcher.OpenAsync(SelectedEventDetail.Url.Trim());
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Event page wasn't opened: {e.Message}").Show();
+        }
     }
 
     private async void GenerateEventAndUpload()
     {
-        var properties = PageItems.FirstOrDefault(x => x.Type == "Main")?.Properties;
-        if (properties == null) return;
+        try
+        {
+            var properties = PageItems.FirstOrDefault(x => x.Type == "Main")?.Properties;
+            if (properties == null) return;
         
-        var calendar = new Ical.Net.Calendar
-        {
-            Method = "PUBLISH",
-            Scale = "GREGORIAN"
-        };
-        calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
+            var calendar = new Ical.Net.Calendar
+            {
+                Method = "PUBLISH",
+                Scale = "GREGORIAN"
+            };
+            calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
         
-        var alarm = new Alarm
-        {
-            Trigger = new Ical.Net.DataTypes.Trigger("-PT5M"),
-            Description = "Reminder",
-            Action = AlarmAction.Display,
-        };
-        var datesStamp = properties?.Details.DatesTimestamp;
-        var icalEvent = new CalendarEvent
-        {
-            Start = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
-            Summary = SelectedEventDetail.Title,
-            Description = $"{HtmlConverter.HtmlToPlainText(SelectedEventDetail.Description)}" + "\n\n" + $"{SelectedEventDetail.Url}",
-            DtStart = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
-            DtEnd = new CalDateTime(ConvertDateTime(datesStamp.End), TimeZoneInfo.Local.Id),
-            Transparency = TransparencyType.Opaque,
+            var alarm = new Alarm
+            {
+                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M"),
+                Description = "Reminder",
+                Action = AlarmAction.Display
+            };
+            var datesStamp = properties?.Details.DatesTimestamp;
+            var icalEvent = new CalendarEvent
+            {
+                Start = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
+                Summary = SelectedEventDetail.Title,
+                Description = $"{HtmlConverter.HtmlToPlainText(SelectedEventDetail.Description)}" + "\n\n" + $"{SelectedEventDetail.Url}",
+                DtStart = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
+                DtEnd = new CalDateTime(ConvertDateTime(datesStamp.End), TimeZoneInfo.Local.Id),
+                Transparency = TransparencyType.Opaque
             
                 
-        };
-        icalEvent.Alarms.Add(alarm);
-        icalEvent.Attendees.Add(new Attendee { CommonName = "Guest", Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
-        calendar.Events.Add(icalEvent);
+            };
+            icalEvent.Alarms.Add(alarm);
+            icalEvent.Attendees.Add(new Attendee { CommonName = "Guest", Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+            calendar.Events.Add(icalEvent);
         
-        var serializer = new CalendarSerializer();
-        var icalString = serializer.SerializeToString(calendar);
+            var serializer = new CalendarSerializer();
+            var icalString = serializer.SerializeToString(calendar);
         
-        var path = await SaveIcalToInternalStorageAsync(icalString);
-        await UploadOrSendFile(path);
+            var path = await SaveIcalToInternalStorageAsync(icalString);
+            await UploadOrSendFile(path);
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Event wasn't added: {e.Message}").Show();
+        }
     }
     
-    private async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
-        string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+        var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
-        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-        using var writer = new StreamWriter(stream, Encoding.UTF8);
+        await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        await using var writer = new StreamWriter(stream, Encoding.UTF8);
         await writer.WriteAsync(icalString);
 
         return filePath;
@@ -139,30 +151,27 @@ public class EventCalendarDetailViewModel : BaseViewModel
         
     }
 
-    private string GetEventPeriod(long? start, long? end)
+    private static string GetEventPeriod(long? start, long? end)
     {
-        if (start != null && end != null)
+        if (start == null || end == null) return string.Empty;
+        var startDate = start.Value.ToLocalDateTime();
+        var endDate = end.Value.ToLocalDateTime();
+        if (startDate.Day == endDate.Day)
         {
-            var startDate = start.Value.ToLocalDateTime();
-            var endDate = end.Value.ToLocalDateTime();
-            if (startDate.Day == endDate.Day)
-            {
-                return  startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
-            }
-
-            return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
+            return  startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
         }
-        return string.Empty;
+
+        return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
     }
 
-    private string ConvertDateTime(long dt)
+    private static string ConvertDateTime(long dt)
     {
         DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
         
         return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
     }
 
-    void SetMainCalEventDetail(CalEventDetail eventDetail)
+    private void SetMainCalEventDetail(CalEventDetail eventDetail)
     {
         var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
@@ -173,54 +182,50 @@ public class EventCalendarDetailViewModel : BaseViewModel
         eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
         eventDetail.Date = mainPart.Properties?.Details.DatesTimestamp.Start.ToLocalDateTime().Date.ToString("d MMM");
         eventDetail.Url = mainPart.Properties?.EventUrl;
-        if (mainPart.Properties != null && mainPart.Properties.Languages.Any())
+        if (mainPart.Properties != null && mainPart.Properties.Languages.Count != 0)
             eventDetail.Language = string.Join(", ", mainPart.Properties.Languages);
-        eventDetail.FormatEvent = mainPart.Properties!.Details.ParticipationFormat.Online ? "Online" : "Offline";
-        eventDetail.Location = mainPart.Properties.Details.ParticipationFormat.Location ?? "World";
+        eventDetail.FormatEvent = mainPart.Properties != null && mainPart.Properties.Details.ParticipationFormat.Online ? "Online" : "Offline";
+        if (mainPart.Properties == null) return;
+        {
+            eventDetail.Location = mainPart.Properties.Details.ParticipationFormat.Location ?? "World";
 
-        string text = string.Empty;
-        var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
-        if (unlimitedText != null)
-        {
-            text = unlimitedText.Properties?.UnlimitedText;
-        }
-        
-        var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
-        if (iconPointsPart != null)
-        {
-            var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
-            var icons = iconPointsPart.Properties.Icons.Select(x => x.Text).ToList();
-            if (string.IsNullOrEmpty(text))
+            var text = string.Empty;
+            var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
+            if (unlimitedText != null)
             {
-                text = string.Join("\n", texts);
+                text = unlimitedText.Properties?.UnlimitedText;
             }
-            else if (icons.Any())
-            {
-                text += "<ul>";
-                text = icons.Aggregate(text, (current, icon) => current + ("<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>"));
-                text += "</ul>";
-            }
-            else
-            {
-                text += "\n" + string.Join("\n", texts);
-            }
-        }
 
-        if (!string.IsNullOrEmpty(text))
-        {
-            bool isDark = Microsoft.Maui.Controls.Application.Current.RequestedTheme == AppTheme.Dark;
-            if (isDark)
+            var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
+            if (iconPointsPart != null)
             {
-                eventDetail.Description = BuildDarkHtmlContent(text);
+                var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
+                var icons = iconPointsPart.Properties.Icons.Select(x => x.Text).ToList();
+                if (string.IsNullOrEmpty(text))
+                {
+                    text = string.Join("\n", texts);
+                }
+                else if (icons.Count != 0)
+                {
+                    text += "<ul>";
+                    text = icons.Aggregate(text,
+                        (current, icon) =>
+                            current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
+                    text += "</ul>";
+                }
+                else
+                {
+                    text += "\n" + string.Join("\n", texts);
+                }
             }
-            else
-            {
-                eventDetail.Description = BuildLightHtmlContent(text);
-            }
+
+            if (string.IsNullOrEmpty(text)) return;
+            var isDark = Microsoft.Maui.Controls.Application.Current?.RequestedTheme == AppTheme.Dark;
+            eventDetail.Description = isDark ? BuildDarkHtmlContent(text) : BuildLightHtmlContent(text);
         }
     }
 
-    async Task SetAgendaPage(CalEventDetail eventDetail)
+    private async Task SetAgendaPage(CalEventDetail eventDetail)
     {
         var agendaPart = PageItems.FirstOrDefault(x => x.Type == "Agenda");
         if (agendaPart?.Properties == null) return;
@@ -262,76 +267,73 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
             if (agendaItem?.Info?.DescriptionHtml != null)
             {
-                bool isDark = IsDarkMode();
-                if (isDark)
-                {
-                    eventDetail.Description = BuildDarkHtmlContent(agendaItem?.Info?.DescriptionHtml);
-                }
-                else
-                {
-                    eventDetail.Description = BuildLightHtmlContent(agendaItem?.Info?.DescriptionHtml);
-                }
+                var isDark = IsDarkMode();
+                eventDetail.Description = isDark ? BuildDarkHtmlContent(agendaItem?.Info?.DescriptionHtml) : BuildLightHtmlContent(agendaItem?.Info?.DescriptionHtml);
             }
         }
     }
     
-    private bool IsDarkMode()
+    private static bool IsDarkMode()
     {
-        var theme = Microsoft.Maui.Controls.Application.Current.UserAppTheme;
+        var theme = Microsoft.Maui.Controls.Application.Current?.UserAppTheme;
         if (theme == AppTheme.Unspecified)
             theme = Microsoft.Maui.Controls.Application.Current.RequestedTheme;
         return theme == AppTheme.Dark;
     }
     
-    private string BuildLightHtmlContent(string text)
+    private static string BuildLightHtmlContent(string text)
     {
-        return $@"
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-            <style>
-                body {{
-                    margin: 0;
-                    padding: 0;
-                    overflow: hidden !important;
-                    font-family: -apple-system, system-ui;
-                }}
-            </style>
-        </head>
-        <body>
-            {text}
-        </body>
-        </html>";
+        return $$"""
+
+                         <!DOCTYPE html>
+                         <html>
+                         <head>
+                             <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+                             <style>
+                                 body {
+                                     margin: 0;
+                                     padding: 0;
+                                     overflow: hidden !important;
+                                     font-family: -apple-system, system-ui;
+                                 }
+                             </style>
+                         </head>
+                         <body>
+                             {{text}}
+                         </body>
+                         </html>
+                 """;
     }
     
-    private string BuildDarkHtmlContent(string text)
+    private static string BuildDarkHtmlContent(string text)
     {
-        return $@"
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-        <style>
-            body {{
-                margin: 0;
-                padding: 0;
-                overflow: hidden !important;
-                font-family: -apple-system, system-ui;
-                background-color: #121212;
-                color: #e0e0e0;
-            }}
-            a {{
-                color: #bb86fc;
-            }}
-            img {{
-                filter: brightness(0.8) contrast(1.2);
-            }}
-        </style>
-    </head>
-    <body>
-        {text}
-    </body>
-    </html>";
+        return $$"""
+
+                     <!DOCTYPE html>
+                     <html>
+                     <head>
+                         <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+                         <style>
+                             body {
+                                 margin: 0;
+                                 padding: 0;
+                                 overflow: hidden !important;
+                                 font-family: -apple-system, system-ui;
+                                 background-color: #121212;
+                                 color: #e0e0e0;
+                             }
+                             a {
+                                 color: #bb86fc;
+                             }
+                             img {
+                                 filter: brightness(0.8) contrast(1.2);
+                             }
+                         </style>
+                     </head>
+                     <body>
+                         {{text}}
+                     </body>
+                     </html>
+                 """;
     }
 }

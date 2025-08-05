@@ -1,12 +1,11 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.ViewModels;
-using Microsoft.Maui.Controls;
 
 namespace Kommunist.Application.Views;
 
-public partial class CalEventDetailPage : ContentPage
+public partial class CalEventDetailPage
 {
     public string BgImg { get; set; }
     public bool HasParticipants { get; set; }
@@ -21,29 +20,34 @@ public partial class CalEventDetailPage : ContentPage
 
     private async void WebView_OnLoaded(object sender, EventArgs eventArgs)
     {
-        await Task.Delay(500); // ✅ Ensures the content is fully rendered before executing JavaScript
-
         try
         {
-            if (!DescriptionWebView.IsVisible)
-            {
-                ArgumentNullException.ThrowIfNull("The Description shouldn't be NULL");
-            }
-            
-            string heightStr = await DescriptionWebView.EvaluateJavaScriptAsync("document.documentElement.getBoundingClientRect().height");
-            Debug.WriteLine($"WebView Height (JS): {heightStr}"); // ✅ Debug output
+            await Task.Delay(500);
 
-            if (double.TryParse(heightStr, NumberStyles.Any, CultureInfo.InvariantCulture, out double height) && height > 0)
+            try
             {
+                if (!DescriptionWebView.IsVisible)
+                {
+                    ArgumentNullException.ThrowIfNull("The Description shouldn't be NULL");
+                }
+            
+                var heightStr = await DescriptionWebView.EvaluateJavaScriptAsync("document.documentElement.getBoundingClientRect().height");
+                Debug.WriteLine($"WebView Height (JS): {heightStr}");
+
+                if (!double.TryParse(heightStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var height) ||
+                    !(height > 0)) return;
                 DescriptionWebView.HeightRequest = height;
                 DescriptionWebView.InvalidateMeasure();
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error evaluating JavaScript: {ex.Message}");
+            }
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Debug.WriteLine($"Error evaluating JavaScript: {ex.Message}");
+            await Toast.Make($"Error loading WebView: {e}").Show();
         }
     }
-
 }
 
