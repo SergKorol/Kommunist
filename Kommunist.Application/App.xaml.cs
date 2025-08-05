@@ -2,15 +2,14 @@
 
 namespace Kommunist.Application;
 
-public partial class App : Microsoft.Maui.Controls.Application
+public partial class App 
 {
     public App()
     {
         InitializeComponent();
-        // Apply the theme at startup
+        if (Current == null) return;
         SetAppThemeResources(Current.RequestedTheme);
-        
-        // Listen for future theme changes
+
         Current.RequestedThemeChanged += OnRequestedThemeChanged;
     }
     
