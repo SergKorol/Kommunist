@@ -1,10 +1,6 @@
-﻿using System.Windows.Input;
-using CalendarView.MAUI;
-using Microsoft.Maui.Controls;
+﻿namespace Kommunist.Application;
 
-namespace Kommunist.Application;
-
-public partial class MainPage : ContentPage
+public partial class MainPage
 {
     public MainPage()
     {

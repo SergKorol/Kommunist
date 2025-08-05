@@ -41,6 +41,9 @@
     
     <Color x:Key="TextButtonColor">White</Color>
     <Color x:Key="BackgroundButtonColor">#512BD4</Color>
+    <Color x:Key="PrimaryBackgroundButtonColor">#BBBBBB</Color>
+    <Color x:Key="DecrementBackgroundButtonColor">#F0F0F5</Color>
+    <Color x:Key="IncrementBackgroundButtonColor">#F0F0F5</Color>
     <Color x:Key="VisualTextButtonColor">#141414</Color>
     <Color x:Key="VisualBackgroundButtonColor">#C8C8C8</Color>
     
@@ -69,9 +72,25 @@
     
     <Color x:Key="CalendarBackgroundColor">White</Color>
     
-    <!-- <Style TargetType="{x:Type ContentPage}" x:Key="ColorTemplate"> -->
-    <!--     <Setter Property="ControlTemplate" Value="{StaticResource SecondaryColorTemplate}"></Setter> -->
-    <!-- </Style> -->
+    <Color x:Key="EntryPlaceholderColor">#C8C8C8</Color>
+    <Color x:Key="SwitchColor">#512BD4</Color>
+    <Color x:Key="SwitchThumbColor">White</Color>
+    <Color x:Key="SwitchDisabledColor">#ACACAC</Color>
+    <Color x:Key="SwitchDisabledThumbColor">#ACACAC</Color>
+    <Color x:Key="SwitchOnColor">#DFD8F7</Color>
+    <Color x:Key="SwitchOnThumbColor">#512BD4</Color>
+    <Color x:Key="SwitchOffThumbColor">#919191</Color>
+    
+    <Color x:Key="CardBackgroundColor">White</Color>
+    
+    <Color x:Key="InvalidEntryColor">Red</Color>
+    <Color x:Key="ValidEntryColor">Green</Color>
+    
+    <Color x:Key="BorderedEntryContainerColor">White</Color>
+    <Color x:Key="EntryBackgroundColor">White</Color>
+    
+    <Color x:Key="PrimaryButtonTextColor">White</Color>
+
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
     <x:String x:Key="IconExclamation">&#x21;</x:String>

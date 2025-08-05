@@ -1,13 +1,9 @@
-﻿using Kommunist.Application.Views;
+﻿namespace Kommunist.Application;
 
-namespace Kommunist.Application;
-
-public partial class AppShell : Shell
+public partial class AppShell
 {
     public AppShell()
     {
         InitializeComponent();
-        // Routing.RegisterRoute("Calendar", typeof(EventCalendarPage));
-        // Routing.RegisterRoute("Home", typeof(HomePage));
     }
 }

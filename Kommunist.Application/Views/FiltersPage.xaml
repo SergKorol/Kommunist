@@ -31,7 +31,7 @@
     
                 <!-- Tag Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -110,7 +110,7 @@
     
                 <!-- Speaker Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -188,7 +188,7 @@
     
                 <!-- Country Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">
@@ -266,7 +266,7 @@
     
                 <!-- Community Search -->
                 <Border 
-                    Stroke="{StaticResource Gray300}"
+                    Stroke="{DynamicResource Gray300}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 8,8,8,8">
                     <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,5">

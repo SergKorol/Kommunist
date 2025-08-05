@@ -5,7 +5,7 @@
              x:Class="Kommunist.Application.Themes.DarkTheme">
 
     <!-- Primary Colors -->
-    <Color x:Key="PrimaryColor">#82B1FF</Color> <!-- Lighter shade of blue -->
+    <Color x:Key="PrimaryColor">#82B1FF</Color>
     <Color x:Key="PrimaryDarkColor">#8C9EFF</Color>
     <Color x:Key="Secondary">#2A2A2E</Color>
     <Color x:Key="Warning">#FF6E6E</Color>
@@ -48,6 +48,9 @@
     
     <Color x:Key="TextButtonColor">#512BD4</Color>
     <Color x:Key="BackgroundButtonColor">White</Color>
+    <Color x:Key="PrimaryBackgroundButtonColor">#BBBBBB</Color>
+    <Color x:Key="DecrementBackgroundButtonColor">#1E1E1E</Color>
+    <Color x:Key="IncrementBackgroundButtonColor">#1E1E1E</Color>
     <Color x:Key="VisualTextButtonColor">#C8C8C8</Color>
     <Color x:Key="VisualBackgroundButtonColor">#404040</Color>
     
@@ -67,8 +70,8 @@
     
     <Color x:Key="PickerTextColor">White</Color>
     <Color x:Key="PickerTitleColor">#C8C8C8</Color>
-    <Color x:Key="VisualPickerTextColor">#404040</Color>
-    <Color x:Key="VisualPickerTitleColor">#404040</Color>
+    <Color x:Key="VisualPickerTextColor">#3A2D78</Color>
+    <Color x:Key="VisualPickerTitleColor">#3A2D78</Color>
     
     <Color x:Key="BoxViewColor">#404040</Color>
     
@@ -76,10 +79,27 @@
     
     <Color x:Key="CalendarBackgroundColor">Black</Color>
     
+    <Color x:Key="EntryPlaceholderColor">#5A5A5A</Color>
+    <Color x:Key="SwitchColor">White</Color>
+    <Color x:Key="SwitchThumbColor">Black</Color>
+    <Color x:Key="SwitchDisabledColor">#6A6A6A</Color>
+    <Color x:Key="SwitchDisabledThumbColor">#6A6A6A</Color>
+    <Color x:Key="SwitchOnColor">#2C2C2C</Color>
+    <Color x:Key="SwitchOnThumbColor">White</Color>
+    <Color x:Key="SwitchOffThumbColor">#5A5A5A</Color>
     
-    <!-- <Style TargetType="{x:Type ContentPage}" x:Key="ColorTemplate"> -->
-    <!--     <Setter Property="ControlTemplate" Value="{StaticResource SecondaryColorTemplate}"></Setter> -->
-    <!-- </Style> -->
+    <Color x:Key="CardBackgroundColor">Black</Color>
+    
+    <Color x:Key="InvalidEntryColor">Red</Color>
+    <Color x:Key="ValidEntryColor">Green</Color>
+    
+    <Color x:Key="BorderedEntryContainerColor">Black</Color>
+    
+    <Color x:Key="EntryBackgroundColor">Black</Color>
+    
+    <Color x:Key="PrimaryButtonTextColor">Black</Color>
+    
+
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
     <x:String x:Key="IconExclamation">&#x21;</x:String>

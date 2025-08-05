@@ -290,7 +290,7 @@
                 
                 <!-- Join Event Button -->
                 <Button Text="Join Event" 
-                        BackgroundColor="{StaticResource Success}"
+                        BackgroundColor="{DynamicResource Success}"
                         TextColor="White"
                         FontAttributes="Bold"
                         FontSize="16"
