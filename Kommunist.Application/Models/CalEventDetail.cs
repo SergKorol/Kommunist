@@ -2,8 +2,6 @@ namespace Kommunist.Application.Models;
 
 public record CalEventDetail
 {
-    public int EventId { get; set; }
-    public int AgendaId { get; set; }
     public string Title { get; set; }
     public string BgImageUrl { get; set; }
     public string PeriodDateTime { get; set; }
@@ -19,7 +17,6 @@ public record CalEventDetail
 
 public record PersonCard
 {
-    public string SpeakerId { get; set; }
     public string Name { get; set; }
     public string Avatar { get; set; }
     public string Company { get; set; }

@@ -8,13 +8,11 @@ namespace Kommunist.Application.Views;
 public partial class CalEventDetailPage
 {
     public string BgImg { get; set; }
-    public bool HasParticipants { get; set; }
     
     public CalEventDetailPage(EventCalendarDetailViewModel eventDetailViewModel)
     {
         BgImg = eventDetailViewModel.SelectedEventDetail.BgImageUrl;
         InitializeComponent();
-        HasParticipants = eventDetailViewModel.HasParticipants;
         BindingContext = eventDetailViewModel;
     }
 

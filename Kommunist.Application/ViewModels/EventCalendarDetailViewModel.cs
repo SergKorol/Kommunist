@@ -189,7 +189,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
         
-        eventDetail.EventId = TappedEventId;
         eventDetail.Title = mainPart.Properties?.Text?.First()?.Text;
         eventDetail.BgImageUrl = mainPart.Properties?.Image.Url;
         eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
@@ -252,7 +251,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 {
                     var speakerCard = new PersonCard
                     {
-                        SpeakerId = speaker.Id,
                         Name = speaker.Name,
                         Company = speaker.Company,
                         Position = speaker.JobPosition,
@@ -268,7 +266,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 {
                     var moderatorCard = new PersonCard
                     {
-                        SpeakerId = moderator.Id,
                         Name = moderator.Name,
                         Company = moderator.Company,
                         Position = moderator.JobPosition,
