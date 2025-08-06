@@ -22,6 +22,19 @@ public class EventCalendarDetailViewModel : BaseViewModel
     private IEnumerable<PageItem> PageItems { get; set; }
     private AgendaPage AgendaPage { get; set; }
 
+    
+    private bool _isWebViewLoading;
+    public bool IsWebViewLoading
+    {
+        get => _isWebViewLoading;
+        set
+        {
+            if (_isWebViewLoading == value) return;
+            _isWebViewLoading = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     private int TappedEventId { get; }
     

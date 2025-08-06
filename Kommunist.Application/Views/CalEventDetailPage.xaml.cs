@@ -22,6 +22,9 @@ public partial class CalEventDetailPage
     {
         try
         {
+            if (BindingContext is not EventCalendarDetailViewModel vm) return;
+            vm.IsWebViewLoading = true;
+                
             await Task.Delay(500);
 
             try
@@ -38,11 +41,13 @@ public partial class CalEventDetailPage
                     !(height > 0)) return;
                 DescriptionWebView.HeightRequest = height;
                 DescriptionWebView.InvalidateMeasure();
+                vm.IsWebViewLoading = false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error evaluating JavaScript: {ex.Message}");
             }
+
         }
         catch (Exception e)
         {

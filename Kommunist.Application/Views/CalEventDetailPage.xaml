@@ -167,16 +167,21 @@
                         <BoxView Style="{StaticResource SeparatorStyle}" />
                         
 
-                        <WebView IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}" PropertyChanged="WebView_OnLoaded" x:Name="DescriptionWebView" VerticalOptions="FillAndExpand">
+                        <WebView x:Name="DescriptionWebView"
+                                 IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 VerticalOptions="FillAndExpand"
+                                 PropertyChanged="WebView_OnLoaded">
                             <WebView.Source>
                                 <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description}" />
                             </WebView.Source>
                         </WebView>
-                        
-                        <!-- Loading indicator for WebView -->
+
+                        <!-- Overlay loading spinner -->
                         <ActivityIndicator IsRunning="{Binding IsWebViewLoading}" 
                                            IsVisible="{Binding IsWebViewLoading}"
-                                           HorizontalOptions="Center" />
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           InputTransparent="True" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -252,15 +257,13 @@
                                                     Margin="2,5" 
                                                     Padding="10">
                                                 <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                                                    <Frame HeightRequest="60" 
-                                                           WidthRequest="60" 
-                                                           CornerRadius="30" 
-                                                           IsClippedToBounds="True"
-                                                           Padding="0"
-                                                           HorizontalOptions="Center">
+                                                    <Border HeightRequest="60" 
+                                                            WidthRequest="60" 
+                                                            StrokeShape="RoundRectangle 30"
+                                                            HorizontalOptions="Center">
                                                         <Image Aspect="AspectFill"
                                                                Source="{Binding Avatar}" />
-                                                    </Frame>
+                                                    </Border>
                                                     <Label Text="{Binding Name}" 
                                                            FontAttributes="Bold" 
                                                            HorizontalOptions="Center"
