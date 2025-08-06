@@ -1,5 +1,3 @@
-using Kommunist.Core.Entities;
-using Kommunist.Core.Entities.PageProperties.Main;
 using Newtonsoft.Json;
 
 namespace Kommunist.Core.Models;

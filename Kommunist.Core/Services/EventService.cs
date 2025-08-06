@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Kommunist.Core.Converters;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.PageProperties.Agenda;
@@ -17,14 +13,14 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
     public async Task<IEnumerable<ServiceEvent>> LoadEvents(DateTime startDate, DateTime endDate)
     {
         var filters = filterService.GetFilters();
-        string fromDate = EncodeDateString(startDate.ToString("MM/dd/yyyy"));
-        string toDate = EncodeDateString(endDate.ToString("MM/dd/yyyy"));
+        var fromDate = EncodeDateString(startDate.ToString("MM/dd/yyyy"));
+        var toDate = EncodeDateString(endDate.ToString("MM/dd/yyyy"));
         var url = $"/api/v2/calendar?start_date={fromDate}&end_date={toDate}";
         SetFilters(filters, ref url);
         
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -43,7 +39,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         var url = $"/api/v2/events/{eventId}/pages/home";
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -51,7 +47,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
             {
                 Converters = new List<JsonConverter> { new ImageDetailsConverter() }
             };
-            var eventPages = JsonConvert.DeserializeObject<IEnumerable<PageItem>>(json);
+            var eventPages = JsonConvert.DeserializeObject<IEnumerable<PageItem>>(json, settings);
             return eventPages;
         }
         catch (Exception e)
@@ -66,7 +62,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         var url = $"/api/v2/events/{eventId}/agenda";
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -76,15 +72,15 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         catch (Exception e)
         {
             Console.WriteLine($"An HTTP request error occurred: {e.Message}");
-            return default;
+            return null;
         }
     }
-    private string EncodeDateString(string date)
+    private static string EncodeDateString(string date)
     {
         return Uri.EscapeDataString(date).Replace(".", "%2F");
     }
     
-    private void SetFilters(FilterOptions filters, ref string url)
+    private static void SetFilters(FilterOptions filters, ref string url)
     {
         SetTagFilters(ref url, filters.TagFilters);
         SetSpeakerFilters(ref url, filters.SpeakerFilters);
@@ -94,9 +90,9 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         
     }
     
-    private void SetTagFilters(ref string url, ICollection<string> filters)
+    private static void SetTagFilters(ref string url, List<string> filters)
     {
-        if (!filters.Any()) return;
+        if (filters.Count == 0) return;
         var sb = new StringBuilder();
         foreach (var filter in filters)
         {
@@ -107,9 +103,9 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
 
     }
     
-    private void SetSpeakerFilters(ref string url, ICollection<string> filters)
+    private static void SetSpeakerFilters(ref string url, List<string> filters)
     {
-        if (!filters.Any()) return;
+        if (filters.Count == 0) return;
         var sb = new StringBuilder();
         foreach (var filter in filters)
         {
@@ -119,9 +115,9 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         url += sb;
     }
     
-    private void SetCountryFilters(ref string url, ICollection<string> filters)
+    private static void SetCountryFilters(ref string url, List<string> filters)
     {
-        if (!filters.Any()) return;
+        if (filters.Count == 0) return;
         var sb = new StringBuilder();
         foreach (var filter in filters)
         {
@@ -131,9 +127,9 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         url += sb;
     }
     
-    private void SetCommunityFilters(ref string url, ICollection<string> filters)
+    private static void SetCommunityFilters(ref string url, List<string> filters)
     {
-        if (!filters.Any()) return;
+        if (filters.Count == 0) return;
         var sb = new StringBuilder();
         foreach (var filter in filters)
         {
@@ -143,7 +139,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         url += sb;
     }
     
-    private void SetOnlineFilters(ref string url, bool isOnline)
+    private static void SetOnlineFilters(ref string url, bool isOnline)
     {
         if (isOnline) url += "&online=Online";
     }

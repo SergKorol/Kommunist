@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Kommunist.Core.Services.Interfaces;
 
 public interface IEmailService

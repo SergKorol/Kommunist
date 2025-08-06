@@ -12,9 +12,9 @@ public class FileHostingService(IConfiguration config) : IFileHostingService
     {
         try
         {
-            string containerName = EmailTokenGenerator.EncryptForBlobName(email);
-            string fileName = Path.GetFileName(filePath);
-            string connectionString = config["BlobStorage:ConnectionString"];
+            var containerName = EmailTokenGenerator.EncryptForBlobName(email);
+            var fileName = Path.GetFileName(filePath);
+            var connectionString = config["BlobStorage:ConnectionString"];
             if (string.IsNullOrEmpty(connectionString))
                 throw new InvalidOperationException("Blob Storage connection string is missing.");
 

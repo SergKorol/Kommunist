@@ -1,3 +1,3 @@
-namespace Kommunist.Core.Entities.PageProperties;
+namespace Kommunist.Core.Entities.PageProperties.EventNavigation;
 
-public record Logo();
+public record Logo;

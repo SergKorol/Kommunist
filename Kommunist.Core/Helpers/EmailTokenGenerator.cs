@@ -1,23 +1,18 @@
-using System;
-using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Kommunist.Core.Helpers;
 
-public class EmailTokenGenerator
+public static class EmailTokenGenerator
 {
-// Exactly 32 bytes = 256-bit key
-    private static readonly byte[] Key = Encoding.UTF8.GetBytes("12345678901234567890123456789012");
+    private static readonly byte[] Key = "12345678901234567890123456789012"u8.ToArray();
     
-    // Exactly 16 bytes = 128-bit IV
-    private static readonly byte[] IV = Encoding.UTF8.GetBytes("abcdefghijklmnop");
+    private static readonly byte[] Iv = "abcdefghijklmnop"u8.ToArray();
 
     public static string EncryptForBlobName(string email)
     {
         using var aes = Aes.Create();
         aes.Key = Key;
-        aes.IV = IV;
+        aes.IV = Iv;
 
         var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 

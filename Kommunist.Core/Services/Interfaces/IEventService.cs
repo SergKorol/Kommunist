@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Kommunist.Core.Entities;
-using Kommunist.Core.Entities.BaseType;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 
