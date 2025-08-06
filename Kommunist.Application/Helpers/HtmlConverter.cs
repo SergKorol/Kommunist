@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using HtmlAgilityPack;
 
@@ -31,6 +32,7 @@ public static class HtmlConverter
 
         if (listItems == null || paragraphs == null || listItems.Count != paragraphs.Count)
             return sb.ToString().TrimEnd();
+
         for (var i = 0; i < listItems.Count; i++)
         {
             var bullet = $"•{listItems[i].InnerText.Trim()}";
@@ -38,12 +40,13 @@ public static class HtmlConverter
                 ?.Replace("\r", "")
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-            sb.AppendLine(bullet);
+            sb.AppendLine(CultureInfo.InvariantCulture, $"{bullet}");
             if (lines == null) continue;
+
             foreach (var line in lines)
             {
                 const string prefix = "  ";
-                sb.AppendLine($"{prefix}{line.Trim()}");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{prefix}{line.Trim()}");
             }
         }
 

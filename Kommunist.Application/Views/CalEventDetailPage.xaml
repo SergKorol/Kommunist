@@ -6,7 +6,6 @@
     xmlns:models="clr-namespace:Kommunist.Application.Models"
     xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:DataType="{x:Type viewModels:EventCalendarDetailViewModel}"
     xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
     Style="{StaticResource DefaultPageStyle}">
@@ -110,7 +109,7 @@
                                 <Label HorizontalOptions="Center">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span FontFamily="FAS" Text="{StaticResource IconLanguage}" FontSize="24" />
+                                            <Span FontFamily="FAS" Text="{DynamicResource IconLanguage}" FontSize="24" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
@@ -123,7 +122,7 @@
                                 <Label HorizontalOptions="Center">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span FontFamily="FAS" Text="{StaticResource IconLocationPin}" FontSize="24" />
+                                            <Span FontFamily="FAS" Text="{DynamicResource IconLocationPin}" FontSize="24" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
@@ -136,7 +135,7 @@
                                 <Label HorizontalOptions="Center">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span FontFamily="FAS" Text="{StaticResource IconCalendar}" FontSize="24" />
+                                            <Span FontFamily="FAS" Text="{DynamicResource IconCalendar}" FontSize="24" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>

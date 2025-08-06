@@ -32,6 +32,7 @@
         <Setter Property="ArrowColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
         <Setter Property="TextColor" Value="{DynamicResource CalendarPrimaryTextColor}" />
         <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="FontAttributes" Value="Bold" />
     </Style>
 
     <!-- <Style TargetType="{x:Type xc:DayView}" x:Key="DefaultDayViewStyle"> -->

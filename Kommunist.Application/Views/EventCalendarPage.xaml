@@ -67,10 +67,10 @@
                                               RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               HeightRequest="48"
-                                              Text="{Binding Text, Source={RelativeSource TemplatedParent}}"
+                                              Text="{TemplateBinding Text}"
                                               Style="{StaticResource DefaultNavigationViewStyle}">
                                 <xc:NavigationView.TextColor>
-                                    <x:DynamicResource Key="TextPrimaryColor" />
+                                    <x:DynamicResource Key="TextPrimaryColor" /> 
                                 </xc:NavigationView.TextColor>
                                 <xc:NavigationView.FontFamily>
                                     <OnPlatform x:TypeArguments="x:String">
@@ -114,7 +114,7 @@
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
-                                            <Grid BindingContext="{Binding BindingContext, Source={RelativeSource TemplatedParent}}"
+                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type models:EventDay}}}"
                                                   RowSpacing="2">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="1.5*" />

@@ -18,12 +18,12 @@ public class EventCalendarDetailViewModel : BaseViewModel
 {
     private readonly IFileHostingService _fileHostingService;
     
-    public CalEventDetail SelectedEventDetail { get; set; }
+    public CalEventDetail SelectedEventDetail { get; private set; }
     private IEnumerable<PageItem> PageItems { get; set; }
     private AgendaPage AgendaPage { get; set; }
-    
 
-    public int TappedEventId { get; set; }
+
+    private int TappedEventId { get; }
     
     private readonly IEventService _eventService;
     
@@ -97,7 +97,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 Description = "Reminder",
                 Action = AlarmAction.Display
             };
-            var datesStamp = properties?.Details.DatesTimestamp;
+            var datesStamp = properties.Details.DatesTimestamp;
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
@@ -268,7 +268,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             if (agendaItem?.Info?.DescriptionHtml != null)
             {
                 var isDark = IsDarkMode();
-                eventDetail.Description = isDark ? BuildDarkHtmlContent(agendaItem?.Info?.DescriptionHtml) : BuildLightHtmlContent(agendaItem?.Info?.DescriptionHtml);
+                eventDetail.Description = isDark ? BuildDarkHtmlContent(agendaItem.Info?.DescriptionHtml) : BuildLightHtmlContent(agendaItem.Info?.DescriptionHtml);
             }
         }
     }
