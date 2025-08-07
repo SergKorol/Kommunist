@@ -18,8 +18,9 @@ public class PropertiesConverter : JsonConverter<EventPage>
     public override EventPage ReadJson(JsonReader reader, Type objectType, EventPage existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var jsonObject = JObject.Load(reader);
-
-        var eventType = jsonObject["type"].ToObject<PageType>();
+        var type = jsonObject["type"];
+        if (type == null) return null;
+        var eventType = type.ToObject<PageType>();
         var properties = jsonObject["properties"];
 
         var eventPage = new EventPage
