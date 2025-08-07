@@ -90,6 +90,7 @@
     <Color x:Key="EntryBackgroundColor">White</Color>
     
     <Color x:Key="PrimaryButtonTextColor">White</Color>
+    <Color x:Key="CollectionBackgroundColor">LightGrey</Color>
 
     
     <x:String x:Key="IconSpace">&#x20;</x:String>

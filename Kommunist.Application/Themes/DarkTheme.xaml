@@ -99,6 +99,7 @@
     
     <Color x:Key="PrimaryButtonTextColor">Black</Color>
     
+    <Color x:Key="CollectionBackgroundColor">Black</Color>
 
     
     <x:String x:Key="IconSpace">&#x20;</x:String>
