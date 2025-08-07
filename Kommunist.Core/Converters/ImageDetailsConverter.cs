@@ -14,7 +14,7 @@ public class ImageDetailsConverter : JsonConverter
     {
         return reader.TokenType switch
         {
-            JsonToken.String => new ImageDetails { Url = reader.Value?.ToString() },
+            JsonToken.String => new ImageDetails { Url = reader.Value?.ToString() ?? "" },
             JsonToken.StartObject => serializer.Deserialize<ImageDetails>(reader),
             _ => null
         };

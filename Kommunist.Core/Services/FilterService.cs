@@ -8,7 +8,7 @@ public class FilterService : IFilterService
 {
     private const string StorageKey = "AppFilters";
 
-    private FilterOptions Filters { get; set; }
+    private FilterOptions _filters;
 
     public FilterService()
     {
@@ -17,33 +17,33 @@ public class FilterService : IFilterService
 
     public void SetFilters(FilterOptions filters)
     {
-        Filters = filters;
+        _filters = filters;
         SaveFilters();
     }
 
     public FilterOptions GetFilters()
     {
         LoadFilters();
-        return Filters;
+        return _filters;
     }
 
     public void ClearFilters()
     {
-        Filters = new FilterOptions();
+        _filters = new FilterOptions();
         Preferences.Remove(StorageKey);
     }
 
     private void SaveFilters()
     {
-        var json = JsonSerializer.Serialize(Filters);
+        var json = JsonSerializer.Serialize(_filters);
         Preferences.Set(StorageKey, json);
     }
 
     private void LoadFilters()
     {
         var json = Preferences.Get(StorageKey, null);
-        Filters = string.IsNullOrEmpty(json)
+        _filters = json is null or ""
             ? new FilterOptions()
-            : JsonSerializer.Deserialize<FilterOptions>(json);
+            : JsonSerializer.Deserialize<FilterOptions>(json) ?? new FilterOptions();
     }
 }

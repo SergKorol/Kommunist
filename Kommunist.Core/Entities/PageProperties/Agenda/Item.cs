@@ -18,27 +18,27 @@ public record Item
     [JsonProperty("is_speech")]
     public bool IsSpeech { get; set; }
     [JsonProperty("title")]
-    public string Title { get; set; }
+    public string Title { get; set; } = "";
     [JsonProperty("duration")]
-    public string Duration { get; set; }
+    public string Duration { get; set; } = "";
     [JsonProperty("duration_min")]
     public int DurationMin { get; set; }
     [JsonProperty("color")]
-    public string Color { get; set; }
+    public string Color { get; set; } = "";
     [JsonProperty("location")]
-    public string Location { get; set; }
+    public string Location { get; set; } = "";
     [JsonProperty("room")]
-    public string Room { get; set; }
+    public string Room { get; set; } = "";
     [JsonProperty("is_online")]
     public bool IsOnline { get; set; }
     [JsonProperty("filter_location")]
-    public string FilterLocation { get; set; }
+    public string FilterLocation { get; set; } = "";
     [JsonProperty("is_online_broadcast")]
     public bool IsOnlineBroadcast { get; set; }
     [JsonProperty("skills")]
-    public string[] Tags { get; set; }
+    public string[] Tags { get; set; } = [];
     [JsonProperty("is_link_to_stream")]
-    public string IsLinkToStream { get; set; }
+    public string IsLinkToStream { get; set; } = "";
     [JsonProperty("stream_struct")]
     public StreamStruct StreamStruct { get; set; }
     [JsonProperty("is_link_to_recording")]
@@ -46,23 +46,23 @@ public record Item
     [JsonProperty("is_recommended")]
     public bool IsRecommended { get; set; }
     [JsonProperty("talk_type")]
-    public string TalkType { get; set; }
+    public string TalkType { get; set; } = "";
     [JsonProperty("image")]
-    public string Image { get; set; }
+    public string Image { get; set; } = "";
     [JsonProperty("talk_level")] 
-    public string TalkLevel { get; set; }
+    public string TalkLevel { get; set; } = "";
     [JsonProperty("talk_level_id")] 
     public short TalkLevelId { get; set; }
     [JsonProperty("language")]
-    public string Language { get; set; }
+    public string Language { get; set; } = "";
     [JsonProperty("short_language")]
-    public string ShortLanguage { get; set; }
+    public string ShortLanguage { get; set; } = "";
     [JsonProperty("speakers")]
     public IEnumerable<Person> Speakers { get; set; } = new List<Person>();
     [JsonProperty("moderators")]
     public IEnumerable<Person> Moderators { get; set; } = new List<Person>();
     [JsonProperty("background_image")]
-    public string BackgroundImage { get; set; }
+    public string BackgroundImage { get; set; } = "";
     [JsonProperty("info")]
     public Info Info { get; set; }
     [JsonProperty("is_speaker")]

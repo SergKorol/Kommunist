@@ -13,7 +13,7 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
         switch (reader.TokenType)
         {
             case JsonToken.String:
-                result.Add(new TextItem { Text = reader.Value?.ToString() });
+                result.Add(new TextItem { Text = reader.Value?.ToString() ?? "" });
                 break;
             case JsonToken.StartArray:
                 result = serializer.Deserialize<List<TextItem>>(reader);
