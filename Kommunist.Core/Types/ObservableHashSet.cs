@@ -17,9 +17,8 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public void Add(T item)
     {
         if (!_set.Add(item)) return;
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-            NotifyCollectionChangedAction.Add, item));
-        OnPropertyChanged(nameof(Count));
+        RaiseCollectionChanged(NotifyCollectionChangedAction.Add, item);
+        RaisePropertyChanged(nameof(Count));
     }
 
     void ICollection<T>.Add(T item) => Add(item);
@@ -27,19 +26,17 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public bool Remove(T item)
     {
         if (!_set.Remove(item)) return false;
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-            NotifyCollectionChangedAction.Remove, item));
-        OnPropertyChanged(nameof(Count));
+        RaiseCollectionChanged(NotifyCollectionChangedAction.Remove, item);
+        RaisePropertyChanged(nameof(Count));
         return true;
     }
 
     public void Clear()
     {
-        if (_set.Count <= 0) return;
+        if (_set.Count == 0) return;
         _set.Clear();
-        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-            NotifyCollectionChangedAction.Reset));
-        OnPropertyChanged(nameof(Count));
+        RaiseCollectionChanged(NotifyCollectionChangedAction.Reset);
+        RaisePropertyChanged(nameof(Count));
     }
 
     public bool Contains(T item) => _set.Contains(item);
@@ -47,6 +44,15 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public IEnumerator<T> GetEnumerator() => _set.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    private void OnPropertyChanged(string propertyName) =>
+    private void RaiseCollectionChanged(NotifyCollectionChangedAction action, object item = null)
+    {
+        var args = item is null
+            ? new NotifyCollectionChangedEventArgs(action)
+            : new NotifyCollectionChangedEventArgs(action, item);
+
+        CollectionChanged?.Invoke(this, args);
+    }
+
+    private void RaisePropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
