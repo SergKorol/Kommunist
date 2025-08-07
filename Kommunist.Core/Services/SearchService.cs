@@ -1,4 +1,3 @@
-using Kommunist.Core.Entities;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
 
@@ -8,11 +7,11 @@ public class SearchService(HttpClient httpClient) : ISearchService
 {
     public async Task<IEnumerable<string>> GetTags(string query)
     {
-        var url = $"/api/v2/dictionaries/skills/search?search_query={query}";
+        var url = string.Concat("/api/v2/dictionaries/skills/search?search_query=", query);
 
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -32,7 +31,7 @@ public class SearchService(HttpClient httpClient) : ISearchService
 
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -52,7 +51,7 @@ public class SearchService(HttpClient httpClient) : ISearchService
 
         try
         {
-            HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Kommunist.Core.Entities.PageProperties.Main;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace Kommunist.Core.Entities.PageProperties.Agenda;

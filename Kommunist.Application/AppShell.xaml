@@ -17,7 +17,7 @@
                   ContentTemplate="{DataTemplate views:SettingsPage}" />
     
     <ShellContent Route="ICalConfigPage" 
-                  ContentTemplate="{DataTemplate views:ICalConfigPage}" />
+                  ContentTemplate="{DataTemplate views:CalConfigPage}" />
 
 </Shell>
 

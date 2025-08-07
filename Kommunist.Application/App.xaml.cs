@@ -8,6 +8,12 @@ public partial class App
     {
         InitializeComponent();
         if (Current == null) return;
+        var savedTheme = Preferences.Get("AppTheme", "Light");
+
+        if (Enum.TryParse(savedTheme, out AppTheme userTheme))
+        {
+            Current.UserAppTheme = userTheme;
+        }
         SetAppThemeResources(Current.RequestedTheme);
 
         Current.RequestedThemeChanged += OnRequestedThemeChanged;

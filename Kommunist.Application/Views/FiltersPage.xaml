@@ -76,7 +76,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectTagCommand}"
@@ -97,7 +97,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectTagCommand}"
@@ -154,7 +154,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectSpeakerCommand}"
@@ -175,7 +175,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectSpeakerCommand}"
@@ -232,7 +232,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectCountryCommand}"
@@ -253,7 +253,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectCountryCommand}"
@@ -310,7 +310,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectCommunityCommand}"
@@ -331,7 +331,7 @@
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
-                                BackgroundColor="LightGray"
+                                BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectCommunityCommand}"

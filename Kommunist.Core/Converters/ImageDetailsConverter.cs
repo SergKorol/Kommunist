@@ -1,4 +1,3 @@
-using System;
 using Kommunist.Core.Models;
 using Newtonsoft.Json;
 
@@ -13,15 +12,12 @@ public class ImageDetailsConverter : JsonConverter
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-        if (reader.TokenType == JsonToken.String)
+        return reader.TokenType switch
         {
-            return new ImageDetails { Url = reader.Value.ToString() };
-        }
-        else if (reader.TokenType == JsonToken.StartObject)
-        {
-            return serializer.Deserialize<ImageDetails>(reader);
-        }
-        return null;
+            JsonToken.String => new ImageDetails { Url = reader.Value?.ToString() },
+            JsonToken.StartObject => serializer.Deserialize<ImageDetails>(reader),
+            _ => null
+        };
     }
 
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

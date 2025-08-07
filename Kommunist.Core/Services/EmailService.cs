@@ -18,7 +18,7 @@ public class EmailService(IConfiguration config) : IEmailService
                 Credentials = new NetworkCredential(config["SmtpProvider:UserName"], config["SmtpProvider:Password"]),
                 EnableSsl = true
             };
-            var mailMessage = new MailMessage(config["SmtpProvider:Sender"], email)
+            var mailMessage = new MailMessage(config["SmtpProvider:Sender"] ?? string.Empty, email)
             {
                 Subject = subject,
                 Body = body,

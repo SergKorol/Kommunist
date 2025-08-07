@@ -1,4 +1,3 @@
-using System;
 using Kommunist.Core.Entities;
 using Kommunist.Core.Entities.Enums;
 using Kommunist.Core.Entities.PageProperties.Agenda;
@@ -18,41 +17,27 @@ public class PropertiesConverter : JsonConverter<EventPage>
     
     public override EventPage ReadJson(JsonReader reader, Type objectType, EventPage existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        JObject jsonObject = JObject.Load(reader);
-
-        var eventType = jsonObject["type"]!.ToObject<PageType>();
+        var jsonObject = JObject.Load(reader);
+        var type = jsonObject["type"];
+        if (type == null) return null;
+        var eventType = type.ToObject<PageType>();
         var properties = jsonObject["properties"];
 
-        EventPage eventPage = new EventPage();
-        eventPage.Type = eventType;
-
-        // Deserialize properties based on the event type
-        switch (eventType)
+        var eventPage = new EventPage
         {
-            case PageType.Venue:
-                eventPage.Properties = properties?.ToObject<VenueProperties>();
-                break;
-            case PageType.Agenda:
-                eventPage.Properties = properties?.ToObject<AgendaProperties>();
-                break;
-            case PageType.Main:
-                eventPage.Properties = properties?.ToObject<MainProperties>();
-                break;
-            case PageType.EventNavigation:
-                eventPage.Properties = properties?.ToObject<EventNavigationProperties>();
-                break;
-            case PageType.BasicText:
-                eventPage.Properties = properties?.ToObject<BasicTextProperties>();
-                break;
-            case PageType.UnlimitedText:
-                eventPage.Properties = properties?.ToObject<UnlimitedTextProperties>();
-                break;
-            case PageType.StayConnected:
-                eventPage.Properties = properties?.ToObject<StayConnectedProperties>();
-                break;
-            default:
-                throw new NotSupportedException($"Unsupported event type: {eventType}");
-        }
+            Type = eventType,
+            Properties = eventType switch
+            {
+                PageType.Venue => properties?.ToObject<VenueProperties>(),
+                PageType.Agenda => properties?.ToObject<AgendaProperties>(),
+                PageType.Main => properties?.ToObject<MainProperties>(),
+                PageType.EventNavigation => properties?.ToObject<EventNavigationProperties>(),
+                PageType.BasicText => properties?.ToObject<BasicTextProperties>(),
+                PageType.UnlimitedText => properties?.ToObject<UnlimitedTextProperties>(),
+                PageType.StayConnected => properties?.ToObject<StayConnectedProperties>(),
+                _ => throw new NotSupportedException($"Unsupported event type: {eventType}")
+            }
+        };
 
         return eventPage;
     }

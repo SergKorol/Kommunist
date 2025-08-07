@@ -1,19 +1,14 @@
-using System;
-using Microsoft.Maui.Graphics;
-using XCalendar.Core.Interfaces;
 using XCalendar.Core.Models;
 
 namespace Kommunist.Application.Models;
 
 public class CalEvent : Event
 {
-    public int EventId { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public int EventId { get; init; }
     public DateTime DateTime { get; set; } = DateTime.Today;
 
-    public long Start { get; set; }
-    public long End { get; set; }
+    public long Start { get; init; }
+    public long End { get; init; }
     public Color Color { get; set; }
-    public string Url { get; set; }
+    public string Url { get; init; }
 }

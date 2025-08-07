@@ -1,9 +1,8 @@
-using Kommunist.Application.Controls;
 using Kommunist.Application.ViewModels;
 
 namespace Kommunist.Application.Views;
 
-public partial class FiltersPage : MyTabBar
+public partial class FiltersPage
 {
     public FiltersPage()
     {

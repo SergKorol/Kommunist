@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Kommunist.Core.Entities.BaseType;
 using Kommunist.Core.Entities.PageProperties.Main;
 using Newtonsoft.Json;

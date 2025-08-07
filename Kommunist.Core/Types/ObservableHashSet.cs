@@ -6,7 +6,7 @@ namespace Kommunist.Core.Types;
 
 public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
 {
-    private readonly HashSet<T> _set = new();
+    private readonly HashSet<T> _set = [];
 
     public event NotifyCollectionChangedEventHandler CollectionChanged;
     public event PropertyChangedEventHandler PropertyChanged;
@@ -14,41 +14,32 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public int Count => _set.Count;
     public bool IsReadOnly => false;
 
-    public bool Add(T item)
+    public void Add(T item)
     {
-        if (_set.Add(item))
-        {
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-                NotifyCollectionChangedAction.Add, item));
-            OnPropertyChanged(nameof(Count));
-            return true;
-        }
-        return false;
+        if (!_set.Add(item)) return;
+        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
+            NotifyCollectionChangedAction.Add, item));
+        OnPropertyChanged(nameof(Count));
     }
 
     void ICollection<T>.Add(T item) => Add(item);
 
     public bool Remove(T item)
     {
-        if (_set.Remove(item))
-        {
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-                NotifyCollectionChangedAction.Remove, item));
-            OnPropertyChanged(nameof(Count));
-            return true;
-        }
-        return false;
+        if (!_set.Remove(item)) return false;
+        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
+            NotifyCollectionChangedAction.Remove, item));
+        OnPropertyChanged(nameof(Count));
+        return true;
     }
 
     public void Clear()
     {
-        if (_set.Count > 0)
-        {
-            _set.Clear();
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
-                NotifyCollectionChangedAction.Reset));
-            OnPropertyChanged(nameof(Count));
-        }
+        if (_set.Count <= 0) return;
+        _set.Clear();
+        CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
+            NotifyCollectionChangedAction.Reset));
+        OnPropertyChanged(nameof(Count));
     }
 
     public bool Contains(T item) => _set.Contains(item);
@@ -56,6 +47,6 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public IEnumerator<T> GetEnumerator() => _set.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    protected void OnPropertyChanged(string propertyName) =>
+    private void OnPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

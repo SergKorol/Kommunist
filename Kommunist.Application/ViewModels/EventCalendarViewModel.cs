@@ -18,26 +18,27 @@ namespace Kommunist.Application.ViewModels;
 public class EventCalendarViewModel : BaseViewModel
 {
     #region Properties
-    public Calendar<EventDay> EventCalendar { get; set; } = new Calendar<EventDay>()
+    public Calendar<EventDay> EventCalendar { get; } = new()
     {
-        SelectedDates = new ObservableRangeCollection<DateTime>(),
+        SelectedDates = [],
         SelectionType = SelectionType.Single
     };
 
-    public static readonly Random Random = new Random();
-    public List<Color> Colors { get; } = new List<Color>()
-    {
+    private static readonly Random Random = new();
+
+    private List<Color> Colors { get; } =
+    [
         Microsoft.Maui.Graphics.Colors.Red,
         Microsoft.Maui.Graphics.Colors.Orange,
         Microsoft.Maui.Graphics.Colors.Yellow,
         Color.FromArgb("#00A000"),
         Microsoft.Maui.Graphics.Colors.Blue,
         Color.FromArgb("#8010E0")
-    };
+    ];
 
-    public ObservableCollection<ServiceEvent> ServiceEvents;
-    public ObservableRangeCollection<CalEvent> CalEvents { get; } = new ObservableRangeCollection<CalEvent>();
-    public ObservableRangeCollection<CalEvent> SelectedEvents { get; } = new ObservableRangeCollection<CalEvent>();
+    private ObservableCollection<ServiceEvent> _serviceEvents;
+    public ObservableRangeCollection<CalEvent> CalEvents { get; } = [];
+    public ObservableRangeCollection<CalEvent> SelectedEvents { get; } = [];
     #endregion
 
     #region Commands
@@ -77,8 +78,7 @@ public class EventCalendarViewModel : BaseViewModel
     #region Methods
     private void EventCalendar_DaysUpdated(object sender, EventArgs e)
     {
-        var calendar = sender as Calendar<EventDay>;
-        if (calendar == null) return;
+        if (sender is not Calendar<EventDay> calendar) return;
 
         if (CalEvents.All(x => x.DateTime.Date != calendar.NavigatedDate.Date))
         {
@@ -98,10 +98,9 @@ public class EventCalendarViewModel : BaseViewModel
             .OrderByDescending(x => x.DateTime));
     }
 
-    public void NavigateCalendar(int amount)
+    private void NavigateCalendar(int amount)
     {
-        DateTime targetDate;
-        if (EventCalendar.NavigatedDate.TryAddMonths(amount, out targetDate))
+        if (EventCalendar.NavigatedDate.TryAddMonths(amount, out var targetDate))
         {
             EventCalendar.Navigate(targetDate - EventCalendar.NavigatedDate);
         }
@@ -111,24 +110,38 @@ public class EventCalendarViewModel : BaseViewModel
         }
     }
 
-    public void ChangeDateSelection(DateTime dateTime)
+    private void ChangeDateSelection(DateTime dateTime)
     {
         EventCalendar?.ChangeDateSelection(dateTime);
     }
 
     private async void OnEventSelected(CalEvent selectedEvent)
     {
-        var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId, _fileHostingService);;
-        await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
+        try
+        {
+            var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId, _fileHostingService);
+            await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Failed to load event detail: {e.Message}").Show();
+        }
     }
     
     private async void OpenIcalConfig()
     {
-        var navigationParams = new Dictionary<string, object>
+        try
         {
-            { "SelectedEvents", SelectedEvents.ToList() }
-        };
-        await Shell.Current.GoToAsync("//ICalConfigPage", navigationParams);
+            var navigationParams = new Dictionary<string, object>
+            {
+                { "SelectedEvents", SelectedEvents.ToList() }
+            };
+            await Shell.Current.GoToAsync("//ICalConfigPage", navigationParams);
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"Failed to load iCal config: {e.Message}").Show();
+        }
     }
     #endregion
 
@@ -179,15 +192,15 @@ public class EventCalendarViewModel : BaseViewModel
 
     private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth(ObservableCollection<EventDay> days)
     {
-        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month);
+        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month).ToList();
         return (daysByNavMonth.First().DateTime, daysByNavMonth.Last().DateTime);
     }
 
     private async Task<ObservableCollection<ServiceEvent>> LoadServiceEvents(DateTime startDate, DateTime endDate)
     {
         var loadedEvents = await _eventService.LoadEvents(startDate, endDate);
-        ServiceEvents = loadedEvents.ToObservableCollection();
-        return ServiceEvents;
+        _serviceEvents = loadedEvents.ToObservableCollection();
+        return _serviceEvents;
     }
 
     private List<CalEvent> ConvertToCalEvents(ObservableCollection<ServiceEvent> serviceEvents)
@@ -205,7 +218,7 @@ public class EventCalendarViewModel : BaseViewModel
         }).ToList();
     }
 
-    private string BuildEventDescription(ServiceEvent serviceEvent)
+    private static string BuildEventDescription(ServiceEvent serviceEvent)
     {
         var startDateFormatted = serviceEvent.Start.ToLocalDateTime().ToString("dd.MM.yyyy");
         var endDateFormatted = serviceEvent.End.ToLocalDateTime().ToString("dd.MM.yyyy");
@@ -217,10 +230,5 @@ public class EventCalendarViewModel : BaseViewModel
         return string.IsNullOrWhiteSpace(location) 
             ? baseDescription 
             : $"{baseDescription}, {location}";
-    }
-
-    public void LoadEvents()
-    {
-        GetEvents(EventCalendar.Days).ConfigureAwait(false);
     }
 }

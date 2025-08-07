@@ -1,17 +1,18 @@
 using System.Windows.Input;
+using CommunityToolkit.Maui.Alerts;
 
 namespace Kommunist.Application.Controls;
 
-public partial class MyTabBar : ContentPage
+public partial class MyTabBar
 {
     
-    public static readonly BindableProperty NavigateToCommandProperty =
-        BindableProperty.Create(nameof(NavigateToCommand), typeof(ICommand), typeof(MyTabBar), null);
+    private static readonly BindableProperty NavigateToCommandProperty =
+        BindableProperty.Create(nameof(NavigateToCommand), typeof(ICommand), typeof(MyTabBar));
 
     public ICommand NavigateToCommand
     {
         get => (ICommand)GetValue(NavigateToCommandProperty);
-        set => SetValue(NavigateToCommandProperty, value);
+        init => SetValue(NavigateToCommandProperty, value);
     }
     
     public MyTabBar()
@@ -20,29 +21,29 @@ public partial class MyTabBar : ContentPage
         NavigateToCommand = new Command<string>(OnNavigateTo);
     }
     
-    private async void OnNavigateTo(string pageName)
+    private static async void OnNavigateTo(string pageName)
     {
-        switch (pageName)
+        try
         {
-            case "HomePage":
-                await Shell.Current.GoToAsync("//Home");
-                break;
-            case "FiltersPage":
-                await Shell.Current.GoToAsync("//Filters");
-                break;
-            case "SettingsPage":
-                await Shell.Current.GoToAsync("//Settings");
-                break;
-            default:
-                break;
+            switch (pageName)
+            {
+                case "HomePage":
+                    await Shell.Current.GoToAsync("//Home");
+                    break;
+                case "FiltersPage":
+                    await Shell.Current.GoToAsync("//Filters");
+                    break;
+                case "SettingsPage":
+                    await Shell.Current.GoToAsync("//Settings");
+                    break;
+                default:
+                    await Shell.Current.GoToAsync("//Home");
+                    break;
+            }
         }
-    }
-    
-    private async void OnTabBarNavigation(object sender, TappedEventArgs e)
-    {
-        if (e.Parameter is string route)
+        catch (Exception e)
         {
-            await Shell.Current.GoToAsync(route);
+            await Toast.Make($"Error navigating to {pageName}: {e}").Show();
         }
     }
 }

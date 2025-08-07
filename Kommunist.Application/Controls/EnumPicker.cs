@@ -2,25 +2,24 @@ using System.Reflection;
 
 namespace Kommunist.Application.Controls;
 
-class EnumPicker : Picker
+internal class EnumPicker : Picker
 {
     public static readonly BindableProperty EnumTypeProperty =
         BindableProperty.Create(nameof(EnumType), typeof(Type), typeof(EnumPicker),
             propertyChanged: (bindable, oldValue, newValue) =>
             {
-                EnumPicker picker = (EnumPicker)bindable;
+                var picker = (EnumPicker)bindable;
 
                 if (oldValue != null)
                 {
                     picker.ItemsSource = null;
                 }
-                if (newValue != null)
-                {
-                    if (!((Type)newValue).GetTypeInfo().IsEnum)
-                        throw new ArgumentException("EnumPicker: EnumType property must be enumeration type");
 
-                    picker.ItemsSource = Enum.GetValues((Type)newValue);
-                }
+                if (newValue == null) return;
+                if (!((Type)newValue).GetTypeInfo().IsEnum)
+                    throw new ArgumentException("EnumPicker: EnumType property must be enumeration type");
+
+                picker.ItemsSource = Enum.GetValues((Type)newValue);
             });
 
     public Type EnumType

@@ -8,7 +8,7 @@ public class FilterService : IFilterService
 {
     private const string StorageKey = "AppFilters";
 
-    public FilterOptions Filters { get; private set; }
+    private FilterOptions Filters { get; set; }
 
     public FilterService()
     {

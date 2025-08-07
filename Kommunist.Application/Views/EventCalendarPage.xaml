@@ -47,8 +47,7 @@
                              RightArrowCommand="{Binding NavigateCalendarCommand}"
                              NavigatedDate="{Binding EventCalendar.NavigatedDate}"
                              Style="{StaticResource DefaultCalendarViewStyle}"
-                             DaysViewHeightRequest="320"
-                             x:Name="MainCalendarView">
+                             DaysViewHeightRequest="320">
                 
                 <xc:CalendarView.RightArrowCommandParameter>
                     <x:Int32>1</x:Int32>
@@ -68,10 +67,10 @@
                                               RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               HeightRequest="48"
-                                              Text="{Binding Text, Source={RelativeSource TemplatedParent}}"
+                                              Text="{TemplateBinding Text}"
                                               Style="{StaticResource DefaultNavigationViewStyle}">
                                 <xc:NavigationView.TextColor>
-                                    <x:DynamicResource Key="TextPrimaryColor" />
+                                    <x:DynamicResource Key="TextPrimaryColor" /> 
                                 </xc:NavigationView.TextColor>
                                 <xc:NavigationView.FontFamily>
                                     <OnPlatform x:TypeArguments="x:String">
@@ -115,7 +114,7 @@
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
-                                            <Grid BindingContext="{Binding BindingContext, Source={RelativeSource TemplatedParent}}"
+                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type models:EventDay}}}"
                                                   RowSpacing="2">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="1.5*" />

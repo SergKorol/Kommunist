@@ -9,5 +9,5 @@ public record TimeZone
     [JsonProperty("zone_name")]
     public string ZoneName { get; set; }
     [JsonProperty("maxLength")]
-    public long offset { get; set; }
+    public long Offset { get; set; }
 }

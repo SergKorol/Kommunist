@@ -14,12 +14,12 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.ViewModels;
 
-public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributable
+public partial class CalConfigViewModel : ObservableValidator, IQueryAttributable
 {
     private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
     
-    public List<CalEvent> Events { get; set; } = new();
+    public List<CalEvent> Events { get; set; } = [];
     
     [ObservableProperty]
     [Required(ErrorMessage = "Email is required.")]
@@ -54,17 +54,15 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
         get => _saveFile;
         set
         {
-            if (_saveFile != value)
-            {
-                _saveFile = value;
-                OnPropertyChanged();
-            }
+            if (_saveFile == value) return;
+            _saveFile = value;
+            OnPropertyChanged();
         }
     }
 
     public ICommand GenerateIcalCommand { get; }
 
-    public ICalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService)
+    public CalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService)
     {
         _fileHostingService = fileHostingService;
         _emailService = emailService;
@@ -73,8 +71,8 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (!query.ContainsKey("SelectedEvents")) return;
-        Events = query["SelectedEvents"] as List<CalEvent> ?? new List<CalEvent>();
+        if (!query.TryGetValue("SelectedEvents", out var events)) return;
+        Events = events as List<CalEvent> ?? [];
         var dates = Events.Select(x => x.DateTime).ToList(); 
         FirstEventDateTime = dates.Min().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
         LastEventDateTime = dates.Max().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
@@ -83,6 +81,18 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
     
 
     private async void SaveIcalFile()
+    {
+        try
+        {
+            await SaveAndValidateIcalFileAsync();
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"ICal file wasn't saved: {e.Message}").Show();
+        }
+    }
+
+    private async Task SaveAndValidateIcalFileAsync()
     {
         ValidateAllProperties();
         if (HasErrors)
@@ -114,10 +124,9 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
             {
                 Trigger = new Ical.Net.DataTypes.Trigger($"-PT{AlarmMinutes}M"),
                 Description = "Reminder",
-                Action = AlarmAction.Display,
+                Action = AlarmAction.Display
             };
 
-            
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
@@ -125,8 +134,7 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
                 Description = $"{ev.Description}\n{ev.Url}",
                 DtStart = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
                 DtEnd = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
-                Transparency = TransparencyType.Opaque,
-                
+                Transparency = TransparencyType.Opaque
             };
             icalEvent.Alarms.Add(alarm);
             if (!string.IsNullOrEmpty(Invitees))
@@ -167,28 +175,28 @@ public partial class ICalConfigViewModel : ObservableValidator, IQueryAttributab
         if (SendEmail)
         {
             await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "<p>Find attached your iCal event</p><br>.", path, Email);
-            await Toast.Make($"The file was sent successfully").Show();
+            await Toast.Make("The file was sent successfully").Show();
         }
         else
         {
             var fileUrl = await _fileHostingService.UploadFileAsync(path, Email);
-            await Toast.Make($"The file was uploaded successfully").Show();
+            await Toast.Make("The file was uploaded successfully").Show();
             await Launcher.OpenAsync(fileUrl.Trim());
         }
     }
 
-    public async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
-        string filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+        var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
-        using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-        using var writer = new StreamWriter(stream, Encoding.UTF8);
+        await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        await using var writer = new StreamWriter(stream, Encoding.UTF8);
         await writer.WriteAsync(icalString);
 
         return filePath;
     }
 
-    private string ConvertDateTime(long dt)
+    private static string ConvertDateTime(long dt)
     {
         DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
         

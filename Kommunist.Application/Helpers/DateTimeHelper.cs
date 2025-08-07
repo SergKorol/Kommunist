@@ -1,5 +1,3 @@
-using System;
-
 namespace Kommunist.Application.Helpers;
 
 public static class DateTimeHelper

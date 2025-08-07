@@ -50,7 +50,7 @@ public static class MauiProgram
         // ViewModels
         builder.Services.AddScoped<EventCalendarViewModel>();
         builder.Services.AddScoped<EventCalendarDetailViewModel>();
-        builder.Services.AddScoped<ICalConfigViewModel>();
+        builder.Services.AddScoped<CalConfigViewModel>();
         builder.Services.AddScoped<EventFiltersViewModel>();
         
         // Pages
