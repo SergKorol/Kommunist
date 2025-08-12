@@ -37,9 +37,10 @@ public static class EmailTokenGenerator
         var base64 = Convert.ToBase64String(encrypted);
 
         var safeToken = base64
-            .Replace("+", "-")
-            .Replace("/", "_")
-            .Replace("=", "");
+            .Replace("+", "")
+            .Replace("/", "")
+            .Replace("=", "")
+            .ToLowerInvariant();
 
         return safeToken;
     }
