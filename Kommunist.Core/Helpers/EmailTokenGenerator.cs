@@ -4,20 +4,30 @@ namespace Kommunist.Core.Helpers;
 
 public static class EmailTokenGenerator
 {
-    private static readonly byte[] Key = "12345678901234567890123456789012"u8.ToArray();
-    
-    private static readonly byte[] Iv = "abcdefghijklmnop"u8.ToArray();
+    private static readonly byte[] Salt = "KommunistAppSalt"u8.ToArray();
 
-    public static string EncryptForBlobName(string email)
+    private const int KeySize = 32;
+    private const int IvSize = 16;
+    private const int Iterations = 10000;
+
+    public static string EncryptForBlobName(string email, string password = null)
     {
+        if (string.IsNullOrEmpty(email))
+            throw new ArgumentException("Email cannot be null or empty", nameof(email));
+
+        password ??= "DefaultAppEncryptionKey2025";
+
+        using var deriveBytes = new Rfc2898DeriveBytes(password, Salt, Iterations, HashAlgorithmName.SHA256);
+        byte[] key = deriveBytes.GetBytes(KeySize);
+        byte[] iv = deriveBytes.GetBytes(IvSize);
+
         using var aes = Aes.Create();
-        aes.Key = Key;
-        aes.IV = Iv;
+        aes.Key = key;
+        aes.IV = iv;
 
-        var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
+        using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
         using var ms = new MemoryStream();
-        using var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
         using (var sw = new StreamWriter(cs))
         {
             sw.Write(email);
@@ -26,7 +36,6 @@ public static class EmailTokenGenerator
         var encrypted = ms.ToArray();
         var base64 = Convert.ToBase64String(encrypted);
 
-        // Make base64 URL-safe (blob-safe)
         var safeToken = base64
             .Replace("+", "")
             .Replace("/", "")

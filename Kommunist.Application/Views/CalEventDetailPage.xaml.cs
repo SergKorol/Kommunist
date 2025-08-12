@@ -11,7 +11,6 @@ public partial class CalEventDetailPage
     
     public CalEventDetailPage(EventCalendarDetailViewModel eventDetailViewModel)
     {
-        BgImg = eventDetailViewModel.SelectedEventDetail.BgImageUrl;
         InitializeComponent();
         BindingContext = eventDetailViewModel;
     }
@@ -22,7 +21,7 @@ public partial class CalEventDetailPage
         {
             if (BindingContext is not EventCalendarDetailViewModel vm) return;
             vm.IsWebViewLoading = true;
-                
+            BgImg = vm.SelectedEventDetail?.BgImageUrl ?? string.Empty;
             await Task.Delay(500);
 
             try

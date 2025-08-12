@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿#nullable enable
+using System.Reflection;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.ViewModels;
@@ -44,19 +45,15 @@ public static class MauiProgram
 
     private static void ConfigureServices(MauiAppBuilder builder)
     {
-        // Core Services
         builder.Services.AddScoped<IEventService, EventService>();
         
-        // ViewModels
         builder.Services.AddScoped<EventCalendarViewModel>();
         builder.Services.AddScoped<EventCalendarDetailViewModel>();
         builder.Services.AddScoped<CalConfigViewModel>();
         builder.Services.AddScoped<EventFiltersViewModel>();
         
-        // Pages
         builder.Services.AddTransient<MainPage>();
         
-        // HTTP Configuration
         builder.Services.AddHttpClientConfiguration();
     }
 
@@ -75,13 +72,16 @@ public static class MauiProgram
         builder.Services.AddSingleton(config);
     }
 
-    private static IConfiguration LoadConfiguration()
+    private static IConfiguration? LoadConfiguration()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var environmentName = GetEnvironmentName();
-        var resourceName = string.Concat("Kommunist.Application.appsettings.", environmentName, ".json");
-        
-        using var stream = assembly.GetManifestResourceStream(resourceName);
+        var baseName = "Kommunist.Application.appsettings";
+        var envResourceName = string.Concat(baseName, ".", environmentName, ".json");
+        var defaultResourceName = string.Concat(baseName, ".json");
+
+        using var stream = assembly.GetManifestResourceStream(envResourceName)
+                          ?? assembly.GetManifestResourceStream(defaultResourceName);
         return stream != null ? new ConfigurationBuilder().AddJsonStream(stream).Build() : null;
     }
 

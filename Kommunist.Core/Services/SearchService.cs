@@ -5,58 +5,27 @@ namespace Kommunist.Core.Services;
 
 public class SearchService(HttpClient httpClient) : ISearchService
 {
-    public async Task<IEnumerable<string>> GetTags(string query)
+    public Task<IEnumerable<string>> GetTags(string query) => 
+        FetchSearchResults("/api/v2/dictionaries/skills/search", query);
+
+    public Task<IEnumerable<string>> GetSpeakers(string query) => 
+        FetchSearchResults("/api/v2/speakers/search", query);
+
+    public Task<IEnumerable<string>> GetCommunities(string query) => 
+        FetchSearchResults("/api/v2/communities/search", query);
+
+    private async Task<IEnumerable<string>> FetchSearchResults(string endpoint, string query)
     {
-        var url = string.Concat("/api/v2/dictionaries/skills/search?search_query=", query);
+        var url = $"{endpoint}?search_query={query}";
 
         try
         {
-            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            var response = await httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var tags = JsonConvert.DeserializeObject<List<string>>(json);
-            return tags;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"An HTTP request error occurred: {e.Message}");
-            return new List<string>();
-        }
-    }
-    
-    public async Task<IEnumerable<string>> GetSpeakers(string query)
-    {
-        var url = $"/api/v2/speakers/search?search_query={query}";
-
-        try
-        {
-            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync();
-            var speakers = JsonConvert.DeserializeObject<List<string>>(json);
-            return speakers;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"An HTTP request error occurred: {e.Message}");
-            return new List<string>();
-        }
-    }
-    
-    public async Task<IEnumerable<string>> GetCommunities(string query)
-    {
-        var url = $"/api/v2/communities/search?search_query={query}";
-
-        try
-        {
-            var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync();
-            var speakers = JsonConvert.DeserializeObject<List<string>>(json);
-            return speakers;
+            var results = JsonConvert.DeserializeObject<List<string>>(json);
+            return results ?? [];
         }
         catch (Exception e)
         {

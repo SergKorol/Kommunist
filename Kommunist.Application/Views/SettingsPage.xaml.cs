@@ -14,8 +14,6 @@ public partial class SettingsPage
         if (sender is not Picker picker) return;
         var theme = (Theme)picker.SelectedItem;
         
-        Preferences.Set("AppTheme", theme.ToString());
-        
         switch (theme)
         {
             case Theme.Dark:

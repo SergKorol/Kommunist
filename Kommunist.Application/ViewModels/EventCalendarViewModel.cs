@@ -65,13 +65,6 @@ public class EventCalendarViewModel : BaseViewModel
         EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
         
         OpenIcalConfigCommand = new Command(OpenIcalConfig);
-
-        GetEvents(EventCalendar.Days).ConfigureAwait(false);
-
-        foreach (var day in EventCalendar.Days)
-        {
-            day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-        }
     }
     #endregion
 
