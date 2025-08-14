@@ -106,9 +106,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
         
             var alarm = new Alarm
             {
-                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M"),
+                Action = AlarmAction.Display,
                 Description = "Reminder",
-                Action = AlarmAction.Display
+                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M")
             };
             var datesStamp = properties.Details.DatesTimestamp;
             var icalEvent = new CalendarEvent

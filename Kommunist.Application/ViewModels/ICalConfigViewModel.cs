@@ -122,15 +122,16 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         {
             var alarm = new Alarm
             {
-                Trigger = new Ical.Net.DataTypes.Trigger($"-PT{AlarmMinutes}M"),
+                Action = AlarmAction.Display,
                 Description = "Reminder",
-                Action = AlarmAction.Display
+                Trigger = new Ical.Net.DataTypes.Trigger($"-PT{AlarmMinutes}M")
             };
 
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
                 Summary = ev.Title,
+                Location = NormalizeCalendarLocation(ev.Location),
                 Description = $"{ev.Description}\n{ev.Url}",
                 DtStart = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
                 DtEnd = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
@@ -201,5 +202,14 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
         
         return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
+    }
+
+    private static string NormalizeCalendarLocation(string? location)
+    {
+        if (string.IsNullOrEmpty(location)) return string.Empty;
+        var locationParts = location.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries);
+        locationParts = locationParts.Reverse().ToArray();
+        var normalizedLocation = string.Join("\n", locationParts.Select(x => x.Trim()));
+        return normalizedLocation;
     }
 }

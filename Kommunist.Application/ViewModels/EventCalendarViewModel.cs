@@ -202,6 +202,7 @@ public class EventCalendarViewModel : BaseViewModel
         {
             EventId = e.Id,
             Title = e.Title,
+            Location = e.ParticipationFormat.Online ? string.Empty : e.ParticipationFormat.Location,
             Description = BuildEventDescription(e),
             DateTime = e.Start.ToLocalDateTime(),
             Start = e.Start,

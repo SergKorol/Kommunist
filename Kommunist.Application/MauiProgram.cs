@@ -1,13 +1,14 @@
-﻿#nullable enable
-using System.Reflection;
+﻿using System.Reflection;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
+using Kommunist.Application.Helpers;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Handlers;
 using MauiApp = Microsoft.Maui.Hosting.MauiApp;
 
 namespace Kommunist.Application;
@@ -22,6 +23,37 @@ public static class MauiProgram
         ConfigureServices(builder);
         ConfigureLogging(builder);
         ConfigureConfiguration(builder);
+        
+        var app = builder.Build();
+        ServiceHelper.Initialize(app.Services);
+        
+        EntryHandler.Mapper.AppendToMapping("BorderlessEntry", (handler, view) =>
+        {
+            if (view is Entry e && e.StyleClass?.Contains("borderless") == true)
+            {
+#if ANDROID
+                var pv = handler.PlatformView;
+                pv.Background = null;
+                pv.BackgroundTintList =
+                    Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+                int h = (int)Android.Util.TypedValue.ApplyDimension(
+                    Android.Util.ComplexUnitType.Dip, 12, pv.Context.Resources.DisplayMetrics);
+                int v = (int)Android.Util.TypedValue.ApplyDimension(
+                    Android.Util.ComplexUnitType.Dip, 8, pv.Context.Resources.DisplayMetrics);
+                pv.SetPadding(h, v, h, v);
+#endif
+#if IOS
+                handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+#if WINDOWS
+                var tb = handler.PlatformView;
+                tb.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
+                tb.Background =
+                    new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+#endif
+            }
+        });
         
         return builder.Build();
     }
