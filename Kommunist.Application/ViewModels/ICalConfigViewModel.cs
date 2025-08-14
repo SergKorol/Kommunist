@@ -18,6 +18,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
 {
     private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
+    private readonly ICoordinatesService _coordinatesService;
     
     public List<CalEvent> Events { get; set; } = [];
     
@@ -62,10 +63,11 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
 
     public ICommand GenerateIcalCommand { get; }
 
-    public CalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService)
+    public CalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService, ICoordinatesService coordinatesService)
     {
         _fileHostingService = fileHostingService;
         _emailService = emailService;
+        _coordinatesService = coordinatesService;
         GenerateIcalCommand = new Command(SaveIcalFile);
     }
 
@@ -127,6 +129,11 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
                 Trigger = new Ical.Net.DataTypes.Trigger($"-PT{AlarmMinutes}M")
             };
 
+            (double Latitude, double Longitude) coordinates = (0, 0);
+            if (ev.Location != null)
+            {
+                coordinates = await _coordinatesService.GetCoordinatesAsync(ev.Location);
+            }
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
@@ -137,6 +144,10 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
                 DtEnd = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
                 Transparency = TransparencyType.Opaque
             };
+            if (coordinates.Latitude != 0 && coordinates.Longitude != 0)
+            {
+                icalEvent.GeographicLocation = new GeographicLocation(coordinates.Latitude, coordinates.Longitude);
+            }
             icalEvent.Alarms.Add(alarm);
             if (!string.IsNullOrEmpty(Invitees))
             {
@@ -209,7 +220,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         if (string.IsNullOrEmpty(location)) return string.Empty;
         var locationParts = location.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries);
         locationParts = locationParts.Reverse().ToArray();
-        var normalizedLocation = string.Join("\n", locationParts.Select(x => x.Trim()));
+        var normalizedLocation = string.Join(", ", locationParts.Select(x => x.Trim()));
         return normalizedLocation;
     }
 }
