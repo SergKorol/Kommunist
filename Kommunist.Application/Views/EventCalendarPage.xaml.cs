@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Alerts;
+using Kommunist.Application.Helpers;
 using Kommunist.Application.ViewModels;
-
 
 namespace Kommunist.Application.Views;
 
@@ -9,8 +9,8 @@ public partial class EventCalendarPage
     public EventCalendarPage()
     {
         InitializeComponent();
-        var serviceProvider = MauiProgram.CreateMauiApp().Services;
-        var eventCalendarViewModel = serviceProvider?.GetRequiredService<EventCalendarViewModel>();
+        
+        var eventCalendarViewModel = ServiceHelper.Get<EventCalendarViewModel>();
         BindingContext = eventCalendarViewModel;
     }
 
