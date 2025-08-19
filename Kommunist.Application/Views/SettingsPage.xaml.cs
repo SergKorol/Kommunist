@@ -5,7 +5,7 @@ namespace Kommunist.Application.Views;
 
 public partial class SettingsPage
 {
-    private CancellationTokenSource _statusCts;
+    private CancellationTokenSource? _statusCts;
 
     public SettingsPage()
     {
