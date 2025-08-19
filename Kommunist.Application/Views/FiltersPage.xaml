@@ -20,7 +20,7 @@
     </controls:MyTabBar.Resources>
     <controls:MyTabBar.Content>
         <Grid RowDefinitions="Auto,*">
-            <ScrollView Loaded="BindableObject_OnBindingContextChanged">
+            <ScrollView BindingContextChanged="BindableObject_OnBindingContextChanged">
             <VerticalStackLayout Padding="20" Spacing="16">
                 <Label
                     Text="Filters"

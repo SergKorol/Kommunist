@@ -32,9 +32,10 @@
                                            Placeholder="example@email.com"
                                            Keyboard="Email"
                                            TextChanged="OnAlarmEmailChanged"
+                                           StyleClass="borderless"
                                            Style="{StaticResource EntryStyle}">
                                         <Entry.Behaviors>
-                                            <toolkit:EmailValidationBehavior
+                                            <toolkit:EmailValidationBehavior x:Name="EmailValidator"
                                                 InvalidStyle="{StaticResource InvalidEntryStyle}"
                                                 ValidStyle="{StaticResource ValidEntryStyle}"
                                                 Flags="ValidateOnValueChanged"/>
@@ -46,7 +47,7 @@
                                            VerticalOptions="Center" 
                                            HorizontalOptions="End"
                                            Margin="0,0,5,0"
-                                           IsVisible="True"/>
+                                           IsVisible="{Binding Source={x:Reference EmailValidator}, Path=IsValid}"/>
                                 </Grid>
                             </Border>
 
@@ -89,6 +90,7 @@
                                            Placeholder="10"
                                            MaxLength="3"
                                            TextChanged="OnAlarmMinutesChanged"
+                                           StyleClass="borderless"
                                            Style="{StaticResource EntryStyle}"/>
                                            
                                     <HorizontalStackLayout Grid.Column="1" 

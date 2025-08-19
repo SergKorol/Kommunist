@@ -226,6 +226,11 @@
         <Setter Property="HeightRequest" Value="50"/>
         <Setter Property="HorizontalOptions" Value="Fill"/>
         <Setter Property="Padding" Value="15,0"/>
+        <Setter Property="Shadow">
+            <Shadow Brush="#22000000"
+                    Offset="0,3"
+                    Radius="6"/>
+        </Setter>
     </Style>
     
     <Style x:Key="LabelStyle" TargetType="Label">

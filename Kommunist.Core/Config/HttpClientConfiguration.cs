@@ -25,6 +25,7 @@ public static class HttpClientConfiguration
         services.AddSingleton<IFileHostingService, FileHostingService>();
         services.AddSingleton<IEmailService, EmailService>();
         services.AddSingleton<IFilterService, FilterService>();
+        services.AddSingleton<ICoordinatesService, CoordinatesService>();
         return services;
     }
 }

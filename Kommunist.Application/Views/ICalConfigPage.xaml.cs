@@ -1,3 +1,4 @@
+using Kommunist.Application.Helpers;
 using Kommunist.Application.ViewModels;
 
 namespace Kommunist.Application.Views;
@@ -7,8 +8,7 @@ public partial class CalConfigPage
     public CalConfigPage()
     {
         InitializeComponent();
-        var serviceProvider = MauiProgram.CreateMauiApp().Services;
-        var eventCalendarViewModel = serviceProvider.GetRequiredService<CalConfigViewModel>();
+        var eventCalendarViewModel = ServiceHelper.Get<CalConfigViewModel>();
         BindingContext = eventCalendarViewModel;
     }
     

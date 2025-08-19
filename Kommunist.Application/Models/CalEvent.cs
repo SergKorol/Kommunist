@@ -7,8 +7,10 @@ public class CalEvent : Event
     public int EventId { get; init; }
     public DateTime DateTime { get; set; } = DateTime.Today;
 
+    public string? Location { get; set; }
+
     public long Start { get; init; }
     public long End { get; init; }
-    public Color Color { get; set; }
-    public string Url { get; init; }
+    public Color? Color { get; set; }
+    public string? Url { get; init; }
 }

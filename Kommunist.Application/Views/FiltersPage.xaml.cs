@@ -1,3 +1,4 @@
+using Kommunist.Application.Helpers;
 using Kommunist.Application.ViewModels;
 
 namespace Kommunist.Application.Views;
@@ -7,8 +8,7 @@ public partial class FiltersPage
     public FiltersPage()
     {
         InitializeComponent();
-        var serviceProvider = MauiProgram.CreateMauiApp().Services;
-        var eventFiltersViewModel = serviceProvider?.GetRequiredService<EventFiltersViewModel>();
+        var eventFiltersViewModel = ServiceHelper.Get<EventFiltersViewModel>();
         BindingContext = eventFiltersViewModel;
     }
     

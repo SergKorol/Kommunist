@@ -50,8 +50,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
         TappedEventId = tappedEventId;
 
         CreateEventCalendarDetailPage().ConfigureAwait(false);
-        AddToCalendar = new Command(GenerateEventAndUpload);
-        JoinToEvent = new Command(OpenEventPage);
+        AddToCalendar = new Command(async () => await GenerateEventAndUpload());
+        JoinToEvent = new Command(async () => await OpenEventPage());
     }
     
     private async Task CreateEventCalendarDetailPage()
@@ -78,10 +78,16 @@ public class EventCalendarDetailViewModel : BaseViewModel
         
     }
 
-    private async void OpenEventPage()
+    private async Task OpenEventPage()
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(SelectedEventDetail?.Url))
+            {
+                await Toast.Make("Event page URL is missing").Show();
+                return;
+            }
+
             await Launcher.OpenAsync(SelectedEventDetail.Url.Trim());
         }
         catch (Exception e)
@@ -90,7 +96,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
         }
     }
 
-    private async void GenerateEventAndUpload()
+    private async Task GenerateEventAndUpload()
     {
         try
         {
@@ -106,9 +112,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
         
             var alarm = new Alarm
             {
-                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M"),
+                Action = AlarmAction.Display,
                 Description = "Reminder",
-                Action = AlarmAction.Display
+                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M")
             };
             var datesStamp = properties.Details.DatesTimestamp;
             var icalEvent = new CalendarEvent
@@ -179,9 +185,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
     private static string ConvertDateTime(long dt)
     {
-        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
-        
-        return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
+        var dateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
+
+        return dateTimeUtc.ToString("yyyyMMdd'T'HHmmss");
     }
 
     private void SetMainCalEventDetail(CalEventDetail eventDetail)

@@ -10,15 +10,29 @@
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
     <controls:MyTabBar.Content>
         <Grid BackgroundColor="{DynamicResource BackgroundColor}">
-            <StackLayout Margin="20"
-                         VerticalOptions="Center">
-                <controls:EnumPicker iOsSpecific:Picker.UpdateMode="WhenFinished"
-                                     EnumType="{x:Type enums:Theme}"
-                                     Title="Select Theme"
-                                     SelectedIndexChanged="OnPickerSelectionChanged" />
+            <VerticalStackLayout Margin="20"
+                                 VerticalOptions="Start">
+                <Grid RowDefinitions="Auto,*" RowSpacing="0">
+                    <ScrollView Grid.Row="1" Margin="0,25,0,0">
+                        <VerticalStackLayout Padding="20,0,20,20" Spacing="0">
+                            <!-- Main Card -->
+                            <Border Style="{StaticResource CardStyle}">
+                                <VerticalStackLayout Spacing="10">
+                                    <Label Text="Choose Dark or Light theme:" Style="{StaticResource LabelStyle}" />
+                                    <controls:EnumPicker iOsSpecific:Picker.UpdateMode="WhenFinished"
+                                                         EnumType="{x:Type enums:Theme}"
+                                                         Title="Select Theme"
+                                                         SelectedIndexChanged="OnPickerSelectionChanged" />
+                                </VerticalStackLayout>
+                                </Border>
+                            </VerticalStackLayout>
+                        </ScrollView>
+
+                </Grid>
+
                 <Label x:Name="StatusLabel"
                        HorizontalOptions="Center" />
-            </StackLayout>
+            </VerticalStackLayout>
         </Grid>
     </controls:MyTabBar.Content>
 </controls:MyTabBar>
