@@ -342,7 +342,6 @@
                                             <!-- Event description -->
                                             <Label Grid.Row="2"
                                                   FontSize="14"
-                                                  Text="{Binding Description}"
                                                   TextColor="{DynamicResource TextTertiaryColor}"
                                                   LineBreakMode="TailTruncation"
                                                   MaxLines="2"
