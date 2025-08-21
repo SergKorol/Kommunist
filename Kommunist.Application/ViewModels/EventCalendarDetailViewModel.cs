@@ -11,6 +11,7 @@ using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Attendee = Ical.Net.DataTypes.Attendee;
+using Trigger = Ical.Net.DataTypes.Trigger;
 
 namespace Kommunist.Application.ViewModels;
 
@@ -18,11 +19,23 @@ public class EventCalendarDetailViewModel : BaseViewModel
 {
     private readonly IFileHostingService _fileHostingService;
     
-    public CalEventDetail SelectedEventDetail { get; private set; }
-    private IEnumerable<PageItem> PageItems { get; set; }
-    private AgendaPage AgendaPage { get; set; }
+    private CalEventDetail? _selectedEventDetail;
+    public CalEventDetail? SelectedEventDetail
+    {
+        get => _selectedEventDetail;
+        private set
+        {
+            if (_selectedEventDetail == value) return;
+            _selectedEventDetail = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(HasParticipants));
+        }
+    }
 
-    
+    private IEnumerable<PageItem>? PageItems { get; set; }
+    private AgendaPage? AgendaPage { get; set; }
+
+
     private bool _isWebViewLoading;
     public bool IsWebViewLoading
     {
@@ -37,9 +50,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
 
     private int TappedEventId { get; }
-    
+
     private readonly IEventService _eventService;
-    
+
     public ICommand AddToCalendar { get; }
     public ICommand JoinToEvent { get; }
 
@@ -49,46 +62,73 @@ public class EventCalendarDetailViewModel : BaseViewModel
         _fileHostingService = fileHostingService;
         TappedEventId = tappedEventId;
 
-        CreateEventCalendarDetailPage().ConfigureAwait(false);
-        AddToCalendar = new Command(async () => await GenerateEventAndUpload());
-        JoinToEvent = new Command(async () => await OpenEventPage());
+        _ = CreateEventCalendarDetailPage();
+        AddToCalendar = new Command(async void () =>
+        {
+            try
+            {
+                await GenerateEventAndUpload();
+            }
+            catch (Exception e)
+            {
+                await Toast.Make($"Event wasn't added: {e.Message}").Show();
+            }
+        });
+        JoinToEvent = new Command(async void () =>
+        {
+            try
+            {
+                await OpenEventPage();
+            }
+            catch (Exception e)
+            {
+                await Toast.Make($"Event wasn't opened: {e.Message}").Show();
+            }
+        });
     }
-    
+
     private async Task CreateEventCalendarDetailPage()
     {
         await GetHomePage(TappedEventId);
+
         var eventDetail = new CalEventDetail();
         SetMainCalEventDetail(eventDetail);
         await SetAgendaPage(eventDetail);
-        
+
         SelectedEventDetail = eventDetail;
     }
-    
-    public bool HasParticipants => 
-        SelectedEventDetail != null && 
-        (SelectedEventDetail.Speakers is { Count: > 0 } || 
+
+    public bool HasParticipants =>
+        SelectedEventDetail != null &&
+        (SelectedEventDetail.Speakers is { Count: > 0 } ||
          SelectedEventDetail.Moderators is { Count: > 0 });
 
     private async Task GetAgenda(int eventId)
     {
-        if (eventId != 0)
+        if (eventId == 0) return;
+
+        try
         {
-            AgendaPage= await _eventService.GetAgenda(eventId);
+            AgendaPage = await _eventService.GetAgenda(eventId);
         }
-        
+        catch (Exception e)
+        {
+            await Toast.Make($"Failed to load agenda: {e.Message}").Show();
+        }
     }
 
     private async Task OpenEventPage()
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(SelectedEventDetail?.Url))
+            var url = SelectedEventDetail?.Url.Trim();
+            if (string.IsNullOrWhiteSpace(url))
             {
                 await Toast.Make("Event page URL is missing").Show();
                 return;
             }
 
-            await Launcher.OpenAsync(SelectedEventDetail.Url.Trim());
+            await Launcher.OpenAsync(url);
         }
         catch (Exception e)
         {
@@ -100,42 +140,84 @@ public class EventCalendarDetailViewModel : BaseViewModel
     {
         try
         {
+            if (PageItems == null)
+            {
+                await Toast.Make("Event details are not loaded yet").Show();
+                return;
+            }
+
             var properties = PageItems.FirstOrDefault(x => x.Type == "Main")?.Properties;
-            if (properties == null) return;
-        
+            if (properties?.Details?.DatesTimestamp == null)
+            {
+                await Toast.Make("Event date/time is missing").Show();
+                return;
+            }
+
+            var startUnix = properties.Details.DatesTimestamp.Start;
+            var endUnix = properties.Details.DatesTimestamp.End;
+            if (startUnix == 0 || endUnix == 0)
+            {
+                await Toast.Make("Event date/time is invalid").Show();
+                return;
+            }
+
+            var start = ConvertDateTime(startUnix);
+            var end = ConvertDateTime(endUnix);
+
             var calendar = new Ical.Net.Calendar
             {
                 Method = "PUBLISH",
                 Scale = "GREGORIAN"
             };
-            calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
-        
+            calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id });
+
             var alarm = new Alarm
             {
                 Action = AlarmAction.Display,
                 Description = "Reminder",
-                Trigger = new Ical.Net.DataTypes.Trigger("-PT5M")
+                Trigger = new Trigger("-PT5M")
             };
-            var datesStamp = properties.Details.DatesTimestamp;
+
             var icalEvent = new CalendarEvent
             {
-                Start = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
-                Summary = SelectedEventDetail.Title,
-                Description = $"{HtmlConverter.HtmlToPlainText(SelectedEventDetail.Description)}" + "\n\n" + $"{SelectedEventDetail.Url}",
-                DtStart = new CalDateTime(ConvertDateTime(datesStamp.Start), TimeZoneInfo.Local.Id),
-                DtEnd = new CalDateTime(ConvertDateTime(datesStamp.End), TimeZoneInfo.Local.Id),
+                Uid = Guid.NewGuid().ToString("N"),
+                Summary = string.IsNullOrWhiteSpace(SelectedEventDetail?.Title) ? "Event" : SelectedEventDetail.Title,
+                Description = BuildIcsDescription(SelectedEventDetail?.Description, SelectedEventDetail?.Url),
+                DtStart = new CalDateTime(start, TimeZoneInfo.Local.Id),
+                DtEnd = new CalDateTime(end, TimeZoneInfo.Local.Id),
                 Transparency = TransparencyType.Opaque
-            
-                
             };
+
+            var location = properties.Details.ParticipationFormat?.Location;
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                icalEvent.Location = location.Trim();
+            }
+
+            var urlText = SelectedEventDetail?.Url.Trim();
+            if (!string.IsNullOrWhiteSpace(urlText) && Uri.TryCreate(urlText, UriKind.Absolute, out var uri))
+            {
+                icalEvent.Url = uri;
+            }
+
             icalEvent.Alarms.Add(alarm);
-            icalEvent.Attendees.Add(new Attendee { CommonName = "Guest", Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+            icalEvent.Attendees.Add(new Attendee
+            {
+                CommonName = "Guest",
+                Type = "INDIVIDUAL",
+                ParticipationStatus = EventParticipationStatus.Accepted,
+                Role = ParticipationRole.OptionalParticipant
+            });
+
             calendar.Events.Add(icalEvent);
-        
+
             var serializer = new CalendarSerializer();
             var icalString = serializer.SerializeToString(calendar);
-        
-            var path = await SaveIcalToInternalStorageAsync(icalString);
+
+            var fileSafeTitle = MakeSafeFileName(SelectedEventDetail?.Title ?? "event");
+            var fileName = $"{fileSafeTitle}-{startUnix}.ics";
+            var path = await SaveIcalToInternalStorageAsync(icalString, fileName);
+
             await UploadOrSendFile(path);
         }
         catch (Exception e)
@@ -143,7 +225,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"Event wasn't added: {e.Message}").Show();
         }
     }
-    
+
     private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
         var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
@@ -154,20 +236,38 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
         return filePath;
     }
-    
+
     private async Task UploadOrSendFile(string path)
     {
-        var fileUrl = await _fileHostingService.UploadFileAsync(path, "guest@kommunist.dev");
-        await Launcher.OpenAsync(fileUrl.Trim());
+        try
+        {
+            var fileUrl = await _fileHostingService.UploadFileAsync(path, "guest@kommunist.dev");
+            if (string.IsNullOrWhiteSpace(fileUrl))
+            {
+                await Toast.Make("Upload failed: empty URL returned").Show();
+                return;
+            }
+
+            await Launcher.OpenAsync(fileUrl.Trim());
+        }
+        catch (Exception e)
+        {
+            await Toast.Make($"File upload/open failed: {e.Message}").Show();
+        }
     }
-    
+
     private async Task GetHomePage(int eventId)
     {
-        if (eventId != 0)
+        if (eventId == 0) return;
+
+        try
         {
             PageItems = await _eventService.GetHomePage(eventId);
         }
-        
+        catch (Exception e)
+        {
+            await Toast.Make($"Failed to load event: {e.Message}").Show();
+        }
     }
 
     private static string GetEventPeriod(long? start, long? end)
@@ -177,81 +277,92 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var endDate = end.Value.ToLocalDateTime();
         if (startDate.Day == endDate.Day)
         {
-            return  startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
+            return startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
         }
 
         return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
     }
 
-    private static string ConvertDateTime(long dt)
+    private static DateTime ConvertDateTime(long dt)
     {
-        var dateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
-
-        return dateTimeUtc.ToString("yyyyMMdd'T'HHmmss");
+        // Convert Unix seconds to local DateTime (Ical.Net will apply provided timezone)
+        return DateTimeOffset.FromUnixTimeSeconds(dt).LocalDateTime;
     }
 
     private void SetMainCalEventDetail(CalEventDetail eventDetail)
     {
+        if (PageItems == null) return;
+
         var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
-        
-        eventDetail.Title = mainPart.Properties?.Text?.First()?.Text;
-        eventDetail.BgImageUrl = mainPart.Properties?.Image.Url;
-        eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties?.Details.DatesTimestamp.Start, mainPart.Properties?.Details.DatesTimestamp.End);
-        eventDetail.Date = mainPart.Properties?.Details.DatesTimestamp.Start.ToLocalDateTime().Date.ToString("d MMM");
-        eventDetail.Url = mainPart.Properties?.EventUrl;
-        if (mainPart.Properties != null && mainPart.Properties.Languages.Count != 0)
-            eventDetail.Language = string.Join(", ", mainPart.Properties.Languages);
-        eventDetail.FormatEvent = mainPart.Properties != null && mainPart.Properties.Details.ParticipationFormat.Online ? "Online" : "Offline";
-        if (mainPart.Properties == null) return;
+
+        eventDetail.Title = mainPart.Properties.Text?.FirstOrDefault()?.Text;
+        eventDetail.BgImageUrl = mainPart.Properties.Image?.Url;
+        eventDetail.PeriodDateTime = GetEventPeriod(mainPart.Properties.Details?.DatesTimestamp?.Start, mainPart.Properties.Details?.DatesTimestamp?.End);
+        eventDetail.Date = mainPart.Properties.Details?.DatesTimestamp?.Start.ToLocalDateTime().Date.ToString("d MMM");
+        eventDetail.Url = mainPart.Properties.EventUrl;
+
+        var languages = mainPart.Properties.Languages;
+        if (languages is { Count: > 0 })
+            eventDetail.Language = string.Join(", ", languages);
+
+        eventDetail.FormatEvent = mainPart.Properties.Details?.ParticipationFormat?.Online == true ? "Online" : "Offline";
+
+        eventDetail.Location = mainPart.Properties.Details?.ParticipationFormat?.Location ?? "World";
+
+        var text = string.Empty;
+        var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
+        if (unlimitedText != null)
         {
-            eventDetail.Location = mainPart.Properties.Details.ParticipationFormat.Location ?? "World";
+            text = unlimitedText.Properties?.UnlimitedText ?? string.Empty;
+        }
 
-            var text = string.Empty;
-            var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
-            if (unlimitedText != null)
+        var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
+        if (iconPointsPart?.Properties != null)
+        {
+            var texts = iconPointsPart.Properties.Text?.Select(x => $"<p>{x.Text}</p>") ?? Enumerable.Empty<string>();
+            var icons = iconPointsPart.Properties.Icons?.Select(x => x.Text).ToList() ?? new List<IconText>();
+
+            if (string.IsNullOrEmpty(text))
             {
-                text = unlimitedText.Properties?.UnlimitedText;
+                text = string.Join("\n", texts);
             }
-
-            var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
-            if (iconPointsPart != null)
+            else if (icons.Count != 0)
             {
-                var texts = iconPointsPart.Properties.Text.Select(x => $"<p>{x.Text}</p>");
-                var icons = iconPointsPart.Properties.Icons.Select(x => x.Text).ToList();
-                if (string.IsNullOrEmpty(text))
+                text += "<ul>";
+                foreach (var icon in icons)
                 {
-                    text = string.Join("\n", texts);
+                    text += "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>";
                 }
-                else if (icons.Count != 0)
-                {
-                    text += "<ul>";
-                    text = icons.Aggregate(text,
-                        (current, icon) =>
-                            current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
-                    text += "</ul>";
-                }
-                else
-                {
-                    text += "\n" + string.Join("\n", texts);
-                }
+                text += "</ul>";
             }
+            else
+            {
+                text += "\n" + string.Join("\n", texts);
+            }
+        }
 
-            if (string.IsNullOrEmpty(text)) return;
-            var isDark = Microsoft.Maui.Controls.Application.Current?.RequestedTheme == AppTheme.Dark;
+        if (!string.IsNullOrEmpty(text))
+        {
+            var isDark = IsDarkMode();
             eventDetail.Description = isDark ? BuildDarkHtmlContent(text) : BuildLightHtmlContent(text);
         }
     }
 
     private async Task SetAgendaPage(CalEventDetail eventDetail)
     {
+        if (PageItems == null) return;
+
         var agendaPart = PageItems.FirstOrDefault(x => x.Type == "Agenda");
         if (agendaPart?.Properties == null) return;
+
         await GetAgenda(TappedEventId);
-        if (AgendaPage.Agenda.Items.Any())
+
+        if (AgendaPage?.Agenda?.Items?.Any() == true)
         {
             var agendaItem = AgendaPage.Agenda.Items.First();
-            if (agendaItem != null && agendaItem.Speakers?.Any() == true)
+
+            if (agendaItem?.Speakers?.Any() == true)
             {
                 foreach (var speaker in agendaItem.Speakers)
                 {
@@ -266,7 +377,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (agendaItem != null && agendaItem.Moderators?.Any() == true)
+            if (agendaItem?.Moderators?.Any() == true)
             {
                 foreach (var moderator in agendaItem.Moderators)
                 {
@@ -281,23 +392,24 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (agendaItem?.Info?.DescriptionHtml != null)
+            var html = agendaItem?.Info?.DescriptionHtml;
+            if (!string.IsNullOrWhiteSpace(html))
             {
                 var isDark = IsDarkMode();
-                eventDetail.Description = isDark ? BuildDarkHtmlContent(agendaItem.Info?.DescriptionHtml) : BuildLightHtmlContent(agendaItem.Info?.DescriptionHtml);
+                eventDetail.Description = isDark ? BuildDarkHtmlContent(html) : BuildLightHtmlContent(html);
             }
         }
     }
-    
+
     private static bool IsDarkMode()
     {
         var theme = Microsoft.Maui.Controls.Application.Current?.UserAppTheme;
         if (theme == AppTheme.Unspecified)
-            theme = Microsoft.Maui.Controls.Application.Current.RequestedTheme;
+            theme = Microsoft.Maui.Controls.Application.Current?.RequestedTheme;
         return theme == AppTheme.Dark;
     }
-    
-    private static string BuildLightHtmlContent(string text)
+
+    private static string BuildLightHtmlContent(string? text)
     {
         return $$"""
 
@@ -320,8 +432,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
                          </html>
                  """;
     }
-    
-    private static string BuildDarkHtmlContent(string text)
+
+    private static string BuildDarkHtmlContent(string? text)
     {
         return $$"""
 
@@ -351,5 +463,31 @@ public class EventCalendarDetailViewModel : BaseViewModel
                      </body>
                      </html>
                  """;
+    }
+
+    private static string BuildIcsDescription(string? htmlDescription, string? url)
+    {
+        var sb = new StringBuilder();
+        var plain = HtmlConverter.HtmlToPlainText(htmlDescription ?? string.Empty).Trim();
+        if (!string.IsNullOrWhiteSpace(plain))
+            sb.AppendLine(plain);
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            if (sb.Length > 0) sb.AppendLine();
+            sb.Append(url.Trim());
+        }
+        return sb.ToString();
+    }
+
+    private static string MakeSafeFileName(string name)
+    {
+        var invalids = Path.GetInvalidFileNameChars();
+        var sb = new StringBuilder(name.Length);
+        foreach (var ch in name)
+        {
+            sb.Append(invalids.Contains(ch) ? '_' : ch);
+        }
+        var result = sb.ToString().Trim();
+        return string.IsNullOrWhiteSpace(result) ? "event" : result;
     }
 }

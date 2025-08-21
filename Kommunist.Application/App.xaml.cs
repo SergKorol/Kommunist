@@ -4,7 +4,7 @@ namespace Kommunist.Application;
 
 public partial class App 
 {
-    private ResourceDictionary _themeDictionary;
+    private ResourceDictionary? _themeDictionary;
 
     public App()
     {
@@ -27,7 +27,7 @@ public partial class App
         return new Window(new AppShell());
     }
 
-    private void OnRequestedThemeChanged(object sender, AppThemeChangedEventArgs e)
+    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
     {
         Preferences.Set("AppTheme", e.RequestedTheme.ToString());
         SetAppThemeResources(e.RequestedTheme);
@@ -35,11 +35,8 @@ public partial class App
 
     private void SetAppThemeResources(AppTheme theme)
     {
-        if (_themeDictionary is not null)
-        {
-            Resources.MergedDictionaries.Remove(_themeDictionary);
-            _themeDictionary = null;
-        }
+        Resources.MergedDictionaries.Remove(_themeDictionary);
+        _themeDictionary = null;
 
         _themeDictionary = theme == AppTheme.Dark
             ? new DarkTheme()
