@@ -136,12 +136,11 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             }
             var icalEvent = new CalendarEvent
             {
-                Start = new CalDateTime(ev.DateTime, TimeZoneInfo.Local.Id),
+                Start = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
+                End = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
                 Summary = ev.Title,
                 Location = NormalizeCalendarLocation(ev.Location),
                 Description = $"{ev.Description}\n{ev.Url}",
-                DtStart = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
-                DtEnd = new CalDateTime(ConvertDateTime(ev.End), TimeZoneInfo.Local.Id),
                 Transparency = TransparencyType.Opaque
             };
             if (coordinates.Latitude != 0 && coordinates.Longitude != 0)
@@ -151,7 +150,14 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             icalEvent.Alarms.Add(alarm);
             if (!string.IsNullOrEmpty(Invitees))
             {
-                icalEvent.Attendees.Add(new Attendee { CommonName = Invitees, Type = "INDIVIDUAL", ParticipationStatus = EventParticipationStatus.Accepted, Role = ParticipationRole.OptionalParticipant});
+                icalEvent.Attendees.Add(new Attendee
+                {
+                    CommonName = Invitees,
+                    Type = "INDIVIDUAL",
+                    ParticipationStatus = EventParticipationStatus.Accepted,
+                    Role = ParticipationRole.OptionalParticipant,
+                    Value = new Uri($"mailto:{Invitees}")
+                });
             }
             calendar.Events.Add(icalEvent);
         }
@@ -208,11 +214,10 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         return filePath;
     }
 
-    private static string ConvertDateTime(long dt)
+    private static DateTime ConvertDateTime(long dt)
     {
-        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(dt).UtcDateTime;
-        
-        return dateTimeOffset.ToString("yyyyMMdd'T'HHmmss");
+        var local = DateTimeOffset.FromUnixTimeSeconds(dt).ToLocalTime().DateTime;
+        return DateTime.SpecifyKind(local, DateTimeKind.Local);
     }
 
     private static string NormalizeCalendarLocation(string? location)
