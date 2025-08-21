@@ -29,7 +29,7 @@ public static class MauiProgram
         
         EntryHandler.Mapper.AppendToMapping("BorderlessEntry", (handler, view) =>
         {
-            if (view is Entry e && e.StyleClass?.Contains("borderless") == true)
+            if (view is Entry e && e.StyleClass.Contains("borderless") == true)
             {
 #if ANDROID
                 var pv = handler.PlatformView;

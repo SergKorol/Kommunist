@@ -22,7 +22,7 @@ public partial class App
         Current.RequestedThemeChanged += OnRequestedThemeChanged;
     }
 
-    protected override Window CreateWindow(IActivationState activationState)
+    protected override Window CreateWindow(IActivationState? activationState)
     {
         return new Window(new AppShell());
     }

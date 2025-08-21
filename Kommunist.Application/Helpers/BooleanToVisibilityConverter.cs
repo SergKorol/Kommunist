@@ -5,7 +5,7 @@ namespace Kommunist.Application.Helpers;
 
 public class BooleanToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         switch (value)
         {
@@ -30,7 +30,7 @@ public class BooleanToVisibilityConverter : IValueConverter
         }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (targetType == typeof(bool) || targetType == typeof(bool?))
         {

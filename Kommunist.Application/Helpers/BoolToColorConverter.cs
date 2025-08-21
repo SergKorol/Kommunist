@@ -4,7 +4,7 @@ namespace Kommunist.Application.Helpers;
 
 public class BoolToColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not bool boolValue) return Colors.White;
         if (parameter is not string colorParams) return boolValue ? Colors.LightBlue : Colors.White;
@@ -30,7 +30,7 @@ public class BoolToColorConverter : IValueConverter
 
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return null;
     }

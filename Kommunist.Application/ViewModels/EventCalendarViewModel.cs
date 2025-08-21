@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
@@ -241,9 +240,9 @@ public class EventCalendarViewModel : BaseViewModel
             ? startLocal.ToString("dd.MM.yyyy")
             : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
 
-        var languages = (serviceEvent.Languages?.Any() == true
+        var languages = serviceEvent.Languages?.Any() == true
             ? string.Join("/", serviceEvent.Languages).ToUpperInvariant()
-            : "N/A");
+            : "N/A";
 
         var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
 
