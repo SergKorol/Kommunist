@@ -9,7 +9,7 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
 {
     public override List<TextItem> ReadJson(JsonReader reader, Type objectType, List<TextItem> existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
-        if (reader is null) throw new ArgumentNullException(nameof(reader));
+        ArgumentNullException.ThrowIfNull(reader);
 
         switch (reader.TokenType)
         {
@@ -23,7 +23,7 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
             {
                 var obj = JObject.Load(reader);
                 var item = obj.ToObject<TextItem>(serializer);
-                return item != null ? [item] : new List<TextItem>();
+                return item != null ? [item] : [];
             }
 
             case JsonToken.StartArray:

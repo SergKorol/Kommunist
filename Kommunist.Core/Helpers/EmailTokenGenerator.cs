@@ -18,8 +18,8 @@ public static class EmailTokenGenerator
         password ??= "DefaultAppEncryptionKey2025";
 
         using var deriveBytes = new Rfc2898DeriveBytes(password, Salt, Iterations, HashAlgorithmName.SHA256);
-        byte[] key = deriveBytes.GetBytes(KeySize);
-        byte[] iv = deriveBytes.GetBytes(IvSize);
+        var key = deriveBytes.GetBytes(KeySize);
+        var iv = deriveBytes.GetBytes(IvSize);
 
         using var aes = Aes.Create();
         aes.Key = key;
