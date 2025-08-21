@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core.Extensions;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Application.Views;
@@ -24,9 +23,9 @@ public class EventCalendarViewModel : BaseViewModel
         SelectionType = SelectionType.Single
     };
 
-    private static readonly Random Random = new();
+    private static readonly Random Random = Random.Shared;
 
-    private List<Color> Colors { get; } =
+    private static readonly IReadOnlyList<Color> Colors =
     [
         Microsoft.Maui.Graphics.Colors.Red,
         Microsoft.Maui.Graphics.Colors.Orange,
@@ -36,7 +35,6 @@ public class EventCalendarViewModel : BaseViewModel
         Color.FromArgb("#8010E0")
     ];
 
-    private ObservableCollection<ServiceEvent> _serviceEvents;
     public ObservableRangeCollection<CalEvent> CalEvents { get; } = [];
     public ObservableRangeCollection<CalEvent> SelectedEvents { get; } = [];
     #endregion
@@ -45,12 +43,15 @@ public class EventCalendarViewModel : BaseViewModel
     public ICommand NavigateCalendarCommand { get; set; }
     public ICommand ChangeDateSelectionCommand { get; set; }
     public ICommand EventSelectedCommand { get; }
-    
     public ICommand OpenIcalConfigCommand { get; }
     #endregion
 
     private readonly IEventService _eventService;
     private readonly IFileHostingService _fileHostingService;
+
+    // Concurrency + month events cache
+    private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
+    private readonly Dictionary<string, List<CalEvent>> _monthEventsCache = new();
 
     #region Constructors
     public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService)
@@ -63,32 +64,34 @@ public class EventCalendarViewModel : BaseViewModel
 
         EventCalendar.SelectedDates.CollectionChanged += SelectedDates_CollectionChanged;
         EventCalendar.DaysUpdated += EventCalendar_DaysUpdated;
-        
+
         OpenIcalConfigCommand = new Command(OpenIcalConfig);
     }
     #endregion
 
     #region Methods
-    private void EventCalendar_DaysUpdated(object sender, EventArgs e)
+    private async void EventCalendar_DaysUpdated(object? sender, EventArgs e)
     {
         if (sender is not Calendar<EventDay> calendar) return;
 
-        if (CalEvents.All(x => x.DateTime.Date != calendar.NavigatedDate.Date))
+        var monthKey = GetMonthKey(calendar.NavigatedDate);
+
+        if (_monthEventsCache.TryGetValue(monthKey, out var cached))
         {
-            GetEvents(EventCalendar.Days).ConfigureAwait(false);
+            CalEvents.ReplaceRange(cached);
+        }
+        else
+        {
+            await LoadAndPopulateEventsAsync();
+            _monthEventsCache[monthKey] = CalEvents.ToList();
         }
 
-        foreach (var day in EventCalendar.Days)
-        {
-            day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-        }
+        UpdateDaysWithCalEvents();
     }
 
-    private void SelectedDates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void SelectedDates_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        SelectedEvents.ReplaceRange(CalEvents
-            .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
-            .OrderByDescending(x => x.DateTime));
+        UpdateSelectedEvents();
     }
 
     private void NavigateCalendar(int amount)
@@ -105,7 +108,7 @@ public class EventCalendarViewModel : BaseViewModel
 
     private void ChangeDateSelection(DateTime dateTime)
     {
-        EventCalendar?.ChangeDateSelection(dateTime);
+        EventCalendar.ChangeDateSelection(dateTime);
     }
 
     private async void OnEventSelected(CalEvent selectedEvent)
@@ -120,11 +123,17 @@ public class EventCalendarViewModel : BaseViewModel
             await Toast.Make($"Failed to load event detail: {e.Message}").Show();
         }
     }
-    
+
     private async void OpenIcalConfig()
     {
         try
         {
+            if (!SelectedEvents.Any())
+            {
+                await Toast.Make("Please select at least one event.").Show();
+                return;
+            }
+
             var navigationParams = new Dictionary<string, object>
             {
                 { "SelectedEvents", SelectedEvents.ToList() }
@@ -138,65 +147,76 @@ public class EventCalendarViewModel : BaseViewModel
     }
     #endregion
 
-    private async Task GetEvents(ObservableCollection<EventDay> days)
+    private async Task LoadAndPopulateEventsAsync()
     {
-        var dateRange = GetDateRangeForNavigatedMonth(days);
-        var serviceEvents = await LoadServiceEvents(dateRange.StartDate, dateRange.EndDate);
-        var calEvents = ConvertToCalEvents(serviceEvents);
-        
-        CalEvents.ReplaceRange(calEvents);
+        await _loadSemaphore.WaitAsync();
+        try
+        {
+            var dateRange = GetDateRangeForNavigatedMonth();
+            var serviceEvents = await _eventService.LoadEvents(dateRange.StartDate, dateRange.EndDate);
+            var calEvents = ConvertToCalEvents(serviceEvents);
+            CalEvents.ReplaceRange(calEvents);
+        }
+        finally
+        {
+            _loadSemaphore.Release();
+        }
     }
 
     public async Task RefreshCalendarEvents()
     {
         try
         {
-            // Get fresh events with current filters applied
-            await GetEvents(EventCalendar.Days);
-        
-            // Update all calendar days with the new filtered events
-            foreach (var day in EventCalendar.Days)
-            {
-                day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
-            }
-        
-            // Update selected events if any dates are currently selected
+            var monthKey = GetMonthKey(EventCalendar.NavigatedDate);
+            _monthEventsCache.Remove(monthKey);
+
+            await LoadAndPopulateEventsAsync();
+
+            // Cache freshly loaded events for current month
+            _monthEventsCache[monthKey] = CalEvents.ToList();
+
+            UpdateDaysWithCalEvents();
+
             if (EventCalendar.SelectedDates.Any())
             {
-                SelectedEvents.ReplaceRange(CalEvents
-                    .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
-                    .OrderByDescending(x => x.DateTime));
+                UpdateSelectedEvents();
             }
-        
-            // Trigger property changed notifications to update UI
+
             OnPropertyChanged(nameof(CalEvents));
             OnPropertyChanged(nameof(SelectedEvents));
         }
         catch (Exception ex)
         {
-            // Handle any errors that might occur during refresh
-            // Log the error or show a user-friendly message
             System.Diagnostics.Debug.WriteLine($"Error refreshing calendar events: {ex.Message}");
-        
-            // Optionally show a toast or alert to the user
             await Toast.Make("Failed to refresh events. Please try again.").Show();
         }
     }
 
-    private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth(ObservableCollection<EventDay> days)
+    private void UpdateDaysWithCalEvents()
     {
-        var daysByNavMonth = days.Where(x => x.DateTime.Date.Month == EventCalendar.NavigatedDate.Date.Month).ToList();
-        return (daysByNavMonth.First().DateTime, daysByNavMonth.Last().DateTime);
+        foreach (var day in EventCalendar.Days)
+        {
+            day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
+        }
     }
 
-    private async Task<ObservableCollection<ServiceEvent>> LoadServiceEvents(DateTime startDate, DateTime endDate)
+    private void UpdateSelectedEvents()
     {
-        var loadedEvents = await _eventService.LoadEvents(startDate, endDate);
-        _serviceEvents = loadedEvents.ToObservableCollection();
-        return _serviceEvents;
+        SelectedEvents.ReplaceRange(
+            CalEvents
+                .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
+                .OrderByDescending(x => x.DateTime));
     }
 
-    private List<CalEvent> ConvertToCalEvents(ObservableCollection<ServiceEvent> serviceEvents)
+    private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth()
+    {
+        var nav = EventCalendar.NavigatedDate.Date;
+        var start = new DateTime(nav.Year, nav.Month, 1);
+        var end = start.AddMonths(1).AddTicks(-1);
+        return (start, end);
+    }
+
+    private static List<CalEvent> ConvertToCalEvents(IEnumerable<ServiceEvent> serviceEvents)
     {
         return serviceEvents.Select(e => new CalEvent
         {
@@ -214,15 +234,25 @@ public class EventCalendarViewModel : BaseViewModel
 
     private static string BuildEventDescription(ServiceEvent serviceEvent)
     {
-        var startDateFormatted = serviceEvent.Start.ToLocalDateTime().ToString("dd.MM.yyyy");
-        var endDateFormatted = serviceEvent.End.ToLocalDateTime().ToString("dd.MM.yyyy");
-        var languages = string.Join("/", serviceEvent.Languages).ToUpper();
+        var startLocal = serviceEvent.Start.ToLocalDateTime();
+        var endLocal = serviceEvent.End.ToLocalDateTime();
+
+        var datePart = startLocal.Date == endLocal.Date
+            ? startLocal.ToString("dd.MM.yyyy")
+            : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
+
+        var languages = (serviceEvent.Languages?.Any() == true
+            ? string.Join("/", serviceEvent.Languages).ToUpperInvariant()
+            : "N/A");
+
         var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
-        
-        var baseDescription = $"{startDateFormatted} - {endDateFormatted}, {languages}";
-        
-        return string.IsNullOrWhiteSpace(location) 
-            ? baseDescription 
+
+        var baseDescription = $"{datePart}, {languages}";
+
+        return string.IsNullOrWhiteSpace(location)
+            ? baseDescription
             : $"{baseDescription}, {location}";
     }
+
+    private static string GetMonthKey(DateTime date) => $"{date:yyyy-MM}";
 }
