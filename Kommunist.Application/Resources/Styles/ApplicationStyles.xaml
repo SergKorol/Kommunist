@@ -34,14 +34,6 @@
         <Setter Property="HeightRequest" Value="50" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
-
-    <!-- <Style TargetType="{x:Type xc:DayView}" x:Key="DefaultDayViewStyle"> -->
-    <!--     ~1~ <Setter Property="CurrentMonthTextColor" Value="{StaticResource CalendarBackgroundTextColor}" /> @1@ -->
-    <!--     ~1~ <Setter Property="TodayTextColor" Value="{StaticResource CalendarPrimaryColor}" /> @1@ -->
-    <!--     <Setter Property="InvalidTextColor" Value="{StaticResource CalendarTertiaryColor}" /> -->
-    <!--     <Setter Property="SelectedBackgroundColor" Value="{StaticResource CalendarPrimaryColor}" /> -->
-    <!--     <Setter Property="SelectedTextColor" Value="{StaticResource CalendarPrimaryTextColor}" /> -->
-    <!-- </Style> -->
     
     <ControlTemplate x:Key="SecondaryColorTemplate">
         <Grid RowDefinitions="*,Auto">
