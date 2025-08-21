@@ -61,7 +61,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_home1.png"
+                                ImageSource="icon_home.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="HomePage">
                         </Button>
@@ -73,7 +73,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_filters1.png"
+                                ImageSource="icon_filters.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="FiltersPage">
                         </Button>
@@ -85,7 +85,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_settings1.png"
+                                ImageSource="icon_settings.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="SettingsPage">
                         </Button>
