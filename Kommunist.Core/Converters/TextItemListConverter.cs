@@ -32,17 +32,40 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
                 var result = new List<TextItem>(array.Count);
                 foreach (var token in array)
                 {
-                    if (token.Type == JTokenType.String)
+                    switch (token.Type)
                     {
-                        result.Add(new TextItem { Text = token.Value<string>() ?? string.Empty });
-                    }
-                    else if (token.Type == JTokenType.Object)
-                    {
-                        var item = token.ToObject<TextItem>(serializer);
-                        if (item != null)
+                        case JTokenType.String:
+                            result.Add(new TextItem { Text = token.Value<string>() ?? string.Empty });
+                            break;
+                        case JTokenType.Object:
                         {
-                            result.Add(item);
+                            var item = token.ToObject<TextItem>(serializer);
+                            if (item != null)
+                            {
+                                result.Add(item);
+                            }
+
+                            break;
                         }
+                        case JTokenType.None:
+                        case JTokenType.Array:
+                        case JTokenType.Constructor:
+                        case JTokenType.Property:
+                        case JTokenType.Comment:
+                        case JTokenType.Integer:
+                        case JTokenType.Float:
+                        case JTokenType.Boolean:
+                        case JTokenType.Null:
+                        case JTokenType.Undefined:
+                        case JTokenType.Date:
+                        case JTokenType.Raw:
+                        case JTokenType.Bytes:
+                        case JTokenType.Guid:
+                        case JTokenType.Uri:
+                        case JTokenType.TimeSpan:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(token.Type.ToString());
                     }
                 }
 
@@ -50,6 +73,19 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
             }
 
             case JsonToken.None:
+            case JsonToken.StartConstructor:
+            case JsonToken.PropertyName:
+            case JsonToken.Comment:
+            case JsonToken.Raw:
+            case JsonToken.Integer:
+            case JsonToken.Float:
+            case JsonToken.Boolean:
+            case JsonToken.Undefined:
+            case JsonToken.EndObject:
+            case JsonToken.EndArray:
+            case JsonToken.EndConstructor:
+            case JsonToken.Date:
+            case JsonToken.Bytes:
             default:
             {
                 var token = JToken.Load(reader);
@@ -86,11 +122,44 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
 
                                     break;
                                 }
+                                case JTokenType.None:
+                                case JTokenType.Array:
+                                case JTokenType.Constructor:
+                                case JTokenType.Property:
+                                case JTokenType.Comment:
+                                case JTokenType.Integer:
+                                case JTokenType.Float:
+                                case JTokenType.Boolean:
+                                case JTokenType.Null:
+                                case JTokenType.Undefined:
+                                case JTokenType.Date:
+                                case JTokenType.Raw:
+                                case JTokenType.Bytes:
+                                case JTokenType.Guid:
+                                case JTokenType.Uri:
+                                case JTokenType.TimeSpan:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException(t.Type.ToString());
                             }
                         }
 
                         return result;
                     }
+                    case JTokenType.None:
+                    case JTokenType.Constructor:
+                    case JTokenType.Property:
+                    case JTokenType.Comment:
+                    case JTokenType.Integer:
+                    case JTokenType.Float:
+                    case JTokenType.Boolean:
+                    case JTokenType.Undefined:
+                    case JTokenType.Date:
+                    case JTokenType.Raw:
+                    case JTokenType.Bytes:
+                    case JTokenType.Guid:
+                    case JTokenType.Uri:
+                    case JTokenType.TimeSpan:
                     default:
                         throw new JsonSerializationException($"Unexpected token {token.Type} when parsing TextItem list at path '{reader.Path}'.");
                 }

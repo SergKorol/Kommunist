@@ -35,7 +35,7 @@ public partial class CalEventDetailPage
             try
             {
                 await Task.Delay(100);
-                BgImg = vm.SelectedEventDetail?.BgImageUrl ?? string.Empty;
+                BgImg = vm.SelectedEventDetail.BgImageUrl ?? string.Empty;
                 var heightStr = await DescriptionWebView.EvaluateJavaScriptAsync("document.documentElement.scrollHeight");
                 Debug.WriteLine($"WebView Height (JS): {heightStr}");
 

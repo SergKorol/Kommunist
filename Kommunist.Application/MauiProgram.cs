@@ -29,7 +29,7 @@ public static class MauiProgram
         
         EntryHandler.Mapper.AppendToMapping("BorderlessEntry", (handler, view) =>
         {
-            if (view is Entry e && e.StyleClass.Contains("borderless") == true)
+            if (view is Entry e && e.StyleClass.Contains("borderless"))
             {
 #if ANDROID
                 var pv = handler.PlatformView;
@@ -108,7 +108,7 @@ public static class MauiProgram
     {
         var assembly = Assembly.GetExecutingAssembly();
         var environmentName = GetEnvironmentName();
-        var baseName = "Kommunist.Application.appsettings";
+        const string baseName = "Kommunist.Application.appsettings";
         var envResourceName = string.Concat(baseName, ".", environmentName, ".json");
         var defaultResourceName = string.Concat(baseName, ".json");
 
