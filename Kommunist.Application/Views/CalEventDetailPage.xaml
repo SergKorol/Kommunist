@@ -54,13 +54,14 @@
                             Opacity="0.5"
                             Source="{Binding Source={x:Reference Page}, Path=BgImg}" />
                         <VerticalStackLayout Padding="16" Spacing="8">
-                            <Label Text="{Binding SelectedEventDetail.Title}"
+                            <Label Text="{Binding SelectedEventDetail.Title, FallbackValue='', TargetNullValue=''
+}"
                                    FontAttributes="Bold"
                                    FontSize="24"
                                    LineBreakMode="WordWrap"
                                    HorizontalTextAlignment="Center" />
                             
-                            <Label Text="{Binding SelectedEventDetail.PeriodDateTime}"
+                            <Label Text="{Binding SelectedEventDetail.PeriodDateTime, FallbackValue='', TargetNullValue=''}"
                                    FontSize="16"
                                    LineBreakMode="WordWrap"
                                    HorizontalTextAlignment="Center" />
@@ -70,7 +71,7 @@
                                     <FormattedString>
                                         <Span FontFamily="FAS" Text="{DynamicResource IconTowerBroadcast}" />
                                         <Span Text=" " />
-                                        <Span Text="{Binding SelectedEventDetail.FormatEvent}" />
+                                        <Span Text="{Binding SelectedEventDetail.FormatEvent, FallbackValue='', TargetNullValue=''}" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -91,7 +92,7 @@
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Text="{Binding SelectedEventDetail.Language}" 
+                                <Label Text="{Binding SelectedEventDetail.Language, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
@@ -104,7 +105,7 @@
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Text="{Binding SelectedEventDetail.Location}" 
+                                <Label Text="{Binding SelectedEventDetail.Location, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
@@ -117,7 +118,7 @@
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Text="{Binding SelectedEventDetail.Date}" 
+                                <Label Text="{Binding SelectedEventDetail.Date, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
@@ -137,7 +138,7 @@
 
                 <!-- Description Card -->
                 <Border Style="{StaticResource EventCardStyle}" 
-                        IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        IsVisible="{Binding SelectedEventDetail.Description, FallbackValue='', TargetNullValue='', Converter={StaticResource BooleanToVisibilityConverter}}">
                     <VerticalStackLayout Padding="16" Spacing="10">
                         <Label Text="Description" 
                                Style="{StaticResource SectionHeaderStyle}" />
@@ -146,11 +147,11 @@
                         
 
                         <WebView x:Name="DescriptionWebView"
-                                 IsVisible="{Binding SelectedEventDetail.Description, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 IsVisible="{Binding SelectedEventDetail.Description, FallbackValue='', TargetNullValue='', Converter={StaticResource BooleanToVisibilityConverter}}"
                                  VerticalOptions="FillAndExpand"
                                  Navigating="DescriptionWebView_Navigating">
                             <WebView.Source>
-                                <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description}" />
+                                <HtmlWebViewSource Html="{Binding SelectedEventDetail.Description, FallbackValue='', TargetNullValue=''}" />
                             </WebView.Source>
                         </WebView>
 
@@ -176,11 +177,11 @@
                         <!-- Participants Grid -->
                         <Grid ColumnDefinitions="*,*" Grid.Row="2">
                             <!-- Speakers Column -->
-                            <VerticalStackLayout Grid.Column="0" IsVisible="{Binding SelectedEventDetail.Speakers, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <VerticalStackLayout Grid.Column="0" IsVisible="{Binding SelectedEventDetail.Speakers, FallbackValue='', TargetNullValue='', Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Label Text="Speakers"
                                        Style="{StaticResource SectionHeaderStyle}" />
                                        
-                                <CollectionView ItemsSource="{Binding SelectedEventDetail.Speakers}"
+                                <CollectionView ItemsSource="{Binding SelectedEventDetail.Speakers, FallbackValue='', TargetNullValue=''}"
                                                 ItemsLayout="VerticalGrid, 1"
                                                 EmptyView="No speakers available">
                                     <CollectionView.ItemTemplate>
@@ -222,11 +223,11 @@
                             </VerticalStackLayout>
 
                             <!-- Moderators Column -->
-                            <VerticalStackLayout Grid.Column="1" IsVisible="{Binding SelectedEventDetail.Moderators, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <VerticalStackLayout Grid.Column="1" IsVisible="{Binding SelectedEventDetail.Moderators, FallbackValue='', TargetNullValue='', Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Label Text="Moderators"
                                        Style="{StaticResource SectionHeaderStyle}" />
                                        
-                                <CollectionView ItemsSource="{Binding SelectedEventDetail.Moderators}"
+                                <CollectionView ItemsSource="{Binding SelectedEventDetail.Moderators, FallbackValue='', TargetNullValue=''}"
                                                 ItemsLayout="VerticalGrid, 1"
                                                 EmptyView="No moderators available">
                                     <CollectionView.ItemTemplate>

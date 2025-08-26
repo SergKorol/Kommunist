@@ -121,7 +121,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
     {
         try
         {
-            var url = SelectedEventDetail?.Url.Trim();
+            var url = SelectedEventDetail?.Url?.Trim();
             if (string.IsNullOrWhiteSpace(url))
             {
                 await Toast.Make("Event page URL is missing").Show();
@@ -194,7 +194,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 icalEvent.Location = location.Trim();
             }
 
-            var urlText = SelectedEventDetail?.Url.Trim();
+            var urlText = SelectedEventDetail?.Url?.Trim();
             if (!string.IsNullOrWhiteSpace(urlText) && Uri.TryCreate(urlText, UriKind.Absolute, out var uri))
             {
                 icalEvent.Url = uri;
@@ -320,8 +320,8 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
         if (iconPointsPart?.Properties != null)
         {
-            var texts = iconPointsPart.Properties.Text?.Select(x => $"<p>{x.Text}</p>") ?? Enumerable.Empty<string>();
-            var icons = iconPointsPart.Properties.Icons?.Select(x => x.Text).ToList() ?? new List<IconText>();
+            var texts = iconPointsPart.Properties.Text?.Select(x => $"<p>{x.Text}</p>") ?? [];
+            var icons = iconPointsPart.Properties.Icons?.Select(x => x.Text).ToList() ?? [];
 
             if (string.IsNullOrEmpty(text))
             {
@@ -330,10 +330,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             else if (icons.Count != 0)
             {
                 text += "<ul>";
-                foreach (var icon in icons)
-                {
-                    text += "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>";
-                }
+                text = icons.Aggregate(text, (current, icon) => current + ("<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>"));
                 text += "</ul>";
             }
             else
@@ -342,11 +339,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
             }
         }
 
-        if (!string.IsNullOrEmpty(text))
-        {
-            var isDark = IsDarkMode();
-            eventDetail.Description = isDark ? BuildDarkHtmlContent(text) : BuildLightHtmlContent(text);
-        }
+        if (string.IsNullOrEmpty(text)) return;
+        var isDark = IsDarkMode();
+        eventDetail.Description = isDark ? BuildDarkHtmlContent(text) : BuildLightHtmlContent(text);
     }
 
     private async Task SetAgendaPage(CalEventDetail eventDetail)
@@ -471,11 +466,9 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var plain = HtmlConverter.HtmlToPlainText(htmlDescription ?? string.Empty).Trim();
         if (!string.IsNullOrWhiteSpace(plain))
             sb.AppendLine(plain);
-        if (!string.IsNullOrWhiteSpace(url))
-        {
-            if (sb.Length > 0) sb.AppendLine();
-            sb.Append(url.Trim());
-        }
+        if (string.IsNullOrWhiteSpace(url)) return sb.ToString();
+        if (sb.Length > 0) sb.AppendLine();
+        sb.Append(url.Trim());
         return sb.ToString();
     }
 
