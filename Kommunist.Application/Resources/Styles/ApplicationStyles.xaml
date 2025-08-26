@@ -34,14 +34,6 @@
         <Setter Property="HeightRequest" Value="50" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
-
-    <!-- <Style TargetType="{x:Type xc:DayView}" x:Key="DefaultDayViewStyle"> -->
-    <!--     ~1~ <Setter Property="CurrentMonthTextColor" Value="{StaticResource CalendarBackgroundTextColor}" /> @1@ -->
-    <!--     ~1~ <Setter Property="TodayTextColor" Value="{StaticResource CalendarPrimaryColor}" /> @1@ -->
-    <!--     <Setter Property="InvalidTextColor" Value="{StaticResource CalendarTertiaryColor}" /> -->
-    <!--     <Setter Property="SelectedBackgroundColor" Value="{StaticResource CalendarPrimaryColor}" /> -->
-    <!--     <Setter Property="SelectedTextColor" Value="{StaticResource CalendarPrimaryTextColor}" /> -->
-    <!-- </Style> -->
     
     <ControlTemplate x:Key="SecondaryColorTemplate">
         <Grid RowDefinitions="*,Auto">
@@ -69,7 +61,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_home1.png"
+                                ImageSource="icon_home.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="HomePage">
                         </Button>
@@ -81,7 +73,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_filters1.png"
+                                ImageSource="icon_filters.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="FiltersPage">
                         </Button>
@@ -93,7 +85,7 @@
                                 TextColor="{DynamicResource TextSecondaryColor}"
                                 HorizontalOptions="Center"
                                 ContentLayout="Top,8"
-                                ImageSource="icon_settings1.png"
+                                ImageSource="icon_settings.png"
                                 Command="{Binding NavigateToCommand, Source={RelativeSource TemplatedParent}}"
                                 CommandParameter="SettingsPage">
                         </Button>

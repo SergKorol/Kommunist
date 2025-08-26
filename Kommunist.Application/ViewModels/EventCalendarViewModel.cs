@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
@@ -72,21 +71,28 @@ public class EventCalendarViewModel : BaseViewModel
     #region Methods
     private async void EventCalendar_DaysUpdated(object? sender, EventArgs e)
     {
-        if (sender is not Calendar<EventDay> calendar) return;
-
-        var monthKey = GetMonthKey(calendar.NavigatedDate);
-
-        if (_monthEventsCache.TryGetValue(monthKey, out var cached))
+        try
         {
-            CalEvents.ReplaceRange(cached);
-        }
-        else
-        {
-            await LoadAndPopulateEventsAsync();
-            _monthEventsCache[monthKey] = CalEvents.ToList();
-        }
+            if (sender is not Calendar<EventDay> calendar) return;
 
-        UpdateDaysWithCalEvents();
+            var monthKey = GetMonthKey(calendar.NavigatedDate);
+
+            if (_monthEventsCache.TryGetValue(monthKey, out var cached))
+            {
+                CalEvents.ReplaceRange(cached);
+            }
+            else
+            {
+                await LoadAndPopulateEventsAsync();
+                _monthEventsCache[monthKey] = CalEvents.ToList();
+            }
+
+            UpdateDaysWithCalEvents();
+        }
+        catch (Exception ex)
+        {
+            await Toast.Make($"Failed to update calendar: {ex.Message}").Show();
+        }
     }
 
     private void SelectedDates_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -241,9 +247,9 @@ public class EventCalendarViewModel : BaseViewModel
             ? startLocal.ToString("dd.MM.yyyy")
             : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
 
-        var languages = (serviceEvent.Languages?.Any() == true
+        var languages = serviceEvent.Languages?.Any() == true
             ? string.Join("/", serviceEvent.Languages).ToUpperInvariant()
-            : "N/A");
+            : "N/A";
 
         var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
 

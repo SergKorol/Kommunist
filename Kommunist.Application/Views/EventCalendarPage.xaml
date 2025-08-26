@@ -243,7 +243,7 @@
                         <CollectionView.EmptyView>
                             <Grid HeightRequest="120">
                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                                    <Image Source="icon_calendar1.png"
+                                    <Image Source="icon_calendar.png"
                                            HeightRequest="64"
                                            WidthRequest="64"
                                            HorizontalOptions="Center"

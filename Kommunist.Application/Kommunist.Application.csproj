@@ -40,14 +40,9 @@
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
-        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
-        <MauiImage Update="Resources\Images\icon_home.svg" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\icon_home1.png" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\icon_filters.svg" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\icon_filters1.png" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\icon_calendar.svg" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\icon_settings.svg" BaseSize="30,30" />
-        <MauiImage Update="Resources\Images\icon_settings1.png" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\icon_home.png" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\icon_filters.png" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\icon_settings.png" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\icon_trashcan.png" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\icon_tag.png" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\icon_mic.png" BaseSize="24,24" />

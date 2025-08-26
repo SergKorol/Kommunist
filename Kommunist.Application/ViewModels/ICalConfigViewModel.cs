@@ -25,13 +25,13 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
     [ObservableProperty]
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Invalid email format.")]
-    private string _invitees;
+    private string? _invitees;
     public int AlarmMinutes { get; set; } = 10;
     
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
-    public string FirstEventDateTime { get; set; }
-    public string LastEventDateTime { get; set; }
+    public string? FirstEventDateTime { get; set; }
+    public string? LastEventDateTime { get; set; }
     
     public ICommand IncrementAlarmCommand => new Command(() => AlarmMinutes = Math.Min(120, AlarmMinutes + 5));
     public ICommand DecrementAlarmCommand => new Command(() => AlarmMinutes = Math.Max(0, AlarmMinutes - 5));

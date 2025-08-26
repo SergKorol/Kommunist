@@ -7,7 +7,7 @@ public class CalEvent : Event
     public int EventId { get; init; }
     public DateTime DateTime { get; set; } = DateTime.Today;
 
-    public string? Location { get; set; }
+    public string? Location { get; init; }
 
     public long Start { get; init; }
     public long End { get; init; }

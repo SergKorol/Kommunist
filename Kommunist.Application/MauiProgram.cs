@@ -29,7 +29,7 @@ public static class MauiProgram
         
         EntryHandler.Mapper.AppendToMapping("BorderlessEntry", (handler, view) =>
         {
-            if (view is Entry e && e.StyleClass?.Contains("borderless") == true)
+            if (view is Entry e && e.StyleClass.Contains("borderless"))
             {
 #if ANDROID
                 var pv = handler.PlatformView;
@@ -70,9 +70,9 @@ public static class MauiProgram
     private static void ConfigureFonts(IFontCollection fonts)
     {
         fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        fonts.AddFont("Brands-Regular-400.otf", "FAB");
-        fonts.AddFont("Free-Regular-400.otf", "FAR");
-        fonts.AddFont("Free-Solid-900.otf", "FAS");
+        fonts.AddFont("Font Awesome 7 Brands-Regular-400.otf", "FAB");
+        fonts.AddFont("Font Awesome 7 Free-Regular-400.otf", "FAR");
+        fonts.AddFont("Font Awesome 7 Free-Solid-900.otf", "FAS");
     }
 
     private static void ConfigureServices(MauiAppBuilder builder)
@@ -108,7 +108,7 @@ public static class MauiProgram
     {
         var assembly = Assembly.GetExecutingAssembly();
         var environmentName = GetEnvironmentName();
-        var baseName = "Kommunist.Application.appsettings";
+        const string baseName = "Kommunist.Application.appsettings";
         var envResourceName = string.Concat(baseName, ".", environmentName, ".json");
         var defaultResourceName = string.Concat(baseName, ".json");
 

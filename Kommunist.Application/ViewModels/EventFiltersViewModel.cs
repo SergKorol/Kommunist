@@ -521,17 +521,18 @@ public class EventFiltersViewModel : BaseViewModel, IDisposable
 
         ReplaceItems(SelectedTags, filters.TagFilters);
         ReplaceItems(SelectedSpeakers, filters.SpeakerFilters);
-        ReplaceItems(SelectedCountries!, MapCountryFiltersToFlags(filters.CountryFilters));
+        ReplaceItems(SelectedCountries, MapCountryFiltersToFlags(filters.CountryFilters));
         ReplaceItems(SelectedCommunities, filters.CommunityFilters);
         OnlineOnly = filters.OnlineOnly;
     }
 
-    private IEnumerable<string?> MapCountryFiltersToFlags(IEnumerable<string> countries)
+    private IEnumerable<string> MapCountryFiltersToFlags(IEnumerable<string> countries)
     {
         return countries
             .Select(name => Countries?.FindWithFlag(name))
-            .Where(item => item is not null);
+            .OfType<string>();
     }
+
 
     private static void ReplaceItems<T>(ObservableHashSet<T> target, IEnumerable<T>? source)
     {
@@ -555,6 +556,7 @@ public class EventFiltersViewModel : BaseViewModel, IDisposable
         _countryDebounceCts?.Dispose();
         _communityDebounceCts?.Cancel();
         _communityDebounceCts?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     #endregion
