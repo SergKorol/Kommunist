@@ -248,7 +248,7 @@ public class EventCalendarViewModel : BaseViewModel
             : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
 
         var languages = serviceEvent.Languages?.Any() == true
-            ? string.Join("/", serviceEvent.Languages).ToUpperInvariant()
+            ? string.Join("/", serviceEvent.Languages.ReplaceCodesWithFlags())
             : "N/A";
 
         var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
