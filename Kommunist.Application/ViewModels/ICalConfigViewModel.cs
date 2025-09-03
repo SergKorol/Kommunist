@@ -192,7 +192,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
     {
         if (SendEmail)
         {
-            await _emailService.SendEmailAsync(Invitees, "Your iCal Event", "<p>Find attached your iCal event</p><br>.", path, Email);
+            await _emailService.SendEmailAsync(Invitees, "Your iCal Event", GetEmailBody(), path, Email);
             await Toast.Make("The file was sent successfully").Show();
         }
         else
@@ -227,5 +227,28 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         locationParts = locationParts.Reverse().ToArray();
         var normalizedLocation = string.Join(", ", locationParts.Select(x => x.Trim()));
         return normalizedLocation;
+    }
+
+    private static string GetEmailBody()
+    {
+        return @"
+                <html>
+                  <body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'>
+                    <table align='center' width='600' cellpadding='0' cellspacing='0' style='background: #ffffff; padding: 20px; border-radius: 8px;'>
+                      <tr>
+                        <td style='text-align: center;'>
+                          <h2 style='color: #333;'>Your iCal Event</h2>
+                          <p style=""color:#555; font-size:14px;"">
+                           📅 Your calendar invite is attached as <b>events.ics</b>.<br>
+                           Open the attachment to add it to your calendar.
+                            </p>
+                          <p style='margin-top:20px; color: #777; font-size: 12px;'>
+                            If you have any issues opening the event, please reply to this email.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </body>
+                </html>";
     }
 }
