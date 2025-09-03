@@ -94,6 +94,8 @@
                                 </Label>
                                 <Label Text="{Binding SelectedEventDetail.Language, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
+                                       MaximumWidthRequest="100"
+                                       HorizontalTextAlignment="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
                             
@@ -107,6 +109,8 @@
                                 </Label>
                                 <Label Text="{Binding SelectedEventDetail.Location, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
+                                       MaximumWidthRequest="100"
+                                       HorizontalTextAlignment="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
                             

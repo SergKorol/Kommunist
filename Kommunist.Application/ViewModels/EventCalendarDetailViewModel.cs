@@ -304,7 +304,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
         var languages = mainPart.Properties.Languages;
         if (languages is { Count: > 0 })
-            eventDetail.Language = string.Join(", ", languages);
+            eventDetail.Language = string.Join(", ", languages).ToUpperInvariant();
 
         eventDetail.FormatEvent = mainPart.Properties.Details?.ParticipationFormat?.Online == true ? "Online" : "Offline";
 
