@@ -46,11 +46,12 @@
             <VerticalStackLayout Spacing="15" Padding="16">
                 <!-- Event Header Card -->
                 <Border Style="{StaticResource EventCardStyle}">
-                    <Grid>
+                    <Grid HeightRequest="160" MaximumHeightRequest="300">
                         <Image
-                            Aspect="AspectFill"
+                            Aspect="Fill"
+                            VerticalOptions="Fill"
+                            HorizontalOptions="Fill"
                             BackgroundColor="SkyBlue"
-                            HeightRequest="120"
                             Opacity="0.5"
                             Source="{Binding Source={x:Reference Page}, Path=BgImg}" />
                         <VerticalStackLayout Padding="16" Spacing="8">
@@ -94,6 +95,8 @@
                                 </Label>
                                 <Label Text="{Binding SelectedEventDetail.Language, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
+                                       MaximumWidthRequest="100"
+                                       HorizontalTextAlignment="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
                             
@@ -107,6 +110,8 @@
                                 </Label>
                                 <Label Text="{Binding SelectedEventDetail.Location, FallbackValue='', TargetNullValue=''}" 
                                        HorizontalOptions="Center"
+                                       MaximumWidthRequest="100"
+                                       HorizontalTextAlignment="Center"
                                        FontSize="14" />
                             </VerticalStackLayout>
                             

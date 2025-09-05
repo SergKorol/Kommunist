@@ -4,6 +4,16 @@ namespace Kommunist.Application.Helpers;
 
 public static class CountryExtensions
 {
+    private static readonly Dictionary<string, string> LanguageToFlag = new()
+    {
+        { "En", "🇬🇧" },   // English
+        { "Esp", "🇪🇸" }, // Spanish
+        { "Ua", "🇺🇦" },  // Ukrainian
+        { "Ru", "🇷🇺" },  // Russian
+        { "By", "🇧🇾" },  // Belarusian
+        { "Slk", "🇸🇰" }  // Slovak
+    };
+    
     public static List<string> WithoutFlags(this List<string> countries)
     {
         return
@@ -24,5 +34,12 @@ public static class CountryExtensions
             var name = parts.Length == 2 ? parts[1] : c;
             return string.Equals(name, countryName, StringComparison.OrdinalIgnoreCase);
         });
+    }
+    
+    public static List<string> ReplaceCodesWithFlags(this List<string> codes)
+    {
+        return codes
+            .Select(code => LanguageToFlag.TryGetValue(code, out var flag) ? flag : code)
+            .ToList();
     }
 }
