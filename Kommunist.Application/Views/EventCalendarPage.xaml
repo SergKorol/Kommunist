@@ -6,7 +6,6 @@
                    xmlns:controls="clr-namespace:Kommunist.Application.Controls"
                    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
                    xmlns:models="clr-namespace:Kommunist.Application.Models"
-                   Style="{StaticResource DefaultPageStyle}"
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
@@ -19,7 +18,7 @@
         <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </controls:MyTabBar.Resources>
 
-    <Grid BackgroundColor="{DynamicResource BackgroundColor}">
+    <Grid BackgroundColor="{DynamicResource BackgroundColor}" RowSpacing="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -28,9 +27,9 @@
         <!-- Calendar Section -->
         <Border Grid.Row="0" 
                 BackgroundColor="{DynamicResource SurfaceColor}" 
-                Margin="12,16,12,8" 
+                Margin="12,16,12,0" 
                 Padding="8"
-                StrokeThickness="0">
+                StrokeThickness="1">
             <Border.Shadow>
                 <Shadow Brush="{DynamicResource ShadowColor}"
                         Offset="0,2"
@@ -208,7 +207,7 @@
         </Border>
 
         <!-- Events List Section -->
-        <Grid Grid.Row="1" Margin="0,8,0,0">
+        <Grid Grid.Row="1">
             <Border BackgroundColor="{DynamicResource SurfaceColor}"
                     Margin="12,0,12,12"
                     StrokeThickness="0">
@@ -222,22 +221,13 @@
                     <RoundRectangle CornerRadius="16" />
                 </Border.StrokeShape>
                 
-                <Grid Padding="8">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     
-                    <!-- Selected date header -->
-                    <Label Grid.Row="0"
-                           Text="{Binding EventCalendar.SelectedDates[0], StringFormat='Events for {0:dddd, MMMM d}'}"
-                           TextColor="{DynamicResource TextPrimaryColor}"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           Margin="12,8,12,4" />
-                    
                     <!-- Events list -->
-                    <CollectionView Grid.Row="1"
+                    <CollectionView Grid.Row="0"
                                    ItemsSource="{Binding SelectedEvents}"
                                    Margin="0,8,0,0">
                         <CollectionView.EmptyView>

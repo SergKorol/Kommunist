@@ -21,7 +21,7 @@
     <!-- Background & Surface -->
     <Color x:Key="PageBackgroundColor">#121212</Color>
     <Color x:Key="BackgroundColor">#1E1E1E</Color>
-    <Color x:Key="SurfaceColor">#1C1C1C</Color>
+    <Color x:Key="SurfaceColor">Black</Color>
     <Color x:Key="ShadowColor">#66000000</Color>
 
     <!-- Basic Colors -->
