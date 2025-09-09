@@ -409,4 +409,8 @@
     <Style x:Key="ValidEntryStyle" TargetType="Entry">
         <Setter Property="TextColor" Value="{DynamicResource ValidEntryColor}" />
     </Style>
+    
+    <Style TargetType="Shell" x:Key="ShellStyle">
+        <Setter Property="BackgroundColor" Value="{DynamicResource PageBackgroundColor}" />
+    </Style>
 </ResourceDictionary>
