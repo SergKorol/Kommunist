@@ -5,7 +5,7 @@
                     x:Class="Kommunist.Application.Themes.LightTheme">
 
     <Color x:Key="PrimaryColor">#2060FF</Color>
-    <Color x:Key="PageBackgroundColor">#F0F0F4</Color>
+    <Color x:Key="PageBackgroundColor">#F5F7FA</Color>
     <Color x:Key="ContentTextColor">Black</Color>
 
     <Color x:Key="Primary">#512BD4</Color>

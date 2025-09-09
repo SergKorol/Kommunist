@@ -95,7 +95,13 @@
         </Grid>
     </ControlTemplate>
 
-
+    <Style TargetType="{x:Type Label}" x:Key="ShellLabelStyle">
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="VerticalTextAlignment" Value="Center" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="TextColor" Value="White" />
+    </Style>
 
 
     <Style TargetType="{x:Type ContentPage}" x:Key="DefaultPageStyle">

@@ -9,7 +9,7 @@
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
-                   Title="Event Calendar"
+                   Style="{StaticResource DefaultPageStyle}"
                    Loaded="VisualElement_OnLoaded"
                    ControlTemplate="{StaticResource SecondaryColorTemplate}">
 

@@ -7,7 +7,6 @@
              xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
              x:Class="Kommunist.Application.Views.FiltersPage"
              x:DataType="{x:Type viewModels:EventFiltersViewModel}"
-             Title="Filters"
              Style="{StaticResource DefaultPageStyle}"
              x:Name="Filters"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
