@@ -10,6 +10,7 @@
     <Color x:Key="Secondary">#2A2A2E</Color>
     <Color x:Key="Warning">#FF6E6E</Color>
     <Color x:Key="Success">#66BB6A</Color>
+    <Color x:Key="Primary">#512BD4</Color>
 
     <!-- Text Colors -->
     <Color x:Key="ContentTextColor">White</Color>
