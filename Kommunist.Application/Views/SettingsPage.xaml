@@ -22,6 +22,7 @@
                                     <controls:EnumPicker iOsSpecific:Picker.UpdateMode="WhenFinished"
                                                          EnumType="{x:Type enums:Theme}"
                                                          Title="Select Theme"
+                                                         TextColor="{DynamicResource TextColor}"
                                                          SelectedIndexChanged="OnPickerSelectionChanged" />
                                 </VerticalStackLayout>
                                 </Border>
