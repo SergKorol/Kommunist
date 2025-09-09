@@ -35,6 +35,7 @@
     <Color x:Key="Success">#4CAF50</Color>
     <Color x:Key="PrimaryDarkColor">#5B4ABE</Color>
     <Color x:Key="TextColor">#333333</Color>
+    <Color x:Key="TitleTextColor">#333333</Color>
     <Color x:Key="BorderColor">#DDDDDD</Color>
     <Color x:Key="BorderBackgroundColor">White</Color>
     <Color x:Key="BorderShadowColor">#ACACAC</Color>

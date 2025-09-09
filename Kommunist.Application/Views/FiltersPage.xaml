@@ -47,7 +47,7 @@
                             Grid.Column="1"
                             Placeholder="Search by tag"
                             Text="{Binding TagFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -126,7 +126,7 @@
                             Grid.Column="1"
                             Placeholder="Search by speaker"
                             Text="{Binding SpeakerFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -204,7 +204,7 @@
                             Grid.Column="1"
                             Placeholder="Search by country"
                             Text="{Binding CountryFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -282,7 +282,7 @@
                             Grid.Column="1"
                             Placeholder="Search by community"
                             Text="{Binding CommunityFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
