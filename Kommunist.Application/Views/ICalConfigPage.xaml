@@ -9,7 +9,6 @@
              x:Class="Kommunist.Application.Views.CalConfigPage"
              x:DataType="{x:Type viewModels:CalConfigViewModel}"
              Style="{StaticResource DefaultPageStyle}"
-             Title="iCal Configuration"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
        <controls:MyTabBar.Resources>
            <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>

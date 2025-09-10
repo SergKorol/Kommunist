@@ -3,21 +3,42 @@
        FlyoutBehavior="Disabled"
        x:Class="Kommunist.Application.AppShell"
        x:Name="Shell"
+       Style="{StaticResource ShellStyle}"
        xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:views="clr-namespace:Kommunist.Application.Views"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     
     <ShellContent Route="Home" 
-                  ContentTemplate="{DataTemplate views:EventCalendarPage}" />
+                  ContentTemplate="{DataTemplate views:EventCalendarPage}">
+        <Shell.TitleView>
+            <Label Text="Events Calendar" 
+                   Style="{StaticResource ShellLabelStyle}"/>
+        </Shell.TitleView>
+    </ShellContent>
     
     <ShellContent Route="Filters" 
-                  ContentTemplate="{DataTemplate views:FiltersPage}" />
+                  ContentTemplate="{DataTemplate views:FiltersPage}">
+        <Shell.TitleView>
+            <Label Text="Filters" 
+                   Style="{StaticResource ShellLabelStyle}"/>
+        </Shell.TitleView>
+    </ShellContent>
     
     <ShellContent Route="Settings" 
-                  ContentTemplate="{DataTemplate views:SettingsPage}" />
+                  ContentTemplate="{DataTemplate views:SettingsPage}">
+        <Shell.TitleView>
+            <Label Text="Settings" 
+                   Style="{StaticResource ShellLabelStyle}"/>
+        </Shell.TitleView>
+    </ShellContent>
     
     <ShellContent Route="ICalConfigPage" 
-                  ContentTemplate="{DataTemplate views:CalConfigPage}" />
+                  ContentTemplate="{DataTemplate views:CalConfigPage}">
+        <Shell.TitleView>
+            <Label Text="iCal Configuration" 
+                   Style="{StaticResource ShellLabelStyle}"/>
+        </Shell.TitleView>
+    </ShellContent>
 
 </Shell>
 

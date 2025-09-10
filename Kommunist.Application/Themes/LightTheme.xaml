@@ -5,7 +5,7 @@
                     x:Class="Kommunist.Application.Themes.LightTheme">
 
     <Color x:Key="PrimaryColor">#2060FF</Color>
-    <Color x:Key="PageBackgroundColor">#F0F0F4</Color>
+    <Color x:Key="PageBackgroundColor">#F5F7FA</Color>
     <Color x:Key="ContentTextColor">Black</Color>
 
     <Color x:Key="Primary">#512BD4</Color>
@@ -35,6 +35,7 @@
     <Color x:Key="Success">#4CAF50</Color>
     <Color x:Key="PrimaryDarkColor">#5B4ABE</Color>
     <Color x:Key="TextColor">#333333</Color>
+    <Color x:Key="TitleTextColor">#333333</Color>
     <Color x:Key="BorderColor">#DDDDDD</Color>
     <Color x:Key="BorderBackgroundColor">White</Color>
     <Color x:Key="BorderShadowColor">#ACACAC</Color>

@@ -18,6 +18,7 @@ namespace Kommunist.Application.ViewModels;
 public class EventCalendarDetailViewModel : BaseViewModel
 {
     private readonly IFileHostingService _fileHostingService;
+    private readonly IAndroidCalendarService _androidCalendarService;
     
     private CalEventDetail? _selectedEventDetail;
     public CalEventDetail? SelectedEventDetail
@@ -56,10 +57,11 @@ public class EventCalendarDetailViewModel : BaseViewModel
     public ICommand AddToCalendar { get; }
     public ICommand JoinToEvent { get; }
 
-    public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId, IFileHostingService fileHostingService)
+    public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId, IFileHostingService fileHostingService, IAndroidCalendarService androidCalendarService)
     {
         _eventService = eventService;
         _fileHostingService = fileHostingService;
+        _androidCalendarService = androidCalendarService;
         TappedEventId = tappedEventId;
 
         _ = CreateEventCalendarDetailPage();
@@ -241,6 +243,23 @@ public class EventCalendarDetailViewModel : BaseViewModel
     {
         try
         {
+            #if ANDROID
+            try
+            {
+                var calendarNames = await _androidCalendarService.GetCalendarNames();
+                var chosenName = await App.Current.MainPage.DisplayActionSheet(
+                    "Choose calendar", "Cancel", null, calendarNames);
+        
+                if (string.IsNullOrEmpty(chosenName) || chosenName == "Cancel")
+                    return;
+                
+                await _androidCalendarService.AddEvents(path, chosenName);
+            }
+            catch (Exception e)
+            {
+                await Toast.Make($"Failed to add event: {e.Message}").Show();
+            }
+            #else
             var fileUrl = await _fileHostingService.UploadFileAsync(path, "guest@kommunist.dev");
             if (string.IsNullOrWhiteSpace(fileUrl))
             {
@@ -249,6 +268,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             }
 
             await Launcher.OpenAsync(fileUrl.Trim());
+            #endif
         }
         catch (Exception e)
         {

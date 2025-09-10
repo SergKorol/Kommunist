@@ -7,7 +7,6 @@
              xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
              x:Class="Kommunist.Application.Views.FiltersPage"
              x:DataType="{x:Type viewModels:EventFiltersViewModel}"
-             Title="Filters"
              Style="{StaticResource DefaultPageStyle}"
              x:Name="Filters"
              ControlTemplate="{StaticResource SecondaryColorTemplate}">
@@ -22,13 +21,6 @@
         <Grid RowDefinitions="Auto,*">
             <ScrollView BindingContextChanged="BindableObject_OnBindingContextChanged">
             <VerticalStackLayout Padding="20" Spacing="16">
-                <Label
-                    Text="Filters"
-                    FontSize="24"
-                    FontAttributes="Bold"
-                    HorizontalOptions="Center"
-                    Margin="0,0,0,10"/>
-    
                 <!-- Tag Search -->
                 <Border 
                     Stroke="{DynamicResource Gray300}"
@@ -48,7 +40,7 @@
                             Grid.Column="1"
                             Placeholder="Search by tag"
                             Text="{Binding TagFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -127,7 +119,7 @@
                             Grid.Column="1"
                             Placeholder="Search by speaker"
                             Text="{Binding SpeakerFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -205,7 +197,7 @@
                             Grid.Column="1"
                             Placeholder="Search by country"
                             Text="{Binding CountryFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
@@ -283,7 +275,7 @@
                             Grid.Column="1"
                             Placeholder="Search by community"
                             Text="{Binding CommunityFilter}"
-                            VerticalOptions="Center"/>
+                            Style="{StaticResource EntryStyle}" />
     
                         <!-- Clear Icon (right) -->
                         <ImageButton
