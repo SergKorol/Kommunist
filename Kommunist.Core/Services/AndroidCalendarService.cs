@@ -69,17 +69,33 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                 
                 var reminderTriggerAt = startDto.Value.AddMinutes(reminderMinutes.Value);
 
-
-                await calendarStore.CreateEvent(
-                    targetCalendar.Id,
-                    title: icalEvt.Summary ?? "Event",
-                    description: icalEvt.Description ?? string.Empty,
-                    location: icalEvt.Location ?? string.Empty,
-                    startDateTime: start,
-                    endDateTime: end,
-                    isAllDay: icalEvt.IsAllDay,
-                    reminders: [new Reminder(reminderTriggerAt)]
-                );
+                var events = await calendarStore.GetEvents();
+                var existingEvent = events.FirstOrDefault(x => x.CalendarId == targetCalendar.Id && x.Title == icalEvt.Summary);
+                if (existingEvent != null)
+                {
+                    await calendarStore.UpdateEvent(
+                        eventId: existingEvent.Id, 
+                        title: icalEvt.Summary ?? "Event",
+                        description: icalEvt.Description ?? string.Empty,
+                        location: icalEvt.Location ?? string.Empty,
+                        startDateTime: start,
+                        endDateTime: end,
+                        isAllDay: icalEvt.IsAllDay,
+                        reminders: [new Reminder(reminderTriggerAt)]);
+                }
+                else
+                {
+                    await calendarStore.CreateEvent(
+                        targetCalendar.Id,
+                        title: icalEvt.Summary ?? "Event",
+                        description: icalEvt.Description ?? string.Empty,
+                        location: icalEvt.Location ?? string.Empty,
+                        startDateTime: start,
+                        endDateTime: end,
+                        isAllDay: icalEvt.IsAllDay,
+                        reminders: [new Reminder(reminderTriggerAt)]
+                    );
+                }
             }
             catch (Exception ex)
             {
