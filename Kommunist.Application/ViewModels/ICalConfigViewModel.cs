@@ -168,14 +168,19 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         var icalString = serializer.SerializeToString(calendar);
         
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
-        
-        
+
+        string? path = null;
         if (SaveFile)
         {
             var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
             if (fileSaverResult.IsSuccessful)
             {
+                #if ANDROID
+                path = await SaveIcalToInternalStorageAsync(icalString);
+                await UploadOrSendFile(path);    
+                #else
                 await UploadOrSendFile(fileSaverResult.FilePath);
+                #endif
             }
             else
             {
@@ -185,7 +190,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
         else
         {
-            var path = await SaveIcalToInternalStorageAsync(icalString);
+            path ??= await SaveIcalToInternalStorageAsync(icalString);
             await UploadOrSendFile(path);
         }
     }
@@ -213,8 +218,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                await Toast.Make($"Failed to add event: {e.Message}").Show();
             }
             #else
             var fileUrl = await _fileHostingService.UploadFileAsync(path, Email);

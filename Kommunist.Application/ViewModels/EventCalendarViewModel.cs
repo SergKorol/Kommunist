@@ -47,16 +47,18 @@ public class EventCalendarViewModel : BaseViewModel
 
     private readonly IEventService _eventService;
     private readonly IFileHostingService _fileHostingService;
+    private readonly IAndroidCalendarService _androidCalendarService;
 
     // Concurrency + month events cache
     private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
     private readonly Dictionary<string, List<CalEvent>> _monthEventsCache = new();
 
     #region Constructors
-    public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService)
+    public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService, IAndroidCalendarService androidCalendarService)
     {
         _eventService = eventService;
         _fileHostingService = fileHostingService;
+        _androidCalendarService = androidCalendarService;
         NavigateCalendarCommand = new Command<int>(NavigateCalendar);
         ChangeDateSelectionCommand = new Command<DateTime>(ChangeDateSelection);
         EventSelectedCommand = new Command<CalEvent>(OnEventSelected);
@@ -121,7 +123,7 @@ public class EventCalendarViewModel : BaseViewModel
     {
         try
         {
-            var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId, _fileHostingService);
+            var eventDetailViewModel = new EventCalendarDetailViewModel(_eventService, selectedEvent.EventId, _fileHostingService, _androidCalendarService);
             await Shell.Current.Navigation.PushAsync(new CalEventDetailPage(eventDetailViewModel));
         }
         catch (Exception e)
