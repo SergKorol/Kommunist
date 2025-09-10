@@ -26,6 +26,7 @@ public static class HttpClientConfiguration
         services.AddSingleton<IEmailService, EmailService>();
         services.AddSingleton<IFilterService, FilterService>();
         services.AddSingleton<ICoordinatesService, CoordinatesService>();
+        services.AddSingleton<IAndroidCalendarService, AndroidCalendarService>();
         return services;
     }
 }

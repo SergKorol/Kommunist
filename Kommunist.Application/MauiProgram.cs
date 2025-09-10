@@ -9,6 +9,7 @@ using Kommunist.Core.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
+using Plugin.Maui.CalendarStore;
 using MauiApp = Microsoft.Maui.Hosting.MauiApp;
 
 namespace Kommunist.Application;
@@ -23,6 +24,8 @@ public static class MauiProgram
         ConfigureServices(builder);
         ConfigureLogging(builder);
         ConfigureConfiguration(builder);
+        
+        builder.Services.AddSingleton(CalendarStore.Default);
         
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
