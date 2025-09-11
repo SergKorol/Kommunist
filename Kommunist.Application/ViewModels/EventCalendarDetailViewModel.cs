@@ -386,7 +386,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                         Name = speaker.Name,
                         Company = speaker.Company,
                         Position = speaker.JobPosition,
-                        Avatar = speaker.AvatarSmall
+                        Avatar = !string.IsNullOrWhiteSpace(speaker.AvatarSmall) ? speaker.AvatarSmall : "Resources\\Images\\no_avatar.png",
                     };
                     eventDetail.Speakers.Add(speakerCard);
                 }
