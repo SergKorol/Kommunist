@@ -438,6 +438,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                                      padding: 0;
                                      overflow: hidden !important;
                                      font-family: -apple-system, system-ui;
+                                     text-align: center;
                                  }
                              </style>
                          </head>
@@ -464,6 +465,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                                  font-family: -apple-system, system-ui;
                                  background-color: #121212;
                                  color: #e0e0e0;
+                                 text-align: center;
                              }
                              a {
                                  color: #bb86fc;
