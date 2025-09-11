@@ -20,8 +20,8 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         if (calendar?.Events == null || !calendar.Events.Any())
             return;
 
-        var calendars = await calendarStore.GetCalendars();
-        if (calendars == null || !calendars.Any())
+        var calendars = (await calendarStore.GetCalendars()).ToArray();
+        if (calendars == null || calendars.Length == 0)
             throw new InvalidOperationException("Wasn't able to get calendars from the device.");
         
         var targetCalendar = !string.IsNullOrEmpty(targetCalendarName)
@@ -31,7 +31,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         if (targetCalendar == null)
             throw new InvalidOperationException("Не вдалося знайти календар з вказаною назвою.");
 
-        var icalEvents = calendar.Events.ToList();
+        var icalEvents = calendar.Events.ToArray();
 
         foreach (var icalEvt in icalEvents)
         {
@@ -45,10 +45,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                     continue;
                 }
 
-                if (!endDto.HasValue)
-                {
-                    endDto = startDto.Value.AddHours(1);
-                }
+                endDto ??= startDto.Value.AddHours(1);
 
                 var start = startDto.Value.ToLocalTime().DateTime;
                 var end = endDto.Value.ToLocalTime().DateTime;
@@ -56,14 +53,10 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                 var alarm = icalEvt.Alarms.FirstOrDefault();
                 int? reminderMinutes = null;
 
-                if (alarm != null && alarm.Trigger != null)
+                if (alarm is { Trigger.Duration: not null })
                 {
-                    if (alarm.Trigger.Duration.HasValue)
-                    {
-                        reminderMinutes = alarm.Trigger.Duration.Value.Minutes;
-                    }
+                    reminderMinutes = alarm.Trigger.Duration.Value.Minutes;
                 }
-
 
                 reminderMinutes ??= -30;
                 
@@ -99,21 +92,22 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error importing event '{icalEvt?.Summary}': {ex}");
+                Console.WriteLine($"Error importing event '{icalEvt?.Summary}': {ex}");
+                throw;
             }
         }
     }
 
     public async Task<string[]> GetCalendarNames()
     {
-        var calendars = await calendarStore.GetCalendars();
-        if (calendars == null || !calendars.Any())
+        var calendars = (await calendarStore.GetCalendars()).ToArray();
+        if (calendars == null || calendars.Length == 0)
             throw new InvalidOperationException("Wasn't able to get calendars from the device.");
 
         return calendars.Select(c => c.Name).ToArray();
     }
     
-    private DateTimeOffset? ExtractDateTimeOffset(IcalEvent evt, bool preferStart)
+    private static DateTimeOffset? ExtractDateTimeOffset(IcalEvent evt, bool preferStart)
     {
         if (evt == null) return null;
 
@@ -132,7 +126,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         return TryConvertToDateTimeOffset(fallback);
     }
     
-    private object TryGetPropertyValue(object obj, string propName)
+    private static object TryGetPropertyValue(object obj, string propName)
     {
         if (obj == null) return null;
         var t = obj.GetType();
@@ -141,13 +135,10 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
             return prop.GetValue(obj);
 
         var field = t.GetField(propName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        if (field != null)
-            return field.GetValue(obj);
-
-        return null;
+        return field != null ? field.GetValue(obj) : null;
     }
 
-    private DateTimeOffset? TryConvertToDateTimeOffset(object value)
+    private static DateTimeOffset? TryConvertToDateTimeOffset(object value)
     {
         if (value == null) return null;
 
@@ -155,8 +146,13 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         if (method != null)
         {
             var res = method.Invoke(value, null);
-            if (res is DateTimeOffset dto1) return dto1;
-            if (res is DateTime dt1) return new DateTimeOffset(dt1);
+            switch (res)
+            {
+                case DateTimeOffset dto1:
+                    return dto1;
+                case DateTime dt1:
+                    return new DateTimeOffset(dt1);
+            }
         }
 
         method = value.GetType().GetMethod("AsSystemLocal", BindingFlags.Public | BindingFlags.Instance);
@@ -176,36 +172,38 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         if (valueProp != null)
         {
             var v = valueProp.GetValue(value);
-            if (v is DateTime dtv) 
+            switch (v)
             {
-                if (dtv.Kind == DateTimeKind.Unspecified)
-                    dtv = DateTime.SpecifyKind(dtv, DateTimeKind.Local);
-                return new DateTimeOffset(dtv);
+                case DateTime dtv:
+                {
+                    if (dtv.Kind == DateTimeKind.Unspecified)
+                        dtv = DateTime.SpecifyKind(dtv, DateTimeKind.Local);
+                    return new DateTimeOffset(dtv);
+                }
+                case DateTimeOffset dto:
+                    return dto;
             }
-            if (v is DateTimeOffset dto)
-                return dto;
         }
 
-        if (value is DateTime directDt)
+        switch (value)
         {
-            if (directDt.Kind == DateTimeKind.Unspecified)
-                directDt = DateTime.SpecifyKind(directDt, DateTimeKind.Local);
-            return new DateTimeOffset(directDt);
+            case DateTime directDt:
+            {
+                if (directDt.Kind == DateTimeKind.Unspecified)
+                    directDt = DateTime.SpecifyKind(directDt, DateTimeKind.Local);
+                return new DateTimeOffset(directDt);
+            }
+            case DateTimeOffset directDto:
+                return directDto;
         }
-        if (value is DateTimeOffset directDto) return directDto;
 
         var s = value.ToString();
-        if (!string.IsNullOrWhiteSpace(s))
-        {
-            if (DateTimeOffset.TryParse(s, out var parsedDto)) return parsedDto;
-            if (DateTime.TryParse(s, out var parsedDt))
-            {
-                if (parsedDt.Kind == DateTimeKind.Unspecified)
-                    parsedDt = DateTime.SpecifyKind(parsedDt, DateTimeKind.Local);
-                return new DateTimeOffset(parsedDt);
-            }
-        }
+        if (string.IsNullOrWhiteSpace(s)) return null;
+        if (DateTimeOffset.TryParse(s, out var parsedDto)) return parsedDto;
+        if (!DateTime.TryParse(s, out var parsedDt)) return null;
+        if (parsedDt.Kind == DateTimeKind.Unspecified)
+            parsedDt = DateTime.SpecifyKind(parsedDt, DateTimeKind.Local);
+        return new DateTimeOffset(parsedDt);
 
-        return null;
     }
 }

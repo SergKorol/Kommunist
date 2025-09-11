@@ -350,7 +350,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             else if (icons.Count != 0)
             {
                 text += "<ul>";
-                text = icons.Aggregate(text, (current, icon) => current + ("<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>"));
+                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
                 text += "</ul>";
             }
             else
@@ -386,7 +386,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                         Name = speaker.Name,
                         Company = speaker.Company,
                         Position = speaker.JobPosition,
-                        Avatar = speaker.AvatarSmall
+                        Avatar = !string.IsNullOrWhiteSpace(speaker.AvatarSmall) ? speaker.AvatarSmall : "Resources\\Images\\no_avatar.png",
                     };
                     eventDetail.Speakers.Add(speakerCard);
                 }
@@ -438,6 +438,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                                      padding: 0;
                                      overflow: hidden !important;
                                      font-family: -apple-system, system-ui;
+                                     text-align: center;
                                  }
                              </style>
                          </head>
@@ -464,6 +465,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                                  font-family: -apple-system, system-ui;
                                  background-color: #121212;
                                  color: #e0e0e0;
+                                 text-align: center;
                              }
                              a {
                                  color: #bb86fc;
