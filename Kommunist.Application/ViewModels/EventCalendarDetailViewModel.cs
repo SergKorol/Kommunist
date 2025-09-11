@@ -350,7 +350,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             else if (icons.Count != 0)
             {
                 text += "<ul>";
-                text = icons.Aggregate(text, (current, icon) => current + ("<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>"));
+                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
                 text += "</ul>";
             }
             else

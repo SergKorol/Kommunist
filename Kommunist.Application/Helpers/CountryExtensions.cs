@@ -39,7 +39,7 @@ public static class CountryExtensions
     public static List<string> ReplaceCodesWithFlags(this List<string> codes)
     {
         return codes
-            .Select(code => LanguageToFlag.TryGetValue(code, out var flag) ? flag : code)
+            .Select(code => LanguageToFlag.GetValueOrDefault(code, code))
             .ToList();
     }
 }
