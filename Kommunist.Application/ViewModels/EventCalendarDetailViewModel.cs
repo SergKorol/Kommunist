@@ -381,8 +381,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
             {
                 foreach (var speaker in agendaItem.Speakers)
                 {
-                    var t = ImageSource.FromFile("no_photo.png");
-
                     var speakerCard = new PersonCard
                     {
                         Name = speaker.Name,
@@ -403,7 +401,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                         Name = moderator.Name,
                         Company = moderator.Company,
                         Position = moderator.JobPosition,
-                        Avatar = moderator.AvatarSmall
+                        Avatar = !string.IsNullOrWhiteSpace(moderator.AvatarSmall) && moderator.AvatarSmall.StartsWith("https") ? moderator.AvatarSmall : "no_photo.png"
                     };
                     eventDetail.Moderators.Add(moderatorCard);
                 }
