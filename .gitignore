@@ -41,6 +41,7 @@ ScaffoldingReadMe.txt
 *~
 CodeCoverage/
 .DS_Store
+appsettings.Development.json
 
 # MSBuild Binary and Structured Log
 *.binlog
