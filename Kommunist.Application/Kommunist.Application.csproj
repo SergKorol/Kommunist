@@ -35,7 +35,7 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <!--        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#ffffff" />-->
+<!--        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#ffffff" />-->
         <MauiIcon Include="Resources\AppIcon\appicon.svg"
                   ForegroundFile="Resources\AppIcon\appiconfg.android.svg"
                   Color="#ffffff"
@@ -85,7 +85,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
+      <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
