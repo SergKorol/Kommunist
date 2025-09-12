@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: weslleymurdock/setup-maui-action@v1.1
       with:
         dotnet-version: 9.0.x
 
