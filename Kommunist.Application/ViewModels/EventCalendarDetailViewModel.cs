@@ -381,12 +381,14 @@ public class EventCalendarDetailViewModel : BaseViewModel
             {
                 foreach (var speaker in agendaItem.Speakers)
                 {
+                    var t = ImageSource.FromFile("no_photo.png");
+
                     var speakerCard = new PersonCard
                     {
                         Name = speaker.Name,
                         Company = speaker.Company,
                         Position = speaker.JobPosition,
-                        Avatar = !string.IsNullOrWhiteSpace(speaker.AvatarSmall) ? speaker.AvatarSmall : "Resources\\Images\\no_avatar.png",
+                        Avatar = !string.IsNullOrWhiteSpace(speaker.AvatarSmall) && speaker.AvatarSmall.StartsWith("https") ? speaker.AvatarSmall : "no_photo.png"
                     };
                     eventDetail.Speakers.Add(speakerCard);
                 }
