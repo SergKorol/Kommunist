@@ -35,7 +35,7 @@
 
     <ItemGroup>
         <!-- App Icon -->
-<!--        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#ffffff" />-->
+        <!--        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#ffffff" />-->
         <MauiIcon Include="Resources\AppIcon\appicon.svg"
                   ForegroundFile="Resources\AppIcon\appiconfg.android.svg"
                   Color="#ffffff"
@@ -82,11 +82,10 @@
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
         <PackageReference Include="XCalendar.Core" Version="4.6.0" />
         <PackageReference Include="XCalendar.Maui" Version="4.6.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.82" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
+        <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
