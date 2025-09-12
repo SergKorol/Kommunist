@@ -15,8 +15,6 @@ jobs:
         uses: weslleymurdock/setup-maui-action@v1.1
         with: 
           dotnet-version: 9.0.x
-      - name: Install MAUI workload
-        run: dotnet workload install maui --ignore-failed-sources
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
