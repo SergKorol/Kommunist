@@ -82,6 +82,7 @@
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
         <PackageReference Include="XCalendar.Core" Version="4.6.0" />
         <PackageReference Include="XCalendar.Maui" Version="4.6.0" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.82" />
     </ItemGroup>
 
     <ItemGroup>
@@ -90,6 +91,10 @@
 
     <ItemGroup>
         <EmbeddedResource Include="appsettings.Development.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Images\" />
     </ItemGroup>
 
 </Project>
