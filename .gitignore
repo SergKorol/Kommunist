@@ -42,6 +42,7 @@ ScaffoldingReadMe.txt
 CodeCoverage/
 .DS_Store
 appsettings.Development.json
+FodyWeavers.xsd
 
 # MSBuild Binary and Structured Log
 *.binlog
