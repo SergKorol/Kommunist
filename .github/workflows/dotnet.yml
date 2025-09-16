@@ -1,0 +1,38 @@
+name: .NET MAUI CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET MAUI
+        uses: weslleymurdock/setup-maui-action@v1.1
+        with: 
+          dotnet-version: 9.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Create appsettings.Development.json
+        run: |
+          cat << EOF > Kommunist.Application/appsettings.Development.json
+          {
+            "BlobStorage": {
+              "ConnectionString": "${{ secrets.BLOB_STORAGE_CONNECTION_STRING }}"
+            },
+            "SmtpProvider": {
+              "Host": "smtp-relay.brevo.com",
+              "UserName": "88fdc6001@smtp-brevo.com",
+              "Password": "${{ secrets.BREVO_PASSWORD }}"
+              "Sender": "korols83@gmail.com"
+            }
+          }
+          EOF
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
