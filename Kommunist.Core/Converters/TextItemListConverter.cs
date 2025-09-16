@@ -169,6 +169,17 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
 
     public override void WriteJson(JsonWriter writer, List<TextItem> value, JsonSerializer serializer)
     {
-        serializer.Serialize(writer, value);
+        if (value == null)
+        {
+            writer.WriteNull();
+            return;
+        }
+
+        writer.WriteStartArray();
+        foreach (var item in value)
+        {
+            serializer.Serialize(writer, item);
+        }
+        writer.WriteEndArray();
     }
 }
