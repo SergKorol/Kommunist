@@ -50,6 +50,8 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                 var start = startDto.Value.ToLocalTime().DateTime;
                 var end = endDto.Value.ToLocalTime().DateTime;
                 
+                var isAllDay = SafeGetIsAllDay(icalEvt);
+
                 var alarm = icalEvt.Alarms.FirstOrDefault();
                 int? reminderMinutes = null;
 
@@ -73,7 +75,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                         location: icalEvt.Location ?? string.Empty,
                         startDateTime: start,
                         endDateTime: end,
-                        isAllDay: icalEvt.IsAllDay,
+                        isAllDay: isAllDay,
                         reminders: [new Reminder(reminderTriggerAt)]);
                 }
                 else
@@ -85,7 +87,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
                         location: icalEvt.Location ?? string.Empty,
                         startDateTime: start,
                         endDateTime: end,
-                        isAllDay: icalEvt.IsAllDay,
+                        isAllDay: isAllDay,
                         reminders: [new Reminder(reminderTriggerAt)]
                     );
                 }
@@ -205,5 +207,11 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
             parsedDt = DateTime.SpecifyKind(parsedDt, DateTimeKind.Local);
         return new DateTimeOffset(parsedDt);
 
+    }
+
+    private static bool SafeGetIsAllDay(IcalEvent evt)
+    {
+        try { return evt?.IsAllDay ?? false; }
+        catch { return false; }
     }
 }

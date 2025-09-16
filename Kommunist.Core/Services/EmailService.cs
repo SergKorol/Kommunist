@@ -6,18 +6,19 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Kommunist.Core.Services;
 
-public class EmailService(IConfiguration config) : IEmailService
+public class EmailService(IConfiguration config, ISmtpClientFactory? smtpClientFactory = null) : IEmailService
 {
+    private readonly ISmtpClientFactory _smtpClientFactory = smtpClientFactory ?? new SmtpClientFactory();
+
     public async Task SendEmailAsync(string to, string subject, string body, string attachmentPath, string email)
     {
         try
         {
-            var smtpClient = new SmtpClient(config["SmtpProvider:Host"])
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(config["SmtpProvider:UserName"], config["SmtpProvider:Password"]),
-                EnableSsl = true
-            };
+            using var smtpClient = _smtpClientFactory.Create(config["SmtpProvider:Host"] ?? string.Empty);
+            smtpClient.Port = 587;
+            smtpClient.Credentials = new NetworkCredential(config["SmtpProvider:UserName"], config["SmtpProvider:Password"]);
+            smtpClient.EnableSsl = true;
+
             var mailMessage = new MailMessage(config["SmtpProvider:Sender"] ?? "", email)
             {
                 Subject = subject,

@@ -1,11 +1,15 @@
 using System.Windows.Input;
-using CommunityToolkit.Maui.Alerts;
+using Kommunist.Application.Services;
+using Kommunist.Application.Services.Navigation;
+using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.Controls;
 
 public partial class MyTabBar
 {
-    
+    private readonly INavigationService _navigationService;
+    private readonly IToastService _toastService;
+
     private static readonly BindableProperty NavigateToCommandProperty =
         BindableProperty.Create(nameof(NavigateToCommand), typeof(ICommand), typeof(MyTabBar));
 
@@ -14,36 +18,44 @@ public partial class MyTabBar
         get => (ICommand)GetValue(NavigateToCommandProperty);
         init => SetValue(NavigateToCommandProperty, value);
     }
-    
+
+    // Default constructor used by XAML/runtime
     public MyTabBar()
+        : this(new MauiNavigationService(), new MauiToastService(), initializeComponent: true)
     {
-        InitializeComponent();
+    }
+
+    // Injectable constructor for unit tests or custom composition
+    public MyTabBar(INavigationService navigationService, IToastService toastService, bool initializeComponent = false)
+    {
+        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+        _toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
+
+        if (initializeComponent)
+        {
+            InitializeComponent();
+        }
+
         NavigateToCommand = new Command<string>(OnNavigateTo);
     }
-    
-    private static async void OnNavigateTo(string pageName)
+
+    private async void OnNavigateTo(string pageName)
     {
         try
         {
-            switch (pageName)
+            var route = pageName switch
             {
-                case "HomePage":
-                    await Shell.Current.GoToAsync("//Home");
-                    break;
-                case "FiltersPage":
-                    await Shell.Current.GoToAsync("//Filters");
-                    break;
-                case "SettingsPage":
-                    await Shell.Current.GoToAsync("//Settings");
-                    break;
-                default:
-                    await Shell.Current.GoToAsync("//Home");
-                    break;
-            }
+                "HomePage" => "//Home",
+                "FiltersPage" => "//Filters",
+                "SettingsPage" => "//Settings",
+                _ => "//Home"
+            };
+
+            await _navigationService.GoToAsync(route);
         }
         catch (Exception e)
         {
-            await Toast.Make($"Error navigating to {pageName}: {e}").Show();
+            await _toastService.ShowAsync($"Error navigating to {pageName}: {e}");
         }
     }
 }

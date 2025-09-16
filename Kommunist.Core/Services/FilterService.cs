@@ -8,10 +8,16 @@ public class FilterService : IFilterService
 {
     private const string StorageKey = "AppFilters";
 
+    private readonly IAppPreferences _preferences;
     private FilterOptions _filters;
 
-    public FilterService()
+    public FilterService() : this(new MauiPreferences())
     {
+    }
+
+    public FilterService(IAppPreferences preferences)
+    {
+        _preferences = preferences ?? throw new ArgumentNullException(nameof(preferences));
         LoadFilters();
     }
 
@@ -30,18 +36,18 @@ public class FilterService : IFilterService
     public void ClearFilters()
     {
         _filters = new FilterOptions();
-        Preferences.Remove(StorageKey);
+        _preferences.Remove(StorageKey);
     }
 
     private void SaveFilters()
     {
         var json = JsonSerializer.Serialize(_filters);
-        Preferences.Set(StorageKey, json);
+        _preferences.Set(StorageKey, json);
     }
 
     private void LoadFilters()
     {
-        var json = Preferences.Get(StorageKey, null);
+        var json = _preferences.Get(StorageKey, null);
         _filters = json is null or ""
             ? new FilterOptions()
             : JsonSerializer.Deserialize<FilterOptions>(json) ?? new FilterOptions();

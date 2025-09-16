@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
-        <OutputType>Exe</OutputType>
+        <TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+        <OutputType Condition="'$(TargetFramework)' != 'net9.0'">Exe</OutputType>
         <RootNamespace>Kommunist.Application</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
@@ -63,7 +66,7 @@
     <ItemGroup>
         <PackageReference Include="CalendarView.MAUI" Version="1.1.0" />
         <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />
+<!--        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />-->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
         <PackageReference Include="Ical.Net" Version="5.0.0-pre.41" />

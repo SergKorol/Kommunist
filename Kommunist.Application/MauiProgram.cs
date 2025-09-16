@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Markup;
+// using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
@@ -66,7 +66,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMarkup()
+            // .UseMauiCommunityToolkitMarkup()
             .ConfigureFonts(ConfigureFonts);
     }
 

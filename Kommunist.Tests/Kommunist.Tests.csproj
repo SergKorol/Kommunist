@@ -9,9 +9,14 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.2"/>
+        <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+        <PackageReference Include="Moq" Version="4.20.72" />
         <PackageReference Include="xunit" Version="2.9.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
+        <PackageReference Include="Plugin.Maui.CalendarStore" Version="4.0.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-rc.1.25451.107" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Kommunist.Application\Kommunist.Application.csproj" />
       <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
     </ItemGroup>
 

@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kommunist.Application", "Ko
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kommunist.Core", "Kommunist.Core\Kommunist.Core.csproj", "{E3BAB590-3107-41A4-A969-22AEAB50777A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kommunist.Tests", "Kommunist.Tests\Kommunist.Tests.csproj", "{7436BE8E-6ECF-4071-8BF4-2F9401AEA88B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kommunist.Tests", "Kommunist.Tests\Kommunist.Tests.csproj", "{05DC4C77-AC64-4D03-A153-586CBA4DD3F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{E3BAB590-3107-41A4-A969-22AEAB50777A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3BAB590-3107-41A4-A969-22AEAB50777A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3BAB590-3107-41A4-A969-22AEAB50777A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7436BE8E-6ECF-4071-8BF4-2F9401AEA88B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7436BE8E-6ECF-4071-8BF4-2F9401AEA88B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7436BE8E-6ECF-4071-8BF4-2F9401AEA88B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7436BE8E-6ECF-4071-8BF4-2F9401AEA88B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DC4C77-AC64-4D03-A153-586CBA4DD3F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DC4C77-AC64-4D03-A153-586CBA4DD3F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DC4C77-AC64-4D03-A153-586CBA4DD3F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DC4C77-AC64-4D03-A153-586CBA4DD3F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
