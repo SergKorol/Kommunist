@@ -183,7 +183,7 @@ public class CountryExtensionsTests
             var result = codes.ReplaceCodesWithFlags();
 
             // Assert
-            result.Should().Equal("🇬🇧", "🇪🇸", "🇸🇰");
+            result.Should().Equal("English", "Spanish", "Slovak");
         }
 
         [Fact]
