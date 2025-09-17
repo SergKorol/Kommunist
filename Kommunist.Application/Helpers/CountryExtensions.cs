@@ -6,12 +6,12 @@ public static class CountryExtensions
 {
     private static readonly Dictionary<string, string> LanguageToFlag = new()
     {
-        { "En", "🇬🇧" },   // English
-        { "Esp", "🇪🇸" }, // Spanish
-        { "Ua", "🇺🇦" },  // Ukrainian
-        { "Ru", "🇷🇺" },  // Russian
-        { "By", "🇧🇾" },  // Belarusian
-        { "Slk", "🇸🇰" }  // Slovak
+        { "En", "English" },
+        { "Esp", "Spanish" },
+        { "Ua", "Ukrainian" },
+        { "Ru", "Russian" },
+        { "By", "Belarusian" },
+        { "Slk", "Slovak" }
     };
     
     public static List<string> WithoutFlags(this List<string> countries)
