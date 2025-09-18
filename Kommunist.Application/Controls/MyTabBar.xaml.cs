@@ -21,7 +21,7 @@ public partial class MyTabBar
 
     // Default constructor used by XAML/runtime
     public MyTabBar()
-        : this(new MauiNavigationService(), new MauiToastService(), initializeComponent: true)
+        : this(new MauiNavigationService(new MauiShellNavigator()), new MauiToastService(), initializeComponent: true)
     {
     }
 
