@@ -2,8 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text;
 using System.Windows.Input;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
@@ -20,24 +18,32 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
     private readonly IEmailService _emailService;
     private readonly ICoordinatesService _coordinatesService;
     private readonly IAndroidCalendarService _androidCalendarService;
+
+    // Abstractions for testability
+    private readonly IToastService _toastService;
+    private readonly IFileSaverService _fileSaverService;
+    private readonly IFileSystemService _fileSystemService;
+    private readonly ILauncherService _launcherService;
+    private readonly IPageDialogService _pageDialogService;
     
     public List<CalEvent> Events { get; set; } = [];
-    
+
     [ObservableProperty]
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Invalid email format.")]
     private string? _invitees;
+
     public int AlarmMinutes { get; set; } = 10;
-    
+
     public string? Email { get; set; }
 
     public string? FirstEventDateTime { get; set; }
     public string? LastEventDateTime { get; set; }
-    
+
     public ICommand IncrementAlarmCommand => new Command(() => AlarmMinutes = Math.Min(120, AlarmMinutes + 5));
     public ICommand DecrementAlarmCommand => new Command(() => AlarmMinutes = Math.Max(0, AlarmMinutes - 5));
-    
-    
+
+
     private bool _sendEmail;
     public bool SendEmail
     {
@@ -49,7 +55,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             OnPropertyChanged();
         }
     }
-    
+
     private bool _saveFile;
     public bool SaveFile
     {
@@ -64,12 +70,49 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
 
     public ICommand GenerateIcalCommand { get; }
 
-    public CalConfigViewModel(IFileHostingService fileHostingService, IEmailService emailService, ICoordinatesService coordinatesService, IAndroidCalendarService androidCalendarService)
+    // Original constructor preserved; chain to extended one with default wrappers
+    public CalConfigViewModel(
+        IFileHostingService fileHostingService,
+        IEmailService emailService,
+        ICoordinatesService coordinatesService,
+        IAndroidCalendarService androidCalendarService)
+        : this(
+            fileHostingService,
+            emailService,
+            coordinatesService,
+            androidCalendarService,
+            new Services.ToastService(),
+            new Services.FileSaverService(),
+            new Services.FileSystemService(),
+            new Services.LauncherService(),
+            new Services.PageDialogService())
+    {
+    }
+
+    // Extended constructor for DI and tests
+    public CalConfigViewModel(
+        IFileHostingService fileHostingService,
+        IEmailService emailService,
+        ICoordinatesService coordinatesService,
+        IAndroidCalendarService androidCalendarService,
+        IToastService toastService,
+        IFileSaverService fileSaverService,
+        IFileSystemService fileSystemService,
+        ILauncherService launcherService,
+        IPageDialogService pageDialogService
+        )
     {
         _fileHostingService = fileHostingService;
         _emailService = emailService;
         _coordinatesService = coordinatesService;
         _androidCalendarService = androidCalendarService;
+
+        _toastService = toastService;
+        _fileSaverService = fileSaverService;
+        _fileSystemService = fileSystemService;
+        _launcherService = launcherService;
+        _pageDialogService = pageDialogService;
+        
         GenerateIcalCommand = new Command(SaveIcalFile);
     }
 
@@ -81,8 +124,6 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         FirstEventDateTime = dates.Min().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
         LastEventDateTime = dates.Max().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
     }
-    
-    
 
     private async void SaveIcalFile()
     {
@@ -92,11 +133,12 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
         catch (Exception e)
         {
-            await Toast.Make($"ICal file wasn't saved: {e.Message}").Show();
+            await _toastService.ShowAsync($"ICal file wasn't saved: {e.Message}");
         }
     }
 
-    private async Task SaveAndValidateIcalFileAsync()
+    // Exposed as internal for testing
+    internal async Task SaveAndValidateIcalFileAsync()
     {
         ValidateAllProperties();
         if (HasErrors)
@@ -105,23 +147,22 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
 
             if (!string.IsNullOrEmpty(firstError))
             {
-                await Toast.Make(firstError).Show();
+                await _toastService.ShowAsync(firstError);
             }
             else
             {
-                await Toast.Make("Validation failed.").Show();
+                await _toastService.ShowAsync("Validation failed.");
             }
             return;
         }
-        
+
         var calendar = new Ical.Net.Calendar
         {
             Method = "PUBLISH",
             Scale = "GREGORIAN"
         };
-        calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id});
-        
-        
+        calendar.TimeZones.Add(new VTimeZone { TzId = TimeZoneInfo.Local.Id });
+
         foreach (var ev in Events)
         {
             var alarm = new Alarm
@@ -136,6 +177,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             {
                 coordinates = await _coordinatesService.GetCoordinatesAsync(ev.Location);
             }
+
             var icalEvent = new CalendarEvent
             {
                 Start = new CalDateTime(ConvertDateTime(ev.Start), TimeZoneInfo.Local.Id),
@@ -145,11 +187,14 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
                 Description = $"{ev.Description}\n{ev.Url}",
                 Transparency = TransparencyType.Opaque
             };
+
             if (coordinates.Latitude != 0 && coordinates.Longitude != 0)
             {
                 icalEvent.GeographicLocation = new GeographicLocation(coordinates.Latitude, coordinates.Longitude);
             }
+
             icalEvent.Alarms.Add(alarm);
+
             if (!string.IsNullOrEmpty(Invitees))
             {
                 icalEvent.Attendees.Add(new Attendee
@@ -161,18 +206,19 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
                     Value = new Uri($"mailto:{Invitees}")
                 });
             }
+
             calendar.Events.Add(icalEvent);
         }
 
         var serializer = new CalendarSerializer();
         var icalString = serializer.SerializeToString(calendar);
-        
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(icalString));
 
         string? path = null;
         if (SaveFile)
         {
-            var fileSaverResult = await FileSaver.Default.SaveAsync("events.ics", stream);
+            var fileSaverResult = await _fileSaverService.SaveAsync("events.ics", stream);
             if (fileSaverResult.IsSuccessful)
             {
                 #if ANDROID
@@ -184,8 +230,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             }
             else
             {
-                await Toast.Make($"The file was not saved successfully with error: {fileSaverResult.Exception.Message}").Show();
-            
+                await _toastService.ShowAsync($"The file was not saved successfully with error: {fileSaverResult.Exception?.Message}");
             }
         }
         else
@@ -195,12 +240,13 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
     }
 
-    private async Task UploadOrSendFile(string path)
+    // Exposed as internal for testing completeness if needed
+    internal async Task UploadOrSendFile(string path)
     {
         if (SendEmail)
         {
             await _emailService.SendEmailAsync(Invitees, "Your iCal Event", GetEmailBody(), path, Email);
-            await Toast.Make("The file was sent successfully").Show();
+            await _toastService.ShowAsync("The file was sent successfully");
         }
         else
         {
@@ -208,36 +254,30 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             try
             {
                 var calendarNames = await _androidCalendarService.GetCalendarNames();
-                var chosenName = await App.Current.MainPage.DisplayActionSheet(
+                var chosenName = await _pageDialogService.DisplayActionSheet(
                     "Choose calendar", "Cancel", null, calendarNames);
-        
+
                 if (string.IsNullOrEmpty(chosenName) || chosenName == "Cancel")
                     return;
-                
+
                 await _androidCalendarService.AddEvents(path, chosenName);
             }
             catch (Exception e)
             {
-                await Toast.Make($"Failed to add event: {e.Message}").Show();
+                await _toastService.ShowAsync($"Failed to add event: {e.Message}");
             }
             #else
             var fileUrl = await _fileHostingService.UploadFileAsync(path, Email);
-            await Toast.Make("The file was uploaded successfully").Show();
-            await Launcher.OpenAsync(fileUrl.Trim());
+            await _toastService.ShowAsync("The file was uploaded successfully");
+            await _launcherService.OpenAsync(fileUrl.Trim());
             #endif
-            
         }
     }
 
-    private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    private async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
-        var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
-
-        await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-        await using var writer = new StreamWriter(stream, Encoding.UTF8);
-        await writer.WriteAsync(icalString);
-
-        return filePath;
+        // Delegate to the file system abstraction
+        return await _fileSystemService.SaveTextAsync(fileName, icalString);
     }
 
     private static DateTime ConvertDateTime(long dt)
