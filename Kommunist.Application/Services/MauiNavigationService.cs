@@ -3,14 +3,9 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.Services;
 
-public sealed class MauiNavigationService : INavigationService
+public sealed class MauiNavigationService(IShellNavigator shellNavigator) : INavigationService
 {
-    private readonly IShellNavigator _shellNavigator;
-
-    public MauiNavigationService(IShellNavigator shellNavigator)
-    {
-        _shellNavigator = shellNavigator ?? throw new ArgumentNullException(nameof(shellNavigator));
-    }
+    private readonly IShellNavigator _shellNavigator = shellNavigator ?? throw new ArgumentNullException(nameof(shellNavigator));
 
     public Task GoToAsync(string route)
     {

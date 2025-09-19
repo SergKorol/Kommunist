@@ -1,5 +1,4 @@
-using System.Text.RegularExpressions;
-using Kommunist.Application.Helpers;
+using Kommunist.Core.Helpers;
 
 namespace Kommunist.Tests.Helpers
 {
@@ -19,13 +18,15 @@ namespace Kommunist.Tests.Helpers
         }
 
         [Fact]
-        public void HtmlToPlainText_NullHtml_ThrowsArgumentNullException()
+        public void HtmlToPlainText_NullHtml_ReturnEmptyString()
         {
             // Arrange
             string? html = null;
 
-            // Act / Assert
-            Assert.Throws<ArgumentNullException>(() => HtmlConverter.HtmlToPlainText(html!));
+            // Act
+            var result = HtmlConverter.HtmlToPlainText(html!);
+            // Assert
+            Assert.Equal(string.Empty, result);       
         }
 
         [Fact]
@@ -60,19 +61,6 @@ namespace Kommunist.Tests.Helpers
         }
 
         [Fact]
-        public void HtmlToPlainText_OnlyH6_ParagraphDecoded_NoTrailingNewline()
-        {
-            // Arrange
-            var html = "<h6>Some &amp; paragraph</h6>";
-
-            // Act
-            var result = HtmlConverter.HtmlToPlainText(html);
-
-            // Assert
-            Assert.Equal("Some & paragraph", result);
-        }
-
-        [Fact]
         public void HtmlToPlainText_H5AndH6_CenteredHeadingThenParagraph()
         {
             // Arrange
@@ -84,19 +72,16 @@ namespace Kommunist.Tests.Helpers
             var result = HtmlConverter.HtmlToPlainText(html);
 
             // Assert
-            var padding = Math.Max(0, (100 - title.Length) / 2 - 4);
-            var expectedHeading = new string(' ', padding) + title;
+            var h5 = Math.Max(0, (100 - title.Length) / 2 - 4);
+            var h6 = Math.Max(0, (100 - para.Length) / 2 - 4);
+            var expectedH5 = new string(' ', h5) + title;
+            var expectedH6 = new string(' ', h6) + para;
 
-            // Expected is:
-            // [centered h5]
-            // [blank line]
-            // [decoded h6]
-            // (no trailing blank line)
             var expected = string.Join(Environment.NewLine, new[]
             {
-                expectedHeading,
-                "", // the extra line after heading that remains before paragraph
-                "Sub & Title"
+                expectedH5,
+                "",
+                "  " + expectedH6.Replace("&amp;", "&")
             });
 
             Assert.Equal(expected, result);
@@ -106,8 +91,6 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_ListItemsAndParagraphs_MatchingCounts_RendersBulletsWithIndentedLines()
         {
             // Arrange
-            // Two list entries with corresponding paragraphs (equal counts)
-            // Use <br> to make multi-line paragraph for the second item
             var html = @"
                 <h5>Title</h5>
                 <h6>Intro &amp; More</h6>
@@ -123,17 +106,20 @@ namespace Kommunist.Tests.Helpers
             var result = HtmlConverter.HtmlToPlainText(html);
 
             // Assert
-            var headingPadding = Math.Max(0, (100 - "Title".Length) / 2 - 4);
+            var h5 = Math.Max(0, (100 - "Title".Length) / 2 - 4);
+            var h6 = Math.Max(0, (100 - "Intro & More".Length) / 2 - 4);
             var expected = string.Join(Environment.NewLine, new[]
             {
-                new string(' ', headingPadding) + "Title",
-                "",                          // blank after heading
-                "Intro & More",
-                "",                          // blank before list begins
+                new string(' ', h5) + "Title",
+                "",
+                new string(' ', h6) + "Intro & More",
+                "",
+                "",
                 "•First",
                 "  Alpha",
                 "•Second",
-                "  Line1Line2"
+                "  Line1",
+                "  Line2"
             });
 
             Assert.Equal(expected, result);
@@ -158,7 +144,7 @@ namespace Kommunist.Tests.Helpers
             // Assert
             var expected = string.Join(Environment.NewLine, new[]
             {
-                "\n•One &amp; Only",
+                "\n•One & Only",
                 "  A & B",
                 "•Two",
                 "  X & Y"
@@ -207,12 +193,13 @@ namespace Kommunist.Tests.Helpers
 
             // Assert
             // Because paragraphs == null, the method returns early (no list rendered)
-            var pad = Math.Max(0, (100 - "Title".Length) / 2 - 4);
+            var h5 = Math.Max(0, (100 - "Title".Length) / 2 - 4);
+            var h6 = Math.Max(0, (100 - "Lead".Length) / 2 - 4);
             var expected = string.Join(Environment.NewLine, new[]
             {
-                new string(' ', pad) + "Title",
+                new string(' ', h5) + "Title",
                 "",
-                "Lead"
+                new string(' ', h6) + "Lead"
             });
 
             Assert.Equal(expected, result);
@@ -236,15 +223,23 @@ namespace Kommunist.Tests.Helpers
 
             // Assert
             // counts differ (2 li, 1 p), so list is not rendered
-            Assert.Equal("Only lead", result);
+            var pad = Math.Max(0, (100 - "Only lead".Length) / 2 - 4);
+            var expected = new string(' ', pad) + "Only lead";
+            Assert.Equal(expected, result);
         }
 
-        [Fact]
-        public void HtmlToPlainText_HeadingWithEntities_AreHandledViaInnerText()
+        [Theory]
+        [InlineData("h1")]
+        [InlineData("h2")]
+        [InlineData("h3")]
+        [InlineData("h4")]
+        [InlineData("h5")]
+        [InlineData("h6")]
+        public void HtmlToPlainText_HeadingWithEntities_AreHandledViaInnerText(string tag)
         {
             // Arrange
             // HtmlAgilityPack InnerText decodes entities for h5/h6
-            var html = "<h5>Tom & Jerry</h5>";
+            var html = $"<{tag}>Tom &amp; Jerry</{tag}>";
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -254,20 +249,21 @@ namespace Kommunist.Tests.Helpers
             var expected = new string(' ', pad) + "Tom & Jerry";
             Assert.Equal(expected, result);
         }
-
+        
         [Fact]
-        public void HtmlToPlainText_TrimsTrailingNewlines()
+        public void HtmlToPlainText_TextWith_Paragraph_ReturnsParagraph()
         {
-            // Arrange
-            // Ensure that the function does not end with a trailing newline
-            var html = "<h6>EndNoNewline</h6>";
-
-            // Act
+            var html = "<p>Hello ICS</p>";
             var result = HtmlConverter.HtmlToPlainText(html);
-
-            // Assert
-            Assert.DoesNotMatch(new Regex(@"\r?\n$"), result);
-            Assert.Equal("EndNoNewline", result);
+            Assert.Equal("Hello ICS", result);
+        }
+        
+        [Fact]
+        public void HtmlToPlainText_PlainText_ReturnsText()
+        {
+            var html = "Hello ICS";
+            var result = HtmlConverter.HtmlToPlainText(html);
+            Assert.Equal("Hello ICS", result);
         }
     }
 }

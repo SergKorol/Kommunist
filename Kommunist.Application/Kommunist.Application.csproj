@@ -68,7 +68,6 @@
         <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 <!--        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />-->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
         <PackageReference Include="Ical.Net" Version="5.0.0-pre.41" />
         <PackageReference Include="Markdig" Version="0.40.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0-preview.3.25171.5" />
