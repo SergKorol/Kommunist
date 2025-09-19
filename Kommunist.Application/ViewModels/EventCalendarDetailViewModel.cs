@@ -8,6 +8,7 @@ using Ical.Net.Serialization;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Core.Entities.PageProperties.Agenda;
+using Kommunist.Core.Helpers;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Attendee = Ical.Net.DataTypes.Attendee;

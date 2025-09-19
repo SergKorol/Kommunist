@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui;
 // using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.Helpers;
+using Kommunist.Application.Services;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
 using Kommunist.Core.Services;
@@ -86,6 +87,12 @@ public static class MauiProgram
         builder.Services.AddScoped<EventCalendarDetailViewModel>();
         builder.Services.AddScoped<CalConfigViewModel>();
         builder.Services.AddScoped<EventFiltersViewModel>();
+        
+        builder.Services.AddSingleton<IToastService, ToastService>();
+        builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
+        builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
+        builder.Services.AddSingleton<ILauncherService, LauncherService>();
+        builder.Services.AddSingleton<IPageDialogService, PageDialogService>();
         
         builder.Services.AddTransient<MainPage>();
         
