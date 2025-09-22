@@ -3,20 +3,13 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.Services;
 
-public sealed class MauiToastService : IToastService
+public sealed class MauiToastService(IToolkitToastFactory toastFactory) : IToastService
 {
-    private readonly IToolkitToastFactory _toastFactory;
+    private readonly IToolkitToastFactory _toastFactory = toastFactory ?? throw new ArgumentNullException(nameof(toastFactory));
 
-    // Keeps existing behavior for production code and existing call sites
     public MauiToastService()
         : this(new ToolkitToastFactory())
     {
-    }
-
-    // Testable constructor
-    public MauiToastService(IToolkitToastFactory toastFactory)
-    {
-        _toastFactory = toastFactory ?? throw new ArgumentNullException(nameof(toastFactory));
     }
 
     public Task ShowAsync(string message)

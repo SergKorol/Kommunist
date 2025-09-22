@@ -3,17 +3,12 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.Services;
 
-public class FileSystemService : IFileSystemService
+public class FileSystemService(string appDataDirectory) : IFileSystemService
 {
-    private readonly string _appDataDirectory;
+    private readonly string _appDataDirectory = appDataDirectory ?? throw new ArgumentNullException(nameof(appDataDirectory));
 
     public FileSystemService() : this(FileSystem.AppDataDirectory)
     {
-    }
-
-    public FileSystemService(string appDataDirectory)
-    {
-        _appDataDirectory = appDataDirectory ?? throw new ArgumentNullException(nameof(appDataDirectory));
     }
 
     public string AppDataDirectory => _appDataDirectory;

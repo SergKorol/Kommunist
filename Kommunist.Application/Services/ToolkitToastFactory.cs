@@ -13,14 +13,9 @@ public sealed class ToolkitToastFactory : IToolkitToastFactory
     }
 }
 
-internal sealed class ToolkitToastAdapter : IToolkitToast
+internal sealed class ToolkitToastAdapter(IToast inner) : IToolkitToast
 {
-    private readonly IToast _inner;
-
-    public ToolkitToastAdapter(IToast inner)
-    {
-        _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-    }
+    private readonly IToast _inner = inner ?? throw new ArgumentNullException(nameof(inner));
 
     public Task ShowAsync()
     {
