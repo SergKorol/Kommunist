@@ -25,8 +25,7 @@ public partial class MyTabBar
     {
     }
 
-    // Injectable constructor for unit tests or custom composition
-    public MyTabBar(INavigationService navigationService, IToastService toastService, bool initializeComponent = false)
+    private MyTabBar(INavigationService navigationService, IToastService toastService, bool initializeComponent = false)
     {
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
