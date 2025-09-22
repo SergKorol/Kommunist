@@ -29,7 +29,7 @@ public record Person
     public string? JobPosition { get; set; }
 
     [JsonProperty("company_and_title")]
-    public string CompanyAndTitle { get; set; }
+    public string? CompanyAndTitle { get; set; }
 
     [JsonProperty("slug")]
     public string? Slug { get; set; }

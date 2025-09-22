@@ -10,7 +10,7 @@ public static class EmailTokenGenerator
     private const int IvSize = 16;
     private const int Iterations = 10000;
 
-    public static string EncryptForBlobName(string email, string password = null)
+    public static string EncryptForBlobName(string email, string? password = null)
     {
         if (string.IsNullOrEmpty(email))
             throw new ArgumentException("Email cannot be null or empty", nameof(email));

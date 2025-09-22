@@ -23,10 +23,10 @@ public record ServiceEvent
     public List<string>? Types { get; set; }
 
     [JsonProperty("talks")]
-    public List<object> Talks { get; set; }
+    public List<object>? Talks { get; set; }
 
     [JsonProperty("speakers")]
-    public List<Person> Speakers { get; set; }
+    public List<Person>? Speakers { get; set; }
 
     [JsonProperty("start")]
     public long Start { get; set; }
