@@ -209,7 +209,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
 
     }
 
-    private static bool SafeGetIsAllDay(IcalEvent evt)
+    private static bool SafeGetIsAllDay(IcalEvent? evt)
     {
         try { return evt?.IsAllDay ?? false; }
         catch { return false; }

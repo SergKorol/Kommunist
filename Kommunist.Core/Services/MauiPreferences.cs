@@ -25,7 +25,7 @@ public class MauiPreferences : IAppPreferences
         _remove = remove ?? throw new ArgumentNullException(nameof(remove));
     }
 
-    public string Get(string key, string defaultValue) => _get(key, defaultValue);
+    public string Get(string key, string? defaultValue) => _get(key, defaultValue ?? string.Empty);
 
     public void Set(string key, string value) => _set(key, value);
 

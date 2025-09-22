@@ -54,7 +54,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         }
     }
 
-    public async Task<AgendaPage> GetAgenda(int eventId)
+    public async Task<AgendaPage?> GetAgenda(int eventId)
     {
         var url = $"/api/v2/events/{eventId}/agenda";
         try

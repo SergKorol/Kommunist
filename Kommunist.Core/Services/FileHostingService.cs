@@ -13,7 +13,7 @@ public class FileHostingService : IFileHostingService
     private readonly ILogger<FileHostingService> _logger;
     private readonly BlobServiceClient _blobServiceClient;
 
-    public FileHostingService(IConfiguration config, ILogger<FileHostingService> logger = null)
+    public FileHostingService(IConfiguration config, ILogger<FileHostingService>? logger = null)
     {
         var configuration = config ?? throw new ArgumentNullException(nameof(config));
         _logger = logger;
@@ -32,13 +32,13 @@ public class FileHostingService : IFileHostingService
 
         if (!File.Exists(filePath))
         {
-            _logger?.LogError("File not found: {FilePath}", filePath);
+            _logger.LogError("File not found: {FilePath}", filePath);
             throw new FileNotFoundException("File not found", filePath);
         }
 
         if (_blobServiceClient is null)
         {
-            _logger?.LogError("Blob Storage connection string is missing or invalid");
+            _logger.LogError("Blob Storage connection string is missing or invalid");
             throw new InvalidOperationException("Blob Storage connection string is missing or invalid.");
         }
 
@@ -73,7 +73,7 @@ public class FileHostingService : IFileHostingService
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Failed to upload file {FilePath}. Error: {ErrorMessage}", filePath, ex.Message);
+            _logger.LogError(ex, "Failed to upload file {FilePath}. Error: {ErrorMessage}", filePath, ex.Message);
             throw;
         }
     }
