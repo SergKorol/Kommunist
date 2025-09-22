@@ -5,7 +5,18 @@ namespace Kommunist.Application.Services;
 
 public class FileSystemService : IFileSystemService
 {
-    public string AppDataDirectory => FileSystem.AppDataDirectory;
+    private readonly string _appDataDirectory;
+
+    public FileSystemService() : this(FileSystem.AppDataDirectory)
+    {
+    }
+
+    public FileSystemService(string appDataDirectory)
+    {
+        _appDataDirectory = appDataDirectory ?? throw new ArgumentNullException(nameof(appDataDirectory));
+    }
+
+    public string AppDataDirectory => _appDataDirectory;
 
     public async Task<string> SaveTextAsync(string fileName, string content)
     {
