@@ -1,3 +1,5 @@
+using Kommunist.Core.Services.Interfaces;
+
 namespace Kommunist.Application.Services;
 
 public class MauiMainPageDialog : IMainPageDialog

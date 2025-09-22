@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Kommunist.Application.Services;
+namespace Kommunist.Core.Services.Interfaces;
 
 public interface IMainPageDialog
 {

@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Kommunist.Application.Services;
+using Kommunist.Core.Services.Interfaces;
 using Moq;
 
 namespace Kommunist.Tests.Services;

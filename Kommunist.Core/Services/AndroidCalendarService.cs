@@ -9,7 +9,7 @@ namespace Kommunist.Core.Services;
 
 public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCalendarService
 {
-    public async Task AddEvents(string icsPath, string targetCalendarName = null)
+    public async Task AddEvents(string icsPath, string? targetCalendarName = null)
     {
         if (!File.Exists(icsPath))
             throw new FileNotFoundException("ICS file not found", icsPath);
@@ -109,7 +109,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         return calendars.Select(c => c.Name).ToArray();
     }
     
-    private static DateTimeOffset? ExtractDateTimeOffset(IcalEvent evt, bool preferStart)
+    private static DateTimeOffset? ExtractDateTimeOffset(IcalEvent? evt, bool preferStart)
     {
         if (evt == null) return null;
 
@@ -128,7 +128,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         return TryConvertToDateTimeOffset(fallback);
     }
     
-    private static object TryGetPropertyValue(object obj, string propName)
+    private static object? TryGetPropertyValue(object? obj, string propName)
     {
         if (obj == null) return null;
         var t = obj.GetType();
@@ -140,7 +140,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
         return field != null ? field.GetValue(obj) : null;
     }
 
-    private static DateTimeOffset? TryConvertToDateTimeOffset(object value)
+    private static DateTimeOffset? TryConvertToDateTimeOffset(object? value)
     {
         if (value == null) return null;
 
