@@ -7,7 +7,7 @@ namespace Kommunist.Core.Converters;
 
 public class TextItemListConverter : JsonConverter<List<TextItem>>
 {
-    public override List<TextItem> ReadJson(JsonReader reader, Type objectType, List<TextItem> existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override List<TextItem> ReadJson(JsonReader reader, Type objectType, List<TextItem>? existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -167,7 +167,7 @@ public class TextItemListConverter : JsonConverter<List<TextItem>>
         }
     }
 
-    public override void WriteJson(JsonWriter writer, List<TextItem> value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, List<TextItem>? value, JsonSerializer serializer)
     {
         if (value == null)
         {

@@ -40,7 +40,7 @@ public record Item
     [JsonProperty("is_link_to_stream")]
     public string IsLinkToStream { get; set; } = "";
     [JsonProperty("stream_struct")]
-    public StreamStruct StreamStruct { get; set; }
+    public StreamStruct? StreamStruct { get; set; }
     [JsonProperty("is_link_to_recording")]
     public bool IsLinkToRecording { get; set; }
     [JsonProperty("is_recommended")]
@@ -64,7 +64,7 @@ public record Item
     [JsonProperty("background_image")]
     public string BackgroundImage { get; set; } = "";
     [JsonProperty("info")]
-    public Info Info { get; set; }
+    public Info? Info { get; set; }
     [JsonProperty("is_speaker")]
     public bool IsSpeaker { get; set; }
     [JsonProperty("is_talk_moderator")]
@@ -76,5 +76,5 @@ public record Item
     [JsonProperty("can_add_to_collection")]
     public bool CanAddToCollection { get; set; }
     [JsonProperty("registration_info")]
-    public RegistrationInfo RegistrationInfo { get; set; }
+    public RegistrationInfo? RegistrationInfo { get; set; }
 }

@@ -5,9 +5,9 @@ namespace Kommunist.Core.Entities.PageProperties.Agenda;
 public record Info
 {
     [JsonProperty("description")]
-    public string DescriptionHtml { get; set; }
+    public string? DescriptionHtml { get; set; }
     [JsonProperty("level")]
-    public Level Level { get; set; }
+    public Level? Level { get; set; }
     [JsonProperty("skills")]
-    public string[] Tags { get; set; }
+    public string[]? Tags { get; set; }
 }
