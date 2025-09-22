@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
-
 namespace Kommunist.Application.Services.Navigation;
 
 public sealed class MauiShellNavigator : IShellNavigator
