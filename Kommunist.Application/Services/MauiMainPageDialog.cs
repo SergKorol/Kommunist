@@ -4,9 +4,13 @@ public class MauiMainPageDialog : IMainPageDialog
 {
     public async Task<string?> DisplayActionSheet(string title, string cancel, string destruction, string[] buttons)
     {
-        var mainPage = Microsoft.Maui.Controls.Application.Current?.MainPage
-            ?? throw new InvalidOperationException("Application.Current.MainPage is not available.");
+        var app = Microsoft.Maui.Controls.Application.Current
+            ?? throw new InvalidOperationException("Application.Current is not available.");
+        var mainPage = app.Windows.Count > 0
+            ? app.Windows[0].Page
+            : throw new InvalidOperationException("No application windows are available.");
 
-        return await mainPage.DisplayActionSheet(title, cancel, destruction, buttons);
+        if (mainPage != null) return await mainPage.DisplayActionSheet(title, cancel, destruction, buttons);
+        throw new InvalidOperationException("Main page is not available.");
     }
 }
