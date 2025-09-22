@@ -14,7 +14,7 @@ namespace Kommunist.Core.Converters;
 
 public class PropertiesConverter : JsonConverter<EventPage>
 {
-    public override EventPage ReadJson(JsonReader reader, Type objectType, EventPage existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override EventPage? ReadJson(JsonReader reader, Type objectType, EventPage? existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         var jsonObject = JObject.Load(reader);
 
@@ -32,7 +32,6 @@ public class PropertiesConverter : JsonConverter<EventPage>
         }
         else
         {
-            // Fallback to default conversion (supports numeric enums as well)
             eventType = typeToken.ToObject<PageType>(serializer);
         }
 
@@ -57,7 +56,7 @@ public class PropertiesConverter : JsonConverter<EventPage>
         return eventPage;
     }
 
-    public override void WriteJson(JsonWriter writer, EventPage value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, EventPage? value, JsonSerializer serializer)
     {
         if (value == null)
         {
@@ -77,8 +76,7 @@ public class PropertiesConverter : JsonConverter<EventPage>
         }
         else
         {
-            var targetType = GetPropertiesType(value.Type);
-            if (targetType != null && targetType.IsInstanceOfType(value.Properties))
+            if (GetPropertiesType(value.Type) is { } targetType && targetType.IsInstanceOfType(value.Properties))
             {
                 serializer.Serialize(writer, value.Properties, targetType);
             }
@@ -91,7 +89,7 @@ public class PropertiesConverter : JsonConverter<EventPage>
         writer.WriteEndObject();
     }
 
-    private static Type GetPropertiesType(PageType pageType) =>
+    private static Type? GetPropertiesType(PageType pageType) =>
         pageType switch
         {
             PageType.Venue => typeof(VenueProperties),
