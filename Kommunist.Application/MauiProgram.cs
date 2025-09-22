@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using CommunityToolkit.Maui;
-// using CommunityToolkit.Maui.Markup;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Services;
 using Kommunist.Application.ViewModels;
@@ -17,6 +17,7 @@ namespace Kommunist.Application;
 
 public static class MauiProgram
 {
+    [SuppressMessage("ReSharper", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract")]
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
@@ -31,7 +32,7 @@ public static class MauiProgram
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         
-        EntryHandler.Mapper.AppendToMapping("BorderlessEntry", (handler, view) =>
+        EntryHandler.Mapper.AppendToMapping("BorderlessEntry", ([SuppressMessage("ReSharper", "UnusedParameter.Local")] handler, view) =>
         {
             if (view is Entry e && e.StyleClass?.Contains("borderless") == true)
             {
@@ -118,7 +119,7 @@ public static class MauiProgram
     {
         var assembly = Assembly.GetExecutingAssembly();
         var environmentName = GetEnvironmentName();
-        var baseName = "Kommunist.Application.appsettings";
+        const string baseName = "Kommunist.Application.appsettings";
         var envResourceName = string.Concat(baseName, ".", environmentName, ".json");
         var defaultResourceName = string.Concat(baseName, ".json");
 
