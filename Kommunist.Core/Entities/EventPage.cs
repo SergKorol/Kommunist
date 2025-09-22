@@ -11,5 +11,5 @@ public record EventPage
     [JsonProperty("type")]
     public PageType Type { get; set; }
     [JsonProperty("properties")]
-    public IProperties Properties { get; set; }
+    public IProperties? Properties { get; set; }
 }

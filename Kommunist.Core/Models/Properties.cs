@@ -9,7 +9,7 @@ public class Properties
     public Event? Event { get; set; }
     
     [JsonProperty("bg_color")]
-    public string BackgroundColor { get; set; }
+    public string? BackgroundColor { get; set; }
 
     [JsonProperty("opacity")]
     public string? Opacity { get; set; }
