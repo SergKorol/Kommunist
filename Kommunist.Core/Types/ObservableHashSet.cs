@@ -8,8 +8,8 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
 {
     private readonly HashSet<T> _set = [];
 
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public int Count => _set.Count;
     public bool IsReadOnly => false;
@@ -44,7 +44,7 @@ public class ObservableHashSet<T> : ICollection<T>, INotifyCollectionChanged, IN
     public IEnumerator<T> GetEnumerator() => _set.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    private void RaiseCollectionChanged(NotifyCollectionChangedAction action, object item = null)
+    private void RaiseCollectionChanged(NotifyCollectionChangedAction action, object? item = null)
     {
         var args = item is null
             ? new NotifyCollectionChangedEventArgs(action)

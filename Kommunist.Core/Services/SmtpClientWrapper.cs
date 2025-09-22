@@ -1,18 +1,12 @@
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Core.Services;
 
-public sealed class SmtpClientWrapper : ISmtpClient
+public sealed class SmtpClientWrapper(string host) : ISmtpClient
 {
-    private readonly SmtpClient _inner;
-
-    public SmtpClientWrapper(string host)
-    {
-        _inner = new SmtpClient(host);
-    }
+    private readonly SmtpClient _inner = new(host);
 
     public int Port
     {
