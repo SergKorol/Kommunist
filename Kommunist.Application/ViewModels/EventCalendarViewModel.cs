@@ -249,7 +249,7 @@ public class EventCalendarViewModel : BaseViewModel
             ? startLocal.ToString("dd.MM.yyyy")
             : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
 
-        var languages = serviceEvent.Languages?.Any() == true
+        var languages = serviceEvent.Languages.Count > 0
             ? string.Join("/", serviceEvent.Languages.ReplaceCodesWithFlags())
             : "N/A";
 
