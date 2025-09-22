@@ -18,8 +18,8 @@ public class EventCalendarViewModelTests
         eventServiceMock = new Mock<IEventService>(MockBehavior.Strict);
 
         var es = eventService ?? eventServiceMock.Object;
-        var fileHosting = Mock.Of<Kommunist.Core.Services.Interfaces.IFileHostingService>();
-        var androidCalendar = Mock.Of<Kommunist.Core.Services.Interfaces.IAndroidCalendarService>();
+        var fileHosting = Mock.Of<IFileHostingService>();
+        var androidCalendar = Mock.Of<IAndroidCalendarService>();
 
         return new EventCalendarViewModel(es, fileHosting, androidCalendar);
     }

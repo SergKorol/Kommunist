@@ -70,13 +70,10 @@ public class EventCalendarDetailViewModelTests
         var flags = BindingFlags.NonPublic | BindingFlags.Static;
         MethodInfo? method;
 
-        if (parameterTypes is null)
-            method = type.GetMethod(methodName, flags);
-        else
-            method = type.GetMethod(methodName, flags, binder: null, types: parameterTypes, modifiers: null);
+        method = parameterTypes is null ? type.GetMethod(methodName, flags) : type.GetMethod(methodName, flags, binder: null, types: parameterTypes, modifiers: null);
 
         Assert.NotNull(method);
-        var result = method!.Invoke(null, args);
+        var result = method.Invoke(null, args);
         return (T)result!;
     }
 
@@ -188,7 +185,7 @@ public class EventCalendarDetailViewModelTests
         // Act
         var result = CallPrivateStatic<string>(
             "MakeSafeFileName",
-            new[] { typeof(string) },
+            [typeof(string)],
             input
         );
 
@@ -204,7 +201,7 @@ public class EventCalendarDetailViewModelTests
         // Act
         var result = CallPrivateStatic<string>(
             "BuildIcsDescription",
-            new[] { typeof(string), typeof(string) },
+            [typeof(string), typeof(string)],
             null, null
         );
 
@@ -222,7 +219,7 @@ public class EventCalendarDetailViewModelTests
         // Act
         var result = CallPrivateStatic<DateTime>(
             "ConvertDateTime",
-            new[] { typeof(long) },
+            [typeof(long)],
             unix
         );
 

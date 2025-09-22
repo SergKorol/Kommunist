@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
@@ -41,7 +42,7 @@ public class EventFiltersViewModelTests : IDisposable
     public void OnlineOnly_SetValue_RaisesPropertyChanged()
     {
         // Arrange
-        bool raised = false;
+        var raised = false;
         _vm.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(EventFiltersViewModel.OnlineOnly))
@@ -164,12 +165,14 @@ public class EventFiltersViewModelTests : IDisposable
     #region Search & Debounce
 
     // [Fact]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("Usage", "xUnit1013:Public method should be marked as test")]
     public async Task TagFilter_TriggersSearch_AddsSuggestions()
     {
         // Arrange
         _searchServiceMock
             .Setup(s => s.GetTags("dot"))
-            .ReturnsAsync(new[] { "dotnet", "docker" });
+            .ReturnsAsync(["dotnet", "docker"]);
 
         // Act
         _vm.TagFilter = "dot";
@@ -191,7 +194,6 @@ public class EventFiltersViewModelTests : IDisposable
         _vm.Dispose();
 
         // Assert
-        // No exception should occur when calling Dispose twice
         _vm.Dispose();
     }
 
