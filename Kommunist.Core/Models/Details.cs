@@ -8,11 +8,11 @@ public record Details
     public bool IsPast { get; set; }
 
     [JsonProperty("dates_timestamp")]
-    public DatesTimestamp DatesTimestamp { get; set; }
+    public DatesTimestamp? DatesTimestamp { get; set; }
 
     [JsonProperty("participation_format")]
-    public ParticipationFormat ParticipationFormat { get; set; }
+    public ParticipationFormat? ParticipationFormat { get; set; }
 
     [JsonProperty("title")]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 }
