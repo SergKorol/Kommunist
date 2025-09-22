@@ -7,11 +7,11 @@ namespace Kommunist.Core.Entities.PageProperties.BasicText;
 public record BasicTextProperties : IProperties
 {
     [JsonProperty("bg_color")]
-    public string BgColor { get; set; }
+    public string? BgColor { get; set; }
     [JsonProperty("opacity")]
-    public string Opacity { get; set; }
+    public string? Opacity { get; set; }
     [JsonProperty("text")]
-    public IEnumerable<TextProperty> Text { get; set; }
+    public IEnumerable<TextProperty>? Text { get; set; }
     [JsonProperty("show_on_mobile_app")]
     public bool ShowOnMobileApp { get; set; }
 }

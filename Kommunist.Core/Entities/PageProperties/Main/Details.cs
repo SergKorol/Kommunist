@@ -15,7 +15,7 @@ public record Details
     [JsonProperty("participation_format")]
     public ParticipationFormat? ParticipationFormat { get; set; }
     [JsonProperty("title")]
-    public string Title { get; set; }
+    public string? Title { get; set; }
     [JsonProperty("timezones")]
     public IEnumerable<TimeZone>? TimeZones { get; set; }
     [JsonProperty("internal")]

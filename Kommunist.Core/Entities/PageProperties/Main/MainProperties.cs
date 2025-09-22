@@ -10,7 +10,7 @@ public record MainProperties : IProperties
     [JsonProperty("opacity")]
     public string? Opacity { get; set; }
     [JsonProperty("text")]
-    public IEnumerable<TextProperty> Text { get; set; }
+    public IEnumerable<TextProperty>? Text { get; set; }
     [JsonProperty("without_details")]
     public bool WithoutDetails { get; set; }
     [JsonProperty("image")]
