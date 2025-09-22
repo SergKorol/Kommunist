@@ -27,7 +27,7 @@ public class FilterService : IFilterService
         SaveFilters();
     }
 
-    public FilterOptions GetFilters()
+    public FilterOptions? GetFilters()
     {
         LoadFilters();
         return _filters;
