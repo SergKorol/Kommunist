@@ -13,7 +13,7 @@ public static class HtmlConverter
         if (string.IsNullOrWhiteSpace(html))
             return string.Empty;
 
-        if (!html.Contains("<"))
+        if (!html.Contains('<'))
             return HtmlEntity.DeEntitize(html.Trim());
         
         html = html.Replace("<br>", "\n", StringComparison.OrdinalIgnoreCase)
@@ -57,7 +57,7 @@ public static class HtmlConverter
         {
             var bullet = $"•{HtmlEntity.DeEntitize(listItems[i].InnerText.Trim())}";
             var lines = HtmlEntity.DeEntitize(listParagraphs[i].InnerText.Trim())
-                ?.Replace("\r", "")
+                .Replace("\r", "")
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             sb.AppendLine(CultureInfo.InvariantCulture, $"{bullet}");

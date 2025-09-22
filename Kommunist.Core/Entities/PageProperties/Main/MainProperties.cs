@@ -6,37 +6,37 @@ namespace Kommunist.Core.Entities.PageProperties.Main;
 public record MainProperties : IProperties
 {
     [JsonProperty("bg_color")]
-    public string BgColor { get; set; }
+    public string? BgColor { get; set; }
     [JsonProperty("opacity")]
-    public string Opacity { get; set; }
+    public string? Opacity { get; set; }
     [JsonProperty("text")]
     public IEnumerable<TextProperty> Text { get; set; }
     [JsonProperty("without_details")]
     public bool WithoutDetails { get; set; }
     [JsonProperty("image")]
-    public string Image { get; set; }
+    public string? Image { get; set; }
     [JsonProperty("details")]
-    public Details Details { get; set; }
+    public Details? Details { get; set; }
     [JsonProperty("is_main_page")]
     public bool IsMainPage { get; set; }
     [JsonProperty("registration")]
-    public Registration Registration { get; set; }
+    public Registration? Registration { get; set; }
     [JsonProperty("subscription")]
-    public string Subscription { get; set; }
+    public string? Subscription { get; set; }
     [JsonProperty("is_registration")]
-    public string IsRegistration { get; set; }
+    public string? IsRegistration { get; set; }
     [JsonProperty("is_speaker")]
-    public string IsSpeaker { get; set; }
+    public string? IsSpeaker { get; set; }
     [JsonProperty("event_url")]
-    public string EventUrl { get; set; }
+    public string? EventUrl { get; set; }
     [JsonProperty("communities")]
-    public IEnumerable<Community> Communities { get; set; }
+    public IEnumerable<Community>? Communities { get; set; }
     [JsonProperty("languages")]
-    public string[] Languages { get; set; }
+    public string[]? Languages { get; set; }
     [JsonProperty("show_qr")]
-    public string ShowQr { get; set; }
+    public string? ShowQr { get; set; }
     [JsonProperty("show_qr_scanner")]
-    public string ShowQrScanner { get; set; }
+    public string? ShowQrScanner { get; set; }
     [JsonProperty("show_pinned_bar")]
-    public string ShowPinnedBar { get; set; }
+    public string? ShowPinnedBar { get; set; }
 }
