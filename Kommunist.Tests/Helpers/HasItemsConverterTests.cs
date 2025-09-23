@@ -8,28 +8,22 @@ public class HasItemsConverterTests
 {
     private readonly HasItemsConverter _sut = new();
 
-    public static IEnumerable<object[]> ConvertTestCases()
+    public static IEnumerable<object?[]> ConvertTestCases()
     {
-        // True when IEnumerable<object> has at least one element
-        yield return new object[] { new List<object> { 1 }, true };
-        yield return new object[] { new object?[] { null }, true }; // null item still counts as an item
+        yield return [new List<object> { 1 }, true];
+        yield return [new object?[] { null }, true]; 
 
-        // False when IEnumerable<object> is empty
-        yield return new object[] { new List<object>(), false };
-        yield return new object[] { Array.Empty<object>(), false };
+        yield return [new List<object>(), false];
+        yield return [Array.Empty<object>(), false];
 
-        // False for null value
-        yield return new object[] { null!, false };
+        yield return [null, false];
 
-        // False for non-enumerable inputs
-        yield return new object[] { 5, false };
-        yield return new object[] { 5.0, false };
+        yield return [5, false];
+        yield return [5.0, false];
 
-        // False for enumerables that are NOT IEnumerable<object>
-        // (e.g., IEnumerable<int> or string which is IEnumerable<char>)
-        yield return new object[] { new List<int> { 1 }, false };
-        yield return new object[] { new int[] { 1, 2 }, false };
-        yield return new object[] { "abc", false };
+        yield return [new List<int> { 1 }, false];
+        yield return [new[] { 1, 2 }, false];
+        yield return ["abc", false];
     }
 
     [Theory]

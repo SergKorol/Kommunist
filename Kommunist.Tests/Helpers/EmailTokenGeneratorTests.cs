@@ -1,7 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
 using Kommunist.Core.Helpers;
-using Xunit;
 
 namespace Kommunist.Tests.Helpers;
 
@@ -10,8 +7,8 @@ public class EmailTokenGeneratorTests
     [Fact]
     public void EncryptForBlobName_Deterministic_WithSamePassword()
     {
-        var email = "user@example.com";
-        var password = "TestPassword123!";
+        const string email = "user@example.com";
+        const string password = "TestPassword123!";
 
         var t1 = EmailTokenGenerator.EncryptForBlobName(email, password);
         var t2 = EmailTokenGenerator.EncryptForBlobName(email, password);
@@ -45,7 +42,7 @@ public class EmailTokenGeneratorTests
     [InlineData("")]
     public void EncryptForBlobName_Throws_OnNullOrEmpty(string? email)
     {
-        Assert.Throws<ArgumentException>(() => EmailTokenGenerator.EncryptForBlobName(email!));
+        Assert.Throws<ArgumentException>(() => EmailTokenGenerator.EncryptForBlobName(email));
     }
 
     [Fact]
@@ -55,7 +52,6 @@ public class EmailTokenGeneratorTests
 
         Assert.False(string.IsNullOrWhiteSpace(token));
 
-        // Only lowercase letters and digits are expected after filtering '+', '/', '=' and lowercasing
         Assert.Matches("^[a-z0-9]+$", token);
         Assert.DoesNotContain("+", token);
         Assert.DoesNotContain("/", token);
@@ -66,8 +62,8 @@ public class EmailTokenGeneratorTests
     public void EncryptForBlobName_UsesDefaultPassword_WhenNullPassword()
     {
         var email = "abc@example.com";
-        var t1 = EmailTokenGenerator.EncryptForBlobName(email, null);
-        var t2 = EmailTokenGenerator.EncryptForBlobName(email, null);
+        var t1 = EmailTokenGenerator.EncryptForBlobName(email);
+        var t2 = EmailTokenGenerator.EncryptForBlobName(email);
 
         Assert.False(string.IsNullOrWhiteSpace(t1));
         Assert.Equal(t1, t2);
