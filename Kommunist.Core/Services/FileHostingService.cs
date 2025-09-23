@@ -13,7 +13,7 @@ public class FileHostingService : IFileHostingService
     private readonly ILogger<FileHostingService>? _logger;
     private readonly BlobServiceClient? _blobServiceClient;
 
-    public FileHostingService(IConfiguration config, ILogger<FileHostingService>? logger = null)
+    public FileHostingService(IConfiguration? config, ILogger<FileHostingService>? logger = null)
     {
         var configuration = config ?? throw new ArgumentNullException(nameof(config));
         _logger = logger;
@@ -25,7 +25,7 @@ public class FileHostingService : IFileHostingService
         }
     }
 
-    public async Task<string> UploadFileAsync(string filePath, string email)
+    public async Task<string> UploadFileAsync(string? filePath, string? email)
     {
         ArgumentException.ThrowIfNullOrEmpty(filePath);
         ArgumentException.ThrowIfNullOrEmpty(email);

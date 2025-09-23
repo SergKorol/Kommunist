@@ -99,7 +99,7 @@ public class EventServiceTests
         var sut = new EventService(httpClient, filterService.Object);
 
         // Act
-        var result = (await sut.LoadEvents(DateTime.UtcNow.Date, DateTime.UtcNow.Date)).ToList();
+        var result = (await sut.LoadEvents(DateTime.UtcNow.Date, DateTime.UtcNow.Date) ?? []).ToList();
 
         // Assert
         result.Should().HaveCount(1);
@@ -154,7 +154,7 @@ public class EventServiceTests
         await sut.LoadEvents(startDate, endDate);
 
         // Assert
-        var uri = handler.Requests.Single().RequestUri!.ToString();
+        var uri = handler.Requests.Single().RequestUri?.ToString();
         uri.Should().Be($"https://example.com/api/v2/calendar?start_date={expectedFrom}&end_date={expectedTo}");
     }
 
@@ -175,7 +175,7 @@ public class EventServiceTests
 
         // Assert
         handler.Requests.Should().ContainSingle();
-        handler.Requests.Single().RequestUri!.ToString()
+        handler.Requests.Single().RequestUri?.ToString()
             .Should().Be("https://example.com/api/v2/events/123/pages/home");
         result.Should().NotBeNull().And.BeEmpty();
     }
@@ -217,7 +217,7 @@ public class EventServiceTests
 
         // Assert
         handler.Requests.Should().ContainSingle();
-        handler.Requests.Single().RequestUri!.ToString()
+        handler.Requests.Single().RequestUri?.ToString()
             .Should().Be("https://example.com/api/v2/events/55/agenda");
         result.Should().BeNull();
     }
@@ -227,7 +227,7 @@ public class EventServiceTests
     {
         private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-        public List<HttpRequestMessage> Requests { get; } = new();
+        public List<HttpRequestMessage> Requests { get; } = [];
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

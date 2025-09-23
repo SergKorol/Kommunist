@@ -17,10 +17,10 @@ public class FileHostingServiceTests
     public void Ctor_WhenConfigIsNull_ThrowsArgumentNullException()
     {
         // Arrange
-        IConfiguration config = null;
+        IConfiguration? config = null;
 
         // Act
-        var act = () => new FileHostingService(config!);
+        var act = () => new FileHostingService(config);
 
         // Assert
         act.Should().Throw<ArgumentNullException>()
@@ -30,13 +30,13 @@ public class FileHostingServiceTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public async Task UploadFileAsync_WhenFilePathIsNullOrEmpty_ThrowsArgumentException(string filePath)
+    public async Task UploadFileAsync_WhenFilePathIsNullOrEmpty_ThrowsArgumentException(string? filePath)
     {
         // Arrange
         var service = CreateServiceWithNoConnectionString();
 
         // Act
-        var act = () => service.UploadFileAsync(filePath!, "user@example.com");
+        var act = () => service.UploadFileAsync(filePath, "user@example.com");
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>();
@@ -45,7 +45,7 @@ public class FileHostingServiceTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public async Task UploadFileAsync_WhenEmailIsNullOrEmpty_ThrowsArgumentException(string email)
+    public async Task UploadFileAsync_WhenEmailIsNullOrEmpty_ThrowsArgumentException(string? email)
     {
         // Arrange
         using var temp = new TempFile(".txt");
@@ -53,7 +53,8 @@ public class FileHostingServiceTests
         var service = CreateServiceWithNoConnectionString();
 
         // Act
-        var act = () => service.UploadFileAsync(temp.Path, email!);
+        var path = temp.Path;
+        var act = () => service.UploadFileAsync(path, email);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>();
@@ -64,7 +65,7 @@ public class FileHostingServiceTests
     {
         // Arrange
         var logger = new Mock<ILogger<FileHostingService>>();
-        var config = BuildConfigWithConnectionString("UseDevelopmentStorage=true"); // value not used; client remains null in this test
+        var config = BuildConfigWithConnectionString("UseDevelopmentStorage=true");
         var service = new FileHostingService(config, logger.Object);
 
         var nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
@@ -79,9 +80,9 @@ public class FileHostingServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("File not found")),
+                It.Is<It.IsAnyType>((v, _) => (Convert.ToString(v) ?? string.Empty).Contains("File not found")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
@@ -97,7 +98,8 @@ public class FileHostingServiceTests
         await File.WriteAllTextAsync(temp.Path, "content");
 
         // Act
-        var act = () => service.UploadFileAsync(temp.Path, "user@example.com");
+        var path = temp.Path;
+        var act = () => service.UploadFileAsync(path, "user@example.com");
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -107,9 +109,9 @@ public class FileHostingServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Blob Storage connection string is missing or invalid")),
+                It.Is<It.IsAnyType>((v, _) => (Convert.ToString(v) ?? string.Empty).Contains("Blob Storage connection string is missing or invalid")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
@@ -147,7 +149,7 @@ public class FileHostingServiceTests
                 It.IsAny<Stream>(),
                 It.Is<BlobUploadOptions>(o => CaptureContentType(o, out capturedContentType)),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Response<BlobContentInfo>)null!);
+            .ReturnsAsync(Mock.Of<Response<BlobContentInfo>>());
 
         mockContainer
             .Setup(c => c.CreateIfNotExistsAsync(
@@ -155,7 +157,7 @@ public class FileHostingServiceTests
                 It.IsAny<IDictionary<string, string>>(),
                 It.IsAny<BlobContainerEncryptionScopeOptions>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Response<BlobContainerInfo>)null!);
+            .ReturnsAsync(Mock.Of<Response<BlobContainerInfo>>());
 
         string? capturedBlobName = null;
         mockContainer
@@ -169,13 +171,12 @@ public class FileHostingServiceTests
             .Callback<string>(name => capturedContainerName = name)
             .Returns(mockContainer.Object);
 
-        // Inject mocked BlobServiceClient
         SetPrivateBlobServiceClient(service, mockBlobService.Object);
 
         using var temp = new TempFile(extension);
         await File.WriteAllTextAsync(temp.Path, "any content");
 
-        var email = "tester@example.com";
+        const string email = "tester@example.com";
         var expectedContainer = EmailTokenGenerator.EncryptForBlobName(email);
         var expectedBlobName = Path.GetFileName(temp.Path);
 
@@ -199,17 +200,17 @@ public class FileHostingServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Uploading file")),
+                It.Is<It.IsAnyType>((v, _) => (Convert.ToString(v) ?? string.Empty).Contains("Uploading file")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.AtLeastOnce);
         logger.Verify(
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("File uploaded successfully")),
+                It.Is<It.IsAnyType>((v, _) => (Convert.ToString(v) ?? string.Empty).Contains("File uploaded successfully")),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.AtLeastOnce);
     }
 
@@ -240,7 +241,7 @@ public class FileHostingServiceTests
                 It.IsAny<IDictionary<string, string>>(),
                 It.IsAny<BlobContainerEncryptionScopeOptions>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Response<BlobContainerInfo>)null!);
+            .ReturnsAsync(Mock.Of<Response<BlobContainerInfo>>());
 
         mockContainer.Setup(c => c.GetBlobClient(It.IsAny<string>())).Returns(mockBlob.Object);
         mockBlobService.Setup(s => s.GetBlobContainerClient(It.IsAny<string>())).Returns(mockContainer.Object);
@@ -251,7 +252,8 @@ public class FileHostingServiceTests
         await File.WriteAllTextAsync(temp.Path, "data");
 
         // Act
-        var act = () => service.UploadFileAsync(temp.Path, "user@example.com");
+        var path = temp.Path;
+        var act = () => service.UploadFileAsync(path, "user@example.com");
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -261,9 +263,9 @@ public class FileHostingServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, _) => v.ToString()!.Contains("Failed to upload file")),
+                It.Is<It.IsAnyType>((v, _) => (Convert.ToString(v) ?? string.Empty).Contains("Failed to upload file")),
                 It.Is<InvalidOperationException>(ex => ex.Message == "upload failed"),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
     }
 
@@ -294,12 +296,12 @@ public class FileHostingServiceTests
     {
         var field = typeof(FileHostingService).GetField("_blobServiceClient", BindingFlags.Instance | BindingFlags.NonPublic);
         field.Should().NotBeNull("the service should have a private _blobServiceClient field");
-        field!.SetValue(service, blobServiceClient);
+        field?.SetValue(service, blobServiceClient);
     }
 
     private static bool CaptureContentType(BlobUploadOptions options, out string? captured)
     {
-        captured = options?.HttpHeaders?.ContentType;
+        captured = options.HttpHeaders?.ContentType;
         return true;
     }
 
@@ -311,7 +313,11 @@ public class FileHostingServiceTests
         {
             var fileName = System.IO.Path.ChangeExtension(System.IO.Path.GetRandomFileName(), extension);
             Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
-            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(Path)!);
+            var dir = System.IO.Path.GetDirectoryName(Path);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
             using var _ = File.Create(Path);
         }
 
@@ -326,7 +332,7 @@ public class FileHostingServiceTests
             }
             catch
             {
-                // ignore cleanup failures
+                // ignored
             }
         }
     }
