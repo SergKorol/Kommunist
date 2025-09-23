@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using FluentAssertions;
 using Kommunist.Application.Helpers;
-using Xunit;
 
 namespace Kommunist.Tests.Helpers;
 
