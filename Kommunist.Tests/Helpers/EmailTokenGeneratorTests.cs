@@ -20,7 +20,7 @@ public class EmailTokenGeneratorTests
     [Fact]
     public void EncryptForBlobName_DifferentPasswords_ProduceDifferentTokens()
     {
-        var email = "user@example.com";
+        const string email = "user@example.com";
 
         var t1 = EmailTokenGenerator.EncryptForBlobName(email, "pwd1");
         var t2 = EmailTokenGenerator.EncryptForBlobName(email, "pwd2");
@@ -61,7 +61,7 @@ public class EmailTokenGeneratorTests
     [Fact]
     public void EncryptForBlobName_UsesDefaultPassword_WhenNullPassword()
     {
-        var email = "abc@example.com";
+        const string email = "abc@example.com";
         var t1 = EmailTokenGenerator.EncryptForBlobName(email);
         var t2 = EmailTokenGenerator.EncryptForBlobName(email);
 
