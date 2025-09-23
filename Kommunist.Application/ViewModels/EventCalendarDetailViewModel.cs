@@ -219,7 +219,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             var serializer = new CalendarSerializer();
             var icalString = serializer.SerializeToString(calendar);
 
-            var fileSafeTitle = MakeSafeFileName(SelectedEventDetail?.Title ?? "event");
+            var fileSafeTitle = MakeSafeFileName(SelectedEventDetail?.Title?.Replace(" ", "_") ?? "event");
             var fileName = $"{fileSafeTitle}-{startUnix}.ics";
             var path = await SaveIcalToInternalStorageAsync(icalString, fileName);
 
