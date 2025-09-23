@@ -27,7 +27,7 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_ReturnsParsedCoordinates_WhenApiReturnsOneResult()
     {
-        var json = "[{\"lat\":\"48.8584\",\"lon\":\"2.2945\"}]";
+        const string json = "[{\"lat\":\"48.8584\",\"lon\":\"2.2945\"}]";
         string? capturedUserAgent = null;
 
         var handler = new TestHandler((req, _) =>
@@ -51,10 +51,10 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_ReturnsFirstResult_WhenApiReturnsMultipleResults()
     {
-        var json = "[" +
-                   "{\"lat\":\"10.1\",\"lon\":\"20.2\"}," +
-                   "{\"lat\":\"30.3\",\"lon\":\"40.4\"}" +
-                   "]";
+        const string json = "[" +
+                            "{\"lat\":\"10.1\",\"lon\":\"20.2\"}," +
+                            "{\"lat\":\"30.3\",\"lon\":\"40.4\"}" +
+                            "]";
         var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent(json)
@@ -140,8 +140,7 @@ public class CoordinatesServiceTests
             var uri = new Uri(requestedUrl);
             var query = uri.Query.TrimStart('?');
             var qParam = query.Split('&', StringSplitOptions.RemoveEmptyEntries)
-                .FirstOrDefault(p => p.StartsWith("q=", StringComparison.Ordinal))?
-                .Substring(2);
+                .FirstOrDefault(p => p.StartsWith("q=", StringComparison.Ordinal))?[2..];
 
             qParam.Should().NotBeNull("q parameter should be present in the request URL");
 
