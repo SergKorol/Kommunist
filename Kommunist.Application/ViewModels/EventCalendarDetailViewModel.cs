@@ -335,7 +335,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var unlimitedText = PageItems?.FirstOrDefault(x => x.Type == "UnlimitedText");
         if (unlimitedText != null)
         {
-            text = unlimitedText.Properties?.UnlimitedText ?? string.Empty;
+            text = unlimitedText.Properties.UnlimitedText ?? string.Empty;
         }
 
         var iconPointsPart = PageItems?.FirstOrDefault(x => x.Type == "IconPoints");
@@ -351,7 +351,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             else if (icons.Count != 0)
             {
                 text += "<ul>";
-                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
+                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon?.Main + "</li>" + "<p>" + icon?.Description + "</p>");
                 text += "</ul>";
             }
             else
@@ -376,7 +376,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
         {
             var agendaItem = AgendaPage.Agenda.Items.First();
 
-            if (agendaItem?.Speakers?.Any() == true)
+            if (agendaItem.Speakers.Any())
             {
                 foreach (var speaker in agendaItem.Speakers)
                 {
@@ -391,7 +391,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (agendaItem?.Moderators?.Any() == true)
+            if (agendaItem.Moderators.Any())
             {
                 foreach (var moderator in agendaItem.Moderators)
                 {
@@ -406,7 +406,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            var html = agendaItem?.Info?.DescriptionHtml;
+            var html = agendaItem.Info?.DescriptionHtml;
             if (!string.IsNullOrWhiteSpace(html))
             {
                 var isDark = IsDarkMode();

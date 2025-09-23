@@ -241,7 +241,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
     }
 
-    private async Task UploadOrSendFile(string path)
+    private async Task UploadOrSendFile(string? path)
     {
         if (SendEmail)
         {
