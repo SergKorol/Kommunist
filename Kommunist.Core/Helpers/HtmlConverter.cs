@@ -8,7 +8,7 @@ namespace Kommunist.Core.Helpers;
 public static class HtmlConverter
 {
     [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
-    public static string HtmlToPlainText(string html)
+    public static string HtmlToPlainText(string? html)
     {
         if (string.IsNullOrWhiteSpace(html))
             return string.Empty;

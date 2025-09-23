@@ -8,7 +8,7 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_EmptyHtml_ReturnsEmptyString()
         {
             // Arrange
-            var html = "";
+            const string html = "";
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -24,7 +24,7 @@ namespace Kommunist.Tests.Helpers
             string? html = null;
 
             // Act
-            var result = HtmlConverter.HtmlToPlainText(html!);
+            var result = HtmlConverter.HtmlToPlainText(html);
             // Assert
             Assert.Equal(string.Empty, result);       
         }
@@ -33,7 +33,7 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_NoHeadingNoParagraphNoList_ReturnsEmpty()
         {
             // Arrange
-            var html = "<div><span>ignored</span></div>";
+            const string html = "<div><span>ignored</span></div>";
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -53,7 +53,6 @@ namespace Kommunist.Tests.Helpers
             var result = HtmlConverter.HtmlToPlainText(html);
 
             // Assert
-            // Centered to width 100 with padding = max(0, (100 - len)/2 - 4)
             var padding = Math.Max(0, (100 - text.Length) / 2 - 4);
             var expected = new string(' ', padding) + text;
 
@@ -91,16 +90,18 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_ListItemsAndParagraphs_MatchingCounts_RendersBulletsWithIndentedLines()
         {
             // Arrange
-            var html = @"
-                <h5>Title</h5>
-                <h6>Intro &amp; More</h6>
-                <ul>
-                    <li>First</li>
-                    <p>Alpha</p>
+            const string html = """
 
-                    <li>Second</li>
-                    <p>Line1<br>Line2</p>
-                </ul>";
+                                                <h5>Title</h5>
+                                                <h6>Intro &amp; More</h6>
+                                                <ul>
+                                                    <li>First</li>
+                                                    <p>Alpha</p>
+
+                                                    <li>Second</li>
+                                                    <p>Line1<br>Line2</p>
+                                                </ul>
+                                """;
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -129,14 +130,16 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_ListItemsAndParagraphs_EntitiesDecodedAndWhitespaceTrimmed()
         {
             // Arrange
-            var html = @"
-                <ul>
-                    <li>  One &amp; Only  </li>
-                    <p>  A &amp; B  </p>
+            const string html = """
 
-                    <li>  Two  </li>
-                    <p>  X &amp; Y  </p>
-                </ul>";
+                                                <ul>
+                                                    <li>  One &amp; Only  </li>
+                                                    <p>  A &amp; B  </p>
+
+                                                    <li>  Two  </li>
+                                                    <p>  X &amp; Y  </p>
+                                                </ul>
+                                """;
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -152,26 +155,29 @@ namespace Kommunist.Tests.Helpers
 
             Assert.Equal(expected, result);
         }
+        private static readonly string[] Value =
+        [
+            "\n•Item",
+                @"  Line1\r\nLine2\r\nLine3"
+        ];
 
         [Fact]
         public void HtmlToPlainText_ListItemsWithWindowsNewlines_RemovesCarriageReturnsAndSplitsLines()
         {
             // Arrange
-            var html = @"
-                <ul>
-                    <li>Item</li>
-                    <p>Line1\r\nLine2\r\nLine3</p>
-                </ul>";
+            const string html = """
+
+                                                <ul>
+                                                    <li>Item</li>
+                                                    <p>Line1\r\nLine2\r\nLine3</p>
+                                                </ul>
+                                """;
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
 
             // Assert
-            var expected = string.Join(Environment.NewLine, new[]
-            {
-                "\n•Item",
-                "  Line1\\r\\nLine2\\r\\nLine3"
-            });
+            var expected = string.Join(Environment.NewLine, Value);
 
             Assert.Equal(expected, result);
         }
@@ -180,13 +186,15 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_ListItems_ParagraphsMissing_ReturnsHeadingAndOrParagraphsOnly_NoList()
         {
             // Arrange
-            var html = @"
-                <h5>Title</h5>
-                <h6>Lead</h6>
-                <ul>
-                    <li>A</li>
-                    <li>B</li>
-                </ul>";
+            const string html = """
+
+                                                <h5>Title</h5>
+                                                <h6>Lead</h6>
+                                                <ul>
+                                                    <li>A</li>
+                                                    <li>B</li>
+                                                </ul>
+                                """;
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
@@ -209,20 +217,21 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_ListItemsCountDoesNotMatchParagraphsCount_ReturnsEarlyWithoutList()
         {
             // Arrange
-            var html = @"
-                <h6>Only lead</h6>
-                <ul>
-                    <li>First</li>
-                    <p>Para1</p>
-                    <li>Second</li>
-                    <!-- Missing corresponding <p> -->
-                </ul>";
+            const string html = """
+
+                                                <h6>Only lead</h6>
+                                                <ul>
+                                                    <li>First</li>
+                                                    <p>Para1</p>
+                                                    <li>Second</li>
+                                                    <!-- Missing corresponding <p> -->
+                                                </ul>
+                                """;
 
             // Act
             var result = HtmlConverter.HtmlToPlainText(html);
 
             // Assert
-            // counts differ (2 li, 1 p), so list is not rendered
             var pad = Math.Max(0, (100 - "Only lead".Length) / 2 - 4);
             var expected = new string(' ', pad) + "Only lead";
             Assert.Equal(expected, result);
@@ -238,7 +247,6 @@ namespace Kommunist.Tests.Helpers
         public void HtmlToPlainText_HeadingWithEntities_AreHandledViaInnerText(string tag)
         {
             // Arrange
-            // HtmlAgilityPack InnerText decodes entities for h5/h6
             var html = $"<{tag}>Tom &amp; Jerry</{tag}>";
 
             // Act
@@ -253,7 +261,7 @@ namespace Kommunist.Tests.Helpers
         [Fact]
         public void HtmlToPlainText_TextWith_Paragraph_ReturnsParagraph()
         {
-            var html = "<p>Hello ICS</p>";
+            const string html = "<p>Hello ICS</p>";
             var result = HtmlConverter.HtmlToPlainText(html);
             Assert.Equal("Hello ICS", result);
         }
@@ -261,7 +269,7 @@ namespace Kommunist.Tests.Helpers
         [Fact]
         public void HtmlToPlainText_PlainText_ReturnsText()
         {
-            var html = "Hello ICS";
+            const string html = "Hello ICS";
             var result = HtmlConverter.HtmlToPlainText(html);
             Assert.Equal("Hello ICS", result);
         }
