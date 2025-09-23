@@ -14,7 +14,7 @@ public class SmtpClientWrapperTests
     public void Ctor_Allows_Any_Host_Value(string? host)
     {
         // Act
-        Action act = () =>
+        var act = () =>
         {
             using var _ = new SmtpClientWrapper(host);
         };
@@ -139,6 +139,7 @@ public class SmtpClientWrapperTests
         var act = () =>
         {
             var local = new SmtpClientWrapper("smtp.example.com");
+            local.Dispose();
             local.Dispose();
         };
 

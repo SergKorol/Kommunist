@@ -1,8 +1,6 @@
-using System;
 using FluentAssertions;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Xunit;
 
 namespace Kommunist.Tests.Services;
 
@@ -43,10 +41,10 @@ public class SmtpClientFactoryTests
         var client = factory.Create("smtp.example.com");
 
         // Act
-        Action act = () =>
+        var act = () =>
         {
             client.Dispose();
-            client.Dispose(); // disposing twice should be safe
+            client.Dispose();
         };
 
         // Assert
@@ -62,7 +60,7 @@ public class SmtpClientFactoryTests
         var factory = new SmtpClientFactory();
 
         // Act
-        using var client = factory.Create(host!);
+        using var client = factory.Create(host);
 
         // Assert
         client.Should().NotBeNull();
