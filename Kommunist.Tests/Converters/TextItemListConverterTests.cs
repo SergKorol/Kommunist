@@ -1,10 +1,8 @@
-using System.Linq;
 using FluentAssertions;
 using Kommunist.Core.Converters;
 using Kommunist.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Kommunist.Tests.Converters;
 
@@ -70,7 +68,7 @@ public class TextItemListConverterTests
     public void ReadJson_EmptyObjectToken_ReturnsSingleItemWithDefaults()
     {
         // Arrange
-        var json = "{}";
+        const string json = "{}";
         var settings = CreateSettings();
 
         // Act
@@ -89,7 +87,7 @@ public class TextItemListConverterTests
     public void ReadJson_ArrayToken_MixedValues_MapsValidAndIgnoresOthers()
     {
         // Arrange
-        var json = "[\"a\", {\"text\":\"b\"}, 123, null, true]";
+        const string json = "[\"a\", {\"text\":\"b\"}, 123, null, true]";
         var settings = CreateSettings();
 
         // Act
@@ -104,7 +102,7 @@ public class TextItemListConverterTests
     public void ReadJson_ArrayToken_NestedArrayAndNulls_Ignored()
     {
         // Arrange
-        var json = "[\"x\", [\"y\"], {\"text\":\"z\"}, null]";
+        const string json = "[\"x\", [\"y\"], {\"text\":\"z\"}, null]";
         var settings = CreateSettings();
 
         // Act
@@ -119,7 +117,7 @@ public class TextItemListConverterTests
     public void ReadJson_EmptyArray_ReturnsEmptyList()
     {
         // Arrange
-        var json = "[]";
+        const string json = "[]";
         var settings = CreateSettings();
 
         // Act
@@ -163,9 +161,9 @@ public class TextItemListConverterTests
         // Assert
         var array = JArray.Parse(json);
         array.Count.Should().Be(2);
-        array[0]["text"]!.Value<string>().Should().Be("alpha");
-        array[1]["text"]!.Value<string>().Should().Be("beta");
-        array[1]["maxLength"]!.Value<int>().Should().Be(5);
+        array[0]["text"]?.Value<string>().Should().Be("alpha");
+        array[1]["text"]?.Value<string>().Should().Be("beta");
+        array[1]["maxLength"]?.Value<int>().Should().Be(5);
     }
 
     [Fact]
@@ -173,7 +171,7 @@ public class TextItemListConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var input = "\"hello\"";
+        const string input = "\"hello\"";
 
         // Act
         var list = JsonConvert.DeserializeObject<List<TextItem>>(input, settings);

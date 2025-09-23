@@ -54,8 +54,8 @@ public class PropertiesConverterTests
     [Fact]
     public void ReadJson_NumericTypeToken_DeserializesUsingFallback()
     {
-        // Arrange: 5 corresponds to PageType.Venue
-        var json = "{\"type\":5,\"properties\":{}}";
+        // Arrange
+        const string json = "{\"type\":5,\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -87,7 +87,7 @@ public class PropertiesConverterTests
     public void ReadJson_UnknownStringType_ThrowsJsonSerializationException()
     {
         // Arrange
-        var json = "{\"type\":\"NotAValidType\",\"properties\":{}}";
+        const string json = "{\"type\":\"NotAValidType\",\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -101,7 +101,7 @@ public class PropertiesConverterTests
     public void ReadJson_UnsupportedNumericType_ThrowsNotSupportedException()
     {
         // Arrange
-        var json = "{\"type\":999,\"properties\":{}}";
+        const string json = "{\"type\":999,\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -208,7 +208,7 @@ public class PropertiesConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var input = "{\"type\":\"Venue\",\"properties\":{}}";
+        const string input = "{\"type\":\"Venue\",\"properties\":{}}";
 
         // Act
         var model = JsonConvert.DeserializeObject<EventPage>(input, settings);

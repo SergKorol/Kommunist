@@ -1,17 +1,15 @@
-using System.Linq;
 using FluentAssertions;
 using Kommunist.Core.Converters;
 using Kommunist.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Kommunist.Tests.Converters;
 
 public class ImageDetailsConverterTests
 {
     private static JsonSerializerSettings CreateSettings() =>
-        new JsonSerializerSettings
+        new()
         {
             Converters = { new ImageDetailsConverter() }
         };
@@ -30,7 +28,7 @@ public class ImageDetailsConverterTests
     }
 
     [Theory]
-    [InlineData("\"http://example.com/img.png\"", "http://example.com/img.png")]
+    [InlineData("\"https://example.com/img.png\"", "https://example.com/img.png")]
     [InlineData("\"\"", "")]
     public void ReadJson_StringToken_ReturnsImageDetails(string json, string expectedUrl)
     {
@@ -42,14 +40,14 @@ public class ImageDetailsConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Url.Should().Be(expectedUrl);
+        result?.Url.Should().Be(expectedUrl);
     }
 
     [Fact]
     public void ReadJson_ObjectToken_ReturnsImageDetails()
     {
         // Arrange
-        var json = "{\"url\":\"http://example.com/a.png\"}";
+        const string json = "{\"url\":\"https://example.com/a.png\"}";
         var settings = CreateSettings();
 
         // Act
@@ -57,14 +55,14 @@ public class ImageDetailsConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Url.Should().Be("http://example.com/a.png");
+        result?.Url.Should().Be("https://example.com/a.png");
     }
 
     [Fact]
     public void ReadJson_ObjectToken_WithExtraProps_IgnoresUnknowns()
     {
         // Arrange
-        var json = "{\"url\":\"u\",\"foo\":\"bar\"}";
+        const string json = "{\"url\":\"u\",\"foo\":\"bar\"}";
         var settings = CreateSettings();
 
         // Act
@@ -72,7 +70,7 @@ public class ImageDetailsConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Url.Should().Be("u");
+        result?.Url.Should().Be("u");
     }
 
     [Theory]
@@ -110,14 +108,14 @@ public class ImageDetailsConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var model = new ImageDetails { Url = "http://example.com/x.png" };
+        var model = new ImageDetails { Url = "https://example.com/x.png" };
 
         // Act
         var json = JsonConvert.SerializeObject(model, settings);
 
         // Assert
         var obj = JObject.Parse(json);
-        obj["url"]!.Value<string>().Should().Be("http://example.com/x.png");
+        obj["url"]?.Value<string>().Should().Be("https://example.com/x.png");
         obj.Properties().Select(p => p.Name).Should().ContainSingle().Which.Should().Be("url");
     }
 
@@ -126,7 +124,7 @@ public class ImageDetailsConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var inputJson = "\"http://example.com/z.png\"";
+        const string inputJson = "\"https://example.com/z.png\"";
 
         // Act
         var details = JsonConvert.DeserializeObject<ImageDetails>(inputJson, settings);
@@ -134,8 +132,8 @@ public class ImageDetailsConverterTests
 
         // Assert
         details.Should().NotBeNull();
-        details!.Url.Should().Be("http://example.com/z.png");
+        details?.Url.Should().Be("https://example.com/z.png");
         var obj = JObject.Parse(outputJson);
-        obj["url"]!.Value<string>().Should().Be("http://example.com/z.png");
+        obj["url"]?.Value<string>().Should().Be("https://example.com/z.png");
     }
 }
