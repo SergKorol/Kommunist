@@ -4,7 +4,7 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Core.Services;
 
-public sealed class SmtpClientWrapper(string host) : ISmtpClient
+public sealed class SmtpClientWrapper(string? host) : ISmtpClient
 {
     private readonly SmtpClient _inner = new(host);
 
@@ -26,7 +26,10 @@ public sealed class SmtpClientWrapper(string host) : ISmtpClient
         set => _inner.EnableSsl = value;
     }
 
-    public Task SendMailAsync(MailMessage message) => _inner.SendMailAsync(message);
+    public Task SendMailAsync(MailMessage? message)
+    {
+        return message != null ? _inner.SendMailAsync(message) : throw new ArgumentNullException(nameof(message));
+    }
 
     public void Dispose() => _inner.Dispose();
 }

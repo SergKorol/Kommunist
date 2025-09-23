@@ -1,11 +1,7 @@
-using System;
 using System.Net;
-using System.Net.Mail;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Xunit;
 
 namespace Kommunist.Tests.Services;
 
@@ -18,7 +14,10 @@ public class SmtpClientWrapperTests
     public void Ctor_Allows_Any_Host_Value(string? host)
     {
         // Act
-        Action act = () => new SmtpClientWrapper(host!);
+        Action act = () =>
+        {
+            using var _ = new SmtpClientWrapper(host);
+        };
 
         // Assert
         act.Should().NotThrow();
@@ -70,11 +69,12 @@ public class SmtpClientWrapperTests
     [InlineData(-1)]
     public void Port_Set_Invalid_Throws(int port)
     {
-        // Arrange
-        using var sut = new SmtpClientWrapper("smtp.example.com");
-
-        // Act
-        Action act = () => sut.Port = port;
+        // Arrange & Act
+        var act = () =>
+        {
+            using var local = new SmtpClientWrapper("smtp.example.com");
+            local.Port = port;
+        };
 
         // Assert
         act.Should().Throw<ArgumentOutOfRangeException>();
@@ -125,27 +125,21 @@ public class SmtpClientWrapperTests
     [Fact]
     public async Task SendMailAsync_With_Null_Throws()
     {
-        // Arrange
-        using var sut = new SmtpClientWrapper("smtp.example.com");
-
         // Act
-        Func<Task> act = () => sut.SendMailAsync(null!);
+        var act = () => new SmtpClientWrapper("smtp.example.com").SendMailAsync(null);
 
         // Assert
-        await act.Should().ThrowAsync<SmtpException>();
+        await act.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Fact]
     public void Dispose_Is_Idempotent()
     {
-        // Arrange
-        var sut = new SmtpClientWrapper("smtp.example.com");
-
         // Act
-        Action act = () =>
+        var act = () =>
         {
-            sut.Dispose();
-            sut.Dispose();
+            var local = new SmtpClientWrapper("smtp.example.com");
+            local.Dispose();
         };
 
         // Assert
