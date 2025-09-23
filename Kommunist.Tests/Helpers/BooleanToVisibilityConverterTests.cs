@@ -9,8 +9,7 @@ public class BooleanToVisibilityConverterTests
 {
     private readonly BooleanToVisibilityConverter _sut = new();
     private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-
-    // Convert tests
+    private static readonly int[] Value = [1];
 
     [Fact]
     public void Convert_Null_ReturnsFalse()
@@ -62,7 +61,7 @@ public class BooleanToVisibilityConverterTests
     [Fact]
     public void Convert_NonEmptyArray_ReturnsTrue()
     {
-        var result = _sut.Convert(new[] { 1 }, typeof(object), null, Culture);
+        var result = _sut.Convert(Value, typeof(object), null, Culture);
         result.Should().Be(true);
     }
 
