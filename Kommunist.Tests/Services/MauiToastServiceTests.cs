@@ -34,7 +34,6 @@ public sealed class MauiToastServiceTests
         toastMock.Verify(t => t.ShowAsync(), Times.Once);
         returnedTask.Should().BeSameAs(innerTcs.Task);
 
-        // Complete and await to ensure no deadlocks
         innerTcs.SetResult();
         await returnedTask;
     }
