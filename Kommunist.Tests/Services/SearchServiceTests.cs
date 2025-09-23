@@ -20,7 +20,7 @@ public class SearchServiceTests
     public async Task GetTags_BuildsCorrectUrl_AndDeserializesResults()
     {
         // Arrange
-        var json = """["tag1","tag2"]""";
+        const string json = """["tag1","tag2"]""";
         var httpClient = CreateHttpClient(
             _ => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
@@ -38,10 +38,10 @@ public class SearchServiceTests
         handler.Requests.Should().ContainSingle();
         var request = handler.Requests.Single();
         request.Method.Should().Be(HttpMethod.Get);
-        request.RequestUri!.ToString()
+        request.RequestUri?.ToString()
             .Should().Be("https://example.com/api/v2/dictionaries/skills/search?search_query=cloud");
 
-        result.Should().BeEquivalentTo(new[] { "tag1", "tag2" });
+        result.Should().BeEquivalentTo("tag1", "tag2");
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class SearchServiceTests
 
         // Assert
         handler.Requests.Should().ContainSingle();
-        handler.Requests.Single().RequestUri!.ToString()
+        handler.Requests.Single().RequestUri?.ToString()
             .Should().Be("https://example.com/api/v2/speakers/search?search_query=john");
 
         result.Should().BeEmpty();
@@ -85,7 +85,7 @@ public class SearchServiceTests
 
         // Assert
         handler.Requests.Should().ContainSingle();
-        handler.Requests.Single().RequestUri!.ToString()
+        handler.Requests.Single().RequestUri?.ToString()
             .Should().Be("https://example.com/api/v2/communities/search?search_query=devs");
 
         result.Should().BeEmpty();
@@ -135,7 +135,7 @@ public class SearchServiceTests
     {
         private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _handler = handler ?? throw new ArgumentNullException(nameof(handler));
 
-        public List<HttpRequestMessage> Requests { get; } = new();
+        public List<HttpRequestMessage> Requests { get; } = [];
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
