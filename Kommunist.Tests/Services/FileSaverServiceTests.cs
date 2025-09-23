@@ -13,11 +13,11 @@ public class FileSaverServiceTests
         var fake = new FakeToolkitFileSaverAdapter();
         var sut = new FileSaverService(fake);
 
-        var expectedPath = "/tmp/some-file.txt";
+        const string expectedPath = "/tmp/some-file.txt";
         fake.OnSaveAsync = (_, _, _) =>
             Task.FromResult(new FileSaveResult(true, expectedPath, null));
-        using var stream = new MemoryStream(new byte[] { 1, 2, 3 });
-        var suggestedName = "some-file.txt";
+        using var stream = new MemoryStream([1, 2, 3]);
+        const string suggestedName = "some-file.txt";
 
         // Act
         var result = await sut.SaveAsync(suggestedName, stream);
@@ -38,7 +38,7 @@ public class FileSaverServiceTests
         var fake = new FakeToolkitFileSaverAdapter
         {
             OnSaveAsync = (_, _, _) =>
-                Task.FromResult(new FileSaveResult(false, null!, new InvalidOperationException("boom")))
+                Task.FromResult(new FileSaveResult(false, null, new InvalidOperationException("boom")))
         };
         var sut = new FileSaverService(fake);
         using var stream = new MemoryStream();
@@ -50,7 +50,7 @@ public class FileSaverServiceTests
         result.IsSuccessful.Should().BeFalse();
         result.FilePath.Should().BeNull();
         result.Exception.Should().BeOfType<InvalidOperationException>();
-        result.Exception!.Message.Should().Be("boom");
+        result.Exception?.Message.Should().Be("boom");
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class FileSaverServiceTests
         var fake = new FakeToolkitFileSaverAdapter
         {
             OnSaveAsync = (_, _, _) =>
-                Task.FromResult(new FileSaveResult(false, null!, null))
+                Task.FromResult(new FileSaveResult(false, null, null))
         };
         var sut = new FileSaverService(fake);
         using var stream = new MemoryStream();
@@ -83,10 +83,9 @@ public class FileSaverServiceTests
             OnSaveAsync = (_, _, _) => throw new ApplicationException("unexpected")
         };
         var sut = new FileSaverService(fake);
-        using var stream = new MemoryStream();
 
         // Act
-        var act = async () => await sut.SaveAsync("throw.txt", stream);
+        Func<Task> act = () => sut.SaveAsync("throw.txt", Stream.Null);
 
         // Assert
         await act.Should().ThrowAsync<ApplicationException>()
@@ -105,12 +104,7 @@ public class FileSaverServiceTests
             CapturedSuggestedName = suggestedFileName;
             CapturedContent = fileStream;
 
-            if (OnSaveAsync is not null)
-            {
-                return OnSaveAsync(suggestedFileName, fileStream, cancellationToken);
-            }
-
-            return Task.FromResult(new FileSaveResult(true, "/tmp/default.txt", null));
+            return OnSaveAsync is not null ? OnSaveAsync(suggestedFileName, fileStream, cancellationToken) : Task.FromResult(new FileSaveResult(true, "/tmp/default.txt", null));
         }
     }
 }
