@@ -11,7 +11,7 @@ namespace Kommunist.Tests.Converters;
 public class TextItemListConverterTests
 {
     private static JsonSerializerSettings CreateSettings() =>
-        new JsonSerializerSettings
+        new()
         {
             Converters = { new TextItemListConverter() }
         };
@@ -27,7 +27,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().BeEmpty();
+        result?.Should().BeEmpty();
     }
 
     [Theory]
@@ -43,15 +43,15 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        result[0].Text.Should().Be(expectedText);
+        result?.Should().ContainSingle();
+        result?[0].Text.Should().Be(expectedText);
     }
 
     [Fact]
     public void ReadJson_ObjectToken_ReturnsSingleItem()
     {
         // Arrange
-        var json = "{\"text\":\"hi\",\"type\":\"paragraph\",\"maxLength\":10}";
+        const string json = "{\"text\":\"hi\",\"type\":\"paragraph\",\"maxLength\":10}";
         var settings = CreateSettings();
 
         // Act
@@ -59,11 +59,11 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        var item = result.Single();
-        item.Text.Should().Be("hi");
-        item.Type.Should().Be("paragraph");
-        item.MaxLength.Should().Be(10);
+        result?.Should().ContainSingle();
+        var item = result?.Single();
+        item?.Text.Should().Be("hi");
+        item?.Type.Should().Be("paragraph");
+        item?.MaxLength.Should().Be(10);
     }
 
     [Fact]
@@ -78,11 +78,11 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        var item = result.Single();
-        item.Text.Should().BeNull();        // default string
-        item.Type.Should().BeNull();        // default string
-        item.MaxLength.Should().Be(0);      // default int
+        result.Should().ContainSingle();
+        var item = result?.Single();
+        item?.Text.Should().BeNull();
+        item?.Type.Should().BeNull();
+        item?.MaxLength.Should().Be(0);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Select(x => x.Text).Should().Equal("a", "b");
+        result?.Select(x => x.Text).Should().Equal("a", "b");
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Select(i => i.Text).Should().Equal("x", "z");
+        result?.Select(i => i.Text).Should().Equal("x", "z");
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().BeEmpty();
+        result?.Should().BeEmpty();
     }
 
     [Theory]
@@ -181,11 +181,11 @@ public class TextItemListConverterTests
 
         // Assert
         list.Should().NotBeNull();
-        list!.Should().ContainSingle();
-        list[0].Text.Should().Be("hello");
+        list.Should().ContainSingle();
+        list?[0].Text.Should().Be("hello");
 
         var array = JArray.Parse(output);
         array.Should().HaveCount(1);
-        array[0]["text"]!.Value<string>().Should().Be("hello");
+        array[0]["text"]?.Value<string>().Should().Be("hello");
     }
 }
