@@ -11,6 +11,6 @@ public class LauncherService(ILauncher launcher) : ILauncherService
 
     public Task OpenAsync(string? url)
     {
-        return url != null ? _launcher.OpenAsync(url) : throw new InvalidOperationException("URL must not be null or empty.");
+        return url != null ? _launcher.OpenAsync(url) : throw new ArgumentNullException(nameof(url));
     }
 }
