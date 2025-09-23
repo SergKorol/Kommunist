@@ -1,10 +1,5 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Kommunist.Application.Services;
-using Xunit;
 
 namespace Kommunist.Tests.Services;
 
@@ -50,17 +45,17 @@ public class FileSystemServiceTests
         var sut = new FileSystemService(tempDir);
         var fileName = UniqueFileName();
         var expectedPath = Path.Combine(sut.AppDataDirectory, fileName);
-        var content = "Hello, こんにちは 👋";
+        const string content = "Hello, こんにちは 👋";
 
         // Act
-        string returnedPath = await sut.SaveTextAsync(fileName, content);
+        var returnedPath = await sut.SaveTextAsync(fileName, content);
 
         try
         {
             // Assert
             returnedPath.Should().Be(expectedPath);
             File.Exists(returnedPath).Should().BeTrue();
-            var written = File.ReadAllText(returnedPath);
+            var written = await File.ReadAllTextAsync(returnedPath);
             written.Should().Be(content);
         }
         finally
@@ -81,17 +76,17 @@ public class FileSystemServiceTests
         var fileName = UniqueFileName();
         var targetPath = Path.Combine(sut.AppDataDirectory, fileName);
 
-        File.WriteAllText(targetPath, "OLD CONTENT");
+        await File.WriteAllTextAsync(targetPath, "OLD CONTENT");
 
         // Act
         try
         {
-            string returnedPath = await sut.SaveTextAsync(fileName, "NEW CONTENT");
+            var returnedPath = await sut.SaveTextAsync(fileName, "NEW CONTENT");
 
             // Assert
             returnedPath.Should().Be(targetPath);
             File.Exists(targetPath).Should().BeTrue();
-            File.ReadAllText(targetPath).Should().Be("NEW CONTENT");
+            (await File.ReadAllTextAsync(targetPath)).Should().Be("NEW CONTENT");
         }
         finally
         {
@@ -112,7 +107,7 @@ public class FileSystemServiceTests
         var expectedPath = Path.Combine(sut.AppDataDirectory, fileName);
 
         // Act
-        string returnedPath = await sut.SaveTextAsync(fileName, string.Empty);
+        var returnedPath = await sut.SaveTextAsync(fileName, string.Empty);
 
         try
         {
@@ -121,7 +116,7 @@ public class FileSystemServiceTests
             File.Exists(expectedPath).Should().BeTrue();
 
             // Validate textual content is empty (independent of BOM presence)
-            var text = File.ReadAllText(expectedPath);
+            var text = await File.ReadAllTextAsync(expectedPath);
             text.Should().BeEmpty();
         }
         finally
@@ -146,7 +141,7 @@ public class FileSystemServiceTests
         char? invalidChar = invalidChars.FirstOrDefault(c =>
             c != Path.DirectorySeparatorChar && c != Path.AltDirectorySeparatorChar);
 
-        string fileName = invalidChar.HasValue && invalidChar.Value != '\0'
+        var fileName = invalidChar.HasValue && invalidChar.Value != '\0'
             ? $"bad{invalidChar.Value}name.txt"
             : $"no_such_dir{Path.DirectorySeparatorChar}file.txt";
 
