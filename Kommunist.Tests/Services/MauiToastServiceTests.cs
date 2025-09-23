@@ -1,4 +1,3 @@
-using System.Threading;
 using FluentAssertions;
 using Moq;
 using Kommunist.Application.Services;
@@ -12,7 +11,7 @@ public sealed class MauiToastServiceTests
     public async Task ShowAsync_CallsFactoryMakeAndToastShowAsync_Once_AndReturnsInnerTask()
     {
         // Arrange
-        var message = "Hello";
+        const string message = "Hello";
         var innerTcs = new TaskCompletionSource();
 
         var toastMock = new Mock<IToolkitToast>(MockBehavior.Strict);
@@ -44,7 +43,7 @@ public sealed class MauiToastServiceTests
     public async Task ShowAsync_PropagatesExceptionFromToast()
     {
         // Arrange
-        var message = "Crash";
+        const string message = "Crash";
         var exception = new InvalidOperationException("boom");
 
         var toastMock = new Mock<IToolkitToast>(MockBehavior.Strict);
@@ -60,7 +59,7 @@ public sealed class MauiToastServiceTests
         var sut = new MauiToastService(factoryMock.Object);
 
         // Act
-        Func<Task> act = () => sut.ShowAsync(message);
+        var act = () => sut.ShowAsync(message);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -73,7 +72,7 @@ public sealed class MauiToastServiceTests
     public async Task ShowAsync_PropagatesCancellationFromToast()
     {
         // Arrange
-        var message = "Cancel";
+        const string message = "Cancel";
         var canceledToken = new CancellationToken(true);
 
         var toastMock = new Mock<IToolkitToast>(MockBehavior.Strict);
@@ -89,7 +88,7 @@ public sealed class MauiToastServiceTests
         var sut = new MauiToastService(factoryMock.Object);
 
         // Act
-        Func<Task> act = () => sut.ShowAsync(message);
+        var act = () => sut.ShowAsync(message);
 
         // Assert
         await act.Should().ThrowAsync<TaskCanceledException>();
@@ -139,17 +138,19 @@ public sealed class MauiToastServiceTests
                  .Verifiable();
 
         var factoryMock = new Mock<IToolkitToastFactory>(MockBehavior.Strict);
-        factoryMock.Setup(f => f.Make(It.Is<string>(m => m == null)))
+        factoryMock.Setup(f => f.Make(It.Is<string>(m => true)))
                    .Returns(toastMock.Object)
                    .Verifiable();
 
         var sut = new MauiToastService(factoryMock.Object);
 
         // Act
-        await sut.ShowAsync(message!);
+#pragma warning disable CS8604 // Possible null reference argument.
+        await sut.ShowAsync(message);
+#pragma warning restore CS8604 // Possible null reference argument.
 
         // Assert
-        factoryMock.Verify(f => f.Make(It.Is<string>(m => m == null)), Times.Once);
+        factoryMock.Verify(f => f.Make(It.Is<string>(m => true)), Times.Once);
         toastMock.Verify(t => t.ShowAsync(), Times.Once);
         factoryMock.VerifyNoOtherCalls();
         toastMock.VerifyNoOtherCalls();
