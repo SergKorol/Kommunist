@@ -8,23 +8,23 @@ public class HasItemsConverterTests
 {
     private readonly HasItemsConverter _sut = new();
 
-    public static IEnumerable<object?[]> ConvertTestCases()
+    public static TheoryData<object?, bool> ConvertTestCases => new()
     {
-        yield return [new List<object> { 1 }, true];
-        yield return [new object?[] { null }, true]; 
+        { new List<object> { 1 }, true },
+        { new object?[] { null }, true },
 
-        yield return [new List<object>(), false];
-        yield return [Array.Empty<object>(), false];
+        { new List<object>(), false },
+        { Array.Empty<object>(), false },
 
-        yield return [null, false];
+        { null, false },
 
-        yield return [5, false];
-        yield return [5.0, false];
+        { 5, false },
+        { 5.0, false },
 
-        yield return [new List<int> { 1 }, false];
-        yield return [new[] { 1, 2 }, false];
-        yield return ["abc", false];
-    }
+        { new List<int> { 1 }, false },
+        { new[] { 1, 2 }, false },
+        { "abc", false },
+    };
 
     [Theory]
     [MemberData(nameof(ConvertTestCases))]

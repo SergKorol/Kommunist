@@ -47,7 +47,7 @@ public class HtmlConverterTests
     {
         // Arrange
         const string text = "My Title";
-        var html = $"<h5>{text}</h5>";
+        const string html = $"<h5>{text}</h5>";
 
         // Act
         var result = HtmlConverter.HtmlToPlainText(html);
@@ -65,7 +65,7 @@ public class HtmlConverterTests
         // Arrange
         const string title = "Centered Title";
         const string para = "Sub &amp; Title";
-        var html = $"<h5>{title}</h5><h6>{para}</h6>";
+        const string html = $"<h5>{title}</h5><h6>{para}</h6>";
 
         // Act
         var result = HtmlConverter.HtmlToPlainText(html);
@@ -145,13 +145,7 @@ public class HtmlConverterTests
         var result = HtmlConverter.HtmlToPlainText(html);
 
         // Assert
-        var expected = string.Join(Environment.NewLine, new[]
-        {
-            "\n•One & Only",
-            "  A & B",
-            "•Two",
-            "  X & Y"
-        });
+        var expected = string.Join(Environment.NewLine, ValueList);
 
         Assert.Equal(expected, result);
     }
@@ -159,6 +153,13 @@ public class HtmlConverterTests
     [
         "\n•Item",
         @"  Line1\r\nLine2\r\nLine3"
+    ];
+    private static readonly string[] ValueList =
+    [
+        "\n•One & Only",
+            "  A & B",
+            "•Two",
+            "  X & Y"
     ];
 
     [Fact]
@@ -200,7 +201,6 @@ public class HtmlConverterTests
         var result = HtmlConverter.HtmlToPlainText(html);
 
         // Assert
-        // Because paragraphs == null, the method returns early (no list rendered)
         var h5 = Math.Max(0, (100 - "Title".Length) / 2 - 4);
         var h6 = Math.Max(0, (100 - "Lead".Length) / 2 - 4);
         var expected = string.Join(Environment.NewLine, new[]
