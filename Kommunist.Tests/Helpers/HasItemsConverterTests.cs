@@ -8,28 +8,48 @@ public class HasItemsConverterTests
 {
     private readonly HasItemsConverter _sut = new();
 
-    public static TheoryData<object?, bool> ConvertTestCases => new()
+    public static TheoryData<string, bool> ConvertTestCases => new()
     {
-        { new List<object> { 1 }, true },
-        { new object?[] { null }, true },
+        { "ListObj_1", true },
+        { "ObjectArray_Null", true },
 
-        { new List<object>(), false },
-        { Array.Empty<object>(), false },
+        { "ListObj_Empty", false },
+        { "ArrayObj_Empty", false },
 
-        { null, false },
+        { "Null", false },
 
-        { 5, false },
-        { 5.0, false },
+        { "Int_5", false },
+        { "Double_5", false },
 
-        { new List<int> { 1 }, false },
-        { new[] { 1, 2 }, false },
-        { "abc", false },
+        { "ListInt_1", false },
+        { "ArrayInt_12", false },
+        { "String_abc", false }
+    };
+
+    private static object? CreateValue(string key) => key switch
+    {
+        "ListObj_1" => new List<object> { 1 },
+        "ObjectArray_Null" => new object?[] { null },
+
+        "ListObj_Empty" => new List<object>(),
+        "ArrayObj_Empty" => Array.Empty<object>(),
+
+        "Null" => null,
+
+        "Int_5" => 5,
+        "Double_5" => 5.0,
+
+        "ListInt_1" => new List<int> { 1 },
+        "ArrayInt_12" => new[] { 1, 2 },
+        "String_abc" => "abc",
+        _ => throw new ArgumentOutOfRangeException(nameof(key), key, "Unknown test case key")
     };
 
     [Theory]
     [MemberData(nameof(ConvertTestCases))]
-    public void Convert_ReturnsExpected(object? value, bool expected)
+    public void Convert_ReturnsExpected(string key, bool expected)
     {
+        var value = CreateValue(key);
         var result = _sut.Convert(value, typeof(bool), parameter: null, culture: CultureInfo.InvariantCulture);
 
         result.Should().BeOfType<bool>();
