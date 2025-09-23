@@ -10,7 +10,7 @@ public class EmailService(IConfiguration config, ISmtpClientFactory? smtpClientF
 {
     private readonly ISmtpClientFactory _smtpClientFactory = smtpClientFactory ?? new SmtpClientFactory();
 
-    public async Task SendEmailAsync(string to, string subject, string body, string attachmentPath, string email)
+    public async Task SendEmailAsync(string to, string subject, string body, string? attachmentPath, string email)
     {
         try
         {

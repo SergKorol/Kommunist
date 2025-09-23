@@ -32,10 +32,10 @@ public class EventServiceTests
 
         var filterOptions = new FilterOptions
         {
-            TagFilters = new() { "tag1", "tag2" },
-            SpeakerFilters = new() { "sp1" },
-            CountryFilters = new() { "US", "DE" },
-            CommunityFilters = new() { "comm" },
+            TagFilters = ["tag1", "tag2"],
+            SpeakerFilters = ["sp1"],
+            CountryFilters = ["US", "DE"],
+            CommunityFilters = ["comm"],
             OnlineOnly = true
         };
 
@@ -57,7 +57,7 @@ public class EventServiceTests
 
         // Assert
         var request = handler.Requests.Should().ContainSingle().Subject;
-        var uri = request.RequestUri!.ToString();
+        var uri = request.RequestUri?.ToString();
 
         // Base and mandatory params in order
         uri.Should().StartWith($"https://example.com/api/v2/calendar?start_date={expectedFrom}&end_date={expectedTo}");
@@ -168,7 +168,7 @@ public class EventServiceTests
             out var handler
         );
         var sut = new EventService(httpClient, filterService.Object);
-        var eventId = 123;
+        const int eventId = 123;
 
         // Act
         var result = await sut.GetHomePage(eventId);

@@ -33,16 +33,11 @@ public class EmailServiceTests
         public Task SendMailAsync(MailMessage message)
         {
             SentMessage = message;
-            if (ThrowOnSend)
-            {
-                throw new InvalidOperationException("SMTP send failed");
-            }
-            return Task.CompletedTask;
+            return ThrowOnSend ? throw new InvalidOperationException("SMTP send failed") : Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            // Intentionally do not dispose the captured message; SmtpClient does not own it.
         }
     }
 
@@ -66,11 +61,11 @@ public class EmailServiceTests
         var factory = new FakeSmtpClientFactory();
         var sut = new EmailService(config, factory);
 
-        var to = "recipient@example.com";
-        var subject = "Hello";
-        var body = "<b>World</b>";
+        const string to = "recipient@example.com";
+        const string subject = "Hello";
+        const string body = "<b>World</b>";
         string? attachmentPath = null;
-        var email = "to-in-ctor@example.com";
+        const string email = "to-in-ctor@example.com";
 
         // Act
         await sut.SendEmailAsync(to, subject, body, attachmentPath, email);
@@ -80,19 +75,19 @@ public class EmailServiceTests
         factory.Client.Port.Should().Be(587);
         factory.Client.EnableSsl.Should().BeTrue();
         factory.Client.Credentials.Should().BeOfType<NetworkCredential>();
-        var nc = (NetworkCredential)factory.Client.Credentials!;
-        nc.UserName.Should().Be("user");
-        nc.Password.Should().Be("pass");
+        var nc = factory.Client.Credentials as NetworkCredential;
+        nc.Should().NotBeNull();
+        nc?.UserName.Should().Be("user");
+        nc?.Password.Should().Be("pass");
 
         factory.Client.SentMessage.Should().NotBeNull();
-        var msg = factory.Client.SentMessage!;
-        msg.Subject.Should().Be(subject);
-        msg.Body.Should().Be(body);
-        msg.IsBodyHtml.Should().BeTrue();
-        msg.From.Address.Should().Be("sender@example.com");
-        // new MailMessage(sender, email) adds 'email' to To; then code also adds 'to'
-        msg.To.Select(x => x.Address).Should().Contain(new[] { email, to });
-        msg.Attachments.Should().BeEmpty();
+        var msg = factory.Client.SentMessage;
+        msg?.Subject.Should().Be(subject);
+        msg?.Body.Should().Be(body);
+        msg?.IsBodyHtml.Should().BeTrue();
+        msg?.From?.Address.Should().Be("sender@example.com");
+        msg?.To.Select(x => x.Address).Should().Contain([email, to]);
+        msg?.Attachments.Should().BeEmpty();
     }
 
     [Fact]
@@ -103,10 +98,10 @@ public class EmailServiceTests
         var factory = new FakeSmtpClientFactory();
         var sut = new EmailService(config, factory);
 
-        var to = "recipient@example.com";
-        var subject = "Subject";
-        var body = "Body";
-        var email = "to-in-ctor@example.com";
+        const string to = "recipient@example.com";
+        const string subject = "Subject";
+        const string body = "Body";
+        const string email = "to-in-ctor@example.com";
 
         var tempFile = Path.GetTempFileName();
         await File.WriteAllTextAsync(tempFile, "Test attachment");
@@ -118,9 +113,9 @@ public class EmailServiceTests
 
             // Assert
             factory.Client.SentMessage.Should().NotBeNull();
-            var msg = factory.Client.SentMessage!;
-            msg.Attachments.Should().HaveCount(1);
-            msg.Attachments[0].Name.Should().Be(Path.GetFileName(tempFile));
+            var msg = factory.Client.SentMessage;
+            msg?.Attachments.Should().HaveCount(1);
+            msg?.Attachments[0].Name.Should().Be(Path.GetFileName(tempFile));
         }
         finally
         {
@@ -137,11 +132,11 @@ public class EmailServiceTests
         var sut = new EmailService(config, factory);
 
         // Act
-        await sut.SendEmailAsync("to@example.com", "s", "b", null!, "t2@example.com");
+        await sut.SendEmailAsync("to@example.com", "s", "b", null, "t2@example.com");
 
         // Assert
         factory.Client.SentMessage.Should().NotBeNull();
-        factory.Client.SentMessage!.Attachments.Should().BeEmpty();
+        factory.Client.SentMessage?.Attachments.Should().BeEmpty();
     }
 
     [Fact]
@@ -157,7 +152,7 @@ public class EmailServiceTests
 
         // Assert
         factory.Client.SentMessage.Should().NotBeNull();
-        factory.Client.SentMessage!.Attachments.Should().BeEmpty();
+        factory.Client.SentMessage?.Attachments.Should().BeEmpty();
     }
 
     [Fact]
@@ -165,12 +160,17 @@ public class EmailServiceTests
     {
         // Arrange
         var config = BuildConfig();
-        var factory = new FakeSmtpClientFactory();
-        factory.Client.ThrowOnSend = true;
+        var factory = new FakeSmtpClientFactory
+        {
+            Client =
+            {
+                ThrowOnSend = true
+            }
+        };
         var sut = new EmailService(config, factory);
 
         // Act
-        Func<Task> act = () => sut.SendEmailAsync("to@example.com", "s", "b", null!, "t2@example.com");
+        var act = () => sut.SendEmailAsync("to@example.com", "s", "b", null, "t2@example.com");
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
