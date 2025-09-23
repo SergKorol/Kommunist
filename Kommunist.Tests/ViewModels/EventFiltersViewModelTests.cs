@@ -11,6 +11,7 @@ public class EventFiltersViewModelTests : IDisposable
     private readonly Mock<ISearchService> _searchServiceMock;
     private readonly Mock<IFilterService> _filterServiceMock;
     private readonly EventFiltersViewModel _vm;
+    private const string Tag = "C#";
 
     public EventFiltersViewModelTests()
     {
@@ -23,6 +24,7 @@ public class EventFiltersViewModelTests : IDisposable
     public void Dispose()
     {
         _vm.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     #region Property Tests
@@ -65,37 +67,35 @@ public class EventFiltersViewModelTests : IDisposable
     public void SelectTagCommand_AddsTagAndClearsSuggestions()
     {
         // Arrange
-        var tag = "C#";
         _vm.TagSuggestions.Add("other");
 
         // Act
-        _vm.SelectTagCommand.Execute(tag);
+        _vm.SelectTagCommand.Execute(Tag);
 
         // Assert
-        Assert.Contains(tag, _vm.SelectedTags);
+        Assert.Contains(Tag, _vm.SelectedTags);
         Assert.Empty(_vm.TagSuggestions);
-        Assert.Equal(tag, _vm.TagFilter);
+        Assert.Equal(Tag, _vm.TagFilter);
     }
 
     [Fact]
     public void DeselectTagCommand_RemovesTag()
     {
         // Arrange
-        var tag = "C#";
-        _vm.SelectedTags.Add(tag);
+        _vm.SelectedTags.Add(Tag);
 
         // Act
-        _vm.DeselectTagCommand.Execute(tag);
+        _vm.DeselectTagCommand.Execute(Tag);
 
         // Assert
-        Assert.DoesNotContain(tag, _vm.SelectedTags);
+        Assert.DoesNotContain(Tag, _vm.SelectedTags);
     }
 
     [Fact]
     public void ClearTagFilterCommand_SetsTagFilterEmpty()
     {
         // Arrange
-        _vm.TagFilter = "C#";
+        _vm.TagFilter = Tag;
 
         // Act
         _vm.ClearTagFilterCommand.Execute(null);
@@ -108,7 +108,7 @@ public class EventFiltersViewModelTests : IDisposable
     public void ApplyFiltersCommand_CallsFilterService()
     {
         // Arrange
-        _vm.SelectedTags.Add("C#");
+        _vm.SelectedTags.Add(Tag);
         _filterServiceMock.Setup(f => f.SetFilters(It.IsAny<FilterOptions>()));
 
         // Act
@@ -116,7 +116,7 @@ public class EventFiltersViewModelTests : IDisposable
 
         // Assert
         _filterServiceMock.Verify(f => f.SetFilters(It.Is<FilterOptions>(
-            fo => fo.TagFilters.Contains("C#"))), Times.Once);
+            fo => fo.TagFilters.Contains(Tag))), Times.Once);
     }
 
     [Fact]

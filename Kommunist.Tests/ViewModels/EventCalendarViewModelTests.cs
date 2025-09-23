@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
-using Kommunist.Core.Entities;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 using System.Reflection;
@@ -34,11 +33,9 @@ public class EventCalendarViewModelTests
     private static void DetachDaysUpdated(EventCalendarViewModel vm)
     {
         var method = typeof(EventCalendarViewModel).GetMethod("EventCalendar_DaysUpdated", BindingFlags.Instance | BindingFlags.NonPublic);
-        if (method != null)
-        {
-            var handler = (EventHandler)Delegate.CreateDelegate(typeof(EventHandler), vm, method);
-            vm.EventCalendar.DaysUpdated -= handler;
-        }
+        if (method == null) return;
+        var handler = (EventHandler)Delegate.CreateDelegate(typeof(EventHandler), vm, method);
+        vm.EventCalendar.DaysUpdated -= handler;
     }
 
     [Fact]
@@ -48,7 +45,7 @@ public class EventCalendarViewModelTests
         var eventServiceMock = new Mock<IEventService>(MockBehavior.Strict);
         eventServiceMock
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(Enumerable.Empty<ServiceEvent>());
+            .ReturnsAsync([]);
 
         var vm = CreateViewModel(out _, eventServiceMock.Object);
 
@@ -90,7 +87,7 @@ public class EventCalendarViewModelTests
         var vm = CreateViewModel(out var eventServiceMock);
         eventServiceMock
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(Enumerable.Empty<ServiceEvent>());
+            .ReturnsAsync([]);
 
         // Prevent DaysUpdated from overwriting CalEvents
         DetachDaysUpdated(vm);
@@ -99,19 +96,18 @@ public class EventCalendarViewModelTests
         var date1 = new DateTime(nav.Year, nav.Month, 10, 9, 0, 0);
         var date2 = new DateTime(nav.Year, nav.Month, 11, 10, 0, 0);
 
-        vm.CalEvents.ReplaceRange(new[]
-        {
+        vm.CalEvents.ReplaceRange([
             new CalEvent { EventId = 1, Title = "A", DateTime = date1 },
             new CalEvent { EventId = 2, Title = "B", DateTime = date2 },
             new CalEvent { EventId = 3, Title = "C", DateTime = date1.AddHours(1) }
-        });
+        ]);
 
         // Act
         vm.EventCalendar.SelectedDates.Add(date1.Date);
 
         // Assert
         vm.SelectedEvents.Should().HaveCount(2);
-        vm.SelectedEvents.Select(e => e.EventId).Should().BeEquivalentTo(new[] { 1, 3 }, opts => opts.WithoutStrictOrdering());
+        vm.SelectedEvents.Select(e => e.EventId).Should().BeEquivalentTo([1, 3], opts => opts.WithoutStrictOrdering());
     }
 
     [Fact]
@@ -121,7 +117,7 @@ public class EventCalendarViewModelTests
         var vm = CreateViewModel(out var eventServiceMock);
         eventServiceMock
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(Enumerable.Empty<ServiceEvent>());
+            .ReturnsAsync([]);
 
         // Prevent DaysUpdated from overwriting CalEvents
         DetachDaysUpdated(vm);
@@ -129,11 +125,10 @@ public class EventCalendarViewModelTests
         var nav = vm.EventCalendar.NavigatedDate;
         var date = new DateTime(nav.Year, nav.Month, 3, 12, 0, 0);
 
-        vm.CalEvents.ReplaceRange(new[]
-        {
+        vm.CalEvents.ReplaceRange([
             new CalEvent { EventId = 1, Title = "A", DateTime = date },
             new CalEvent { EventId = 2, Title = "B", DateTime = date.AddHours(2) }
-        });
+        ]);
 
         // Select
         vm.EventCalendar.SelectedDates.Add(date.Date);
@@ -153,9 +148,8 @@ public class EventCalendarViewModelTests
         var vm = CreateViewModel(out var eventServiceMock);
         eventServiceMock
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-            .ReturnsAsync(Enumerable.Empty<ServiceEvent>());
+            .ReturnsAsync([]);
 
-        // Prevent DaysUpdated from overwriting CalEvents
         DetachDaysUpdated(vm);
 
         var nav = vm.EventCalendar.NavigatedDate;
@@ -164,7 +158,7 @@ public class EventCalendarViewModelTests
         var e2 = new CalEvent { EventId = 2, Title = "Afternoon", DateTime = day.AddHours(13) };
         var e3 = new CalEvent { EventId = 3, Title = "Evening", DateTime = day.AddHours(18) };
 
-        vm.CalEvents.ReplaceRange(new[] { e1, e2, e3 });
+        vm.CalEvents.ReplaceRange([e1, e2, e3]);
 
         // Act
         vm.EventCalendar.SelectedDates.Add(day.Date);
@@ -177,7 +171,7 @@ public class EventCalendarViewModelTests
     public void NavigateCalendarCommand_MovesMonth_ForwardsAndBackwards()
     {
         // Arrange
-        var vm = CreateViewModel(out var _);
+        var vm = CreateViewModel(out _);
 
         var initial = new DateTime(2025, 4, 15);
         SetCalendarNavigatedDate(vm.EventCalendar, initial);
