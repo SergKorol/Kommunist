@@ -1,4 +1,3 @@
-using System.Collections;
 using FluentAssertions;
 using Kommunist.Application.Controls;
 
@@ -6,31 +5,23 @@ namespace Kommunist.Tests.Controls;
 
 public class EnumPickerTests
 {
-    private enum SampleEnumA
-    {
-        One,
-        Two,
-        Three
-    }
+    private enum SampleEnumA;
 
-    private enum SampleEnumB
-    {
-        Alpha,
-        Beta
-    }
+    private enum SampleEnumB;
 
     [Fact]
     public void EnumType_SetToValidEnum_PopulatesItemsSourceWithEnumValues()
     {
         // Arrange
-        var picker = new EnumPicker();
-
-        // Act
-        picker.EnumType = typeof(SampleEnumA);
+        var picker = new EnumPicker
+        {
+            // Act
+            EnumType = typeof(SampleEnumA)
+        };
 
         // Assert
-        var items = picker.ItemsSource!.Cast<object>().ToArray();
-        items.Should().BeEquivalentTo(Enum.GetValues(typeof(SampleEnumA)).Cast<object>(),
+        var items = picker.ItemsSource.Cast<object>().ToArray();
+        items.Should().BeEquivalentTo(Enum.GetValues<SampleEnumA>().Cast<object>(),
             options => options.WithStrictOrdering());
     }
 
@@ -60,7 +51,7 @@ public class EnumPickerTests
         var picker = new EnumPicker
         {
             // Act
-            EnumType = null!
+            EnumType = null
         };
 
         // Assert
@@ -71,12 +62,14 @@ public class EnumPickerTests
     public void EnumType_ChangeFromEnumToNull_ClearsItemsSource()
     {
         // Arrange
-        var picker = new EnumPicker();
-        picker.EnumType = typeof(SampleEnumA);
+        var picker = new EnumPicker
+        {
+            EnumType = typeof(SampleEnumA)
+        };
         picker.ItemsSource.Should().NotBeNull();
 
         // Act
-        picker.EnumType = null!;
+        picker.EnumType = null;
 
         // Assert
         picker.ItemsSource.Should().BeNull();
@@ -95,8 +88,8 @@ public class EnumPickerTests
         picker.EnumType = typeof(SampleEnumB);
 
         // Assert
-        var items = ((IEnumerable)picker.ItemsSource!).Cast<object>().ToArray();
-        items.Should().BeEquivalentTo(Enum.GetValues(typeof(SampleEnumB)).Cast<object>(),
+        var items = picker.ItemsSource.Cast<object>().ToArray();
+        items.Should().BeEquivalentTo(Enum.GetValues<SampleEnumB>().Cast<object>(),
             options => options.WithStrictOrdering());
     }
 }

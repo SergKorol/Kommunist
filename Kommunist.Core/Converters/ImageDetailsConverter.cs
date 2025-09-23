@@ -6,7 +6,7 @@ namespace Kommunist.Core.Converters;
 
 public class ImageDetailsConverter : JsonConverter<ImageDetails>
 {
-    public override ImageDetails ReadJson(JsonReader reader, Type objectType, ImageDetails existingValue, bool hasExistingValue, JsonSerializer serializer)
+    public override ImageDetails? ReadJson(JsonReader reader, Type objectType, ImageDetails? existingValue, bool hasExistingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null)
         {
@@ -30,14 +30,13 @@ public class ImageDetailsConverter : JsonConverter<ImageDetails>
         return result;
     }
 
-    private static ImageDetails ConsumeAndReturnNull(JsonReader reader)
+    private static ImageDetails? ConsumeAndReturnNull(JsonReader reader)
     {
-        // Consume the current value (array, primitive, etc.) to keep the reader in a consistent state
         JToken.ReadFrom(reader);
         return null;
     }
 
-    public override void WriteJson(JsonWriter writer, ImageDetails value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, ImageDetails? value, JsonSerializer serializer)
     {
         if (value == null)
         {
@@ -45,7 +44,6 @@ public class ImageDetailsConverter : JsonConverter<ImageDetails>
             return;
         }
 
-        // Manually write to avoid re-entering this converter and causing a self-referencing loop
         writer.WriteStartObject();
         writer.WritePropertyName("url");
         writer.WriteValue(value.Url);

@@ -5,6 +5,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using JetBrains.Annotations;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Core.Entities.PageProperties.Agenda;
@@ -19,7 +20,7 @@ namespace Kommunist.Application.ViewModels;
 public class EventCalendarDetailViewModel : BaseViewModel
 {
     private readonly IFileHostingService _fileHostingService;
-    private readonly IAndroidCalendarService _androidCalendarService;
+    [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
     
     private CalEventDetail? _selectedEventDetail;
     public CalEventDetail? SelectedEventDetail
@@ -167,6 +168,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             var start = ConvertDateTime(startUnix);
             var end = ConvertDateTime(endUnix);
 
+            // ReSharper disable once RedundantNameQualifier
             var calendar = new Ical.Net.Calendar
             {
                 Method = "PUBLISH",
@@ -217,7 +219,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             var serializer = new CalendarSerializer();
             var icalString = serializer.SerializeToString(calendar);
 
-            var fileSafeTitle = MakeSafeFileName(SelectedEventDetail?.Title ?? "event");
+            var fileSafeTitle = MakeSafeFileName(SelectedEventDetail?.Title?.Replace(" ", "_") ?? "event");
             var fileName = $"{fileSafeTitle}-{startUnix}.ics";
             var path = await SaveIcalToInternalStorageAsync(icalString, fileName);
 
@@ -312,9 +314,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
     private void SetMainCalEventDetail(CalEventDetail eventDetail)
     {
-        if (PageItems == null) return;
-
-        var mainPart = PageItems.FirstOrDefault(x => x.Type == "Main");
+        var mainPart = PageItems?.FirstOrDefault(x => x.Type == "Main");
         if (mainPart?.Properties == null) return;
 
         eventDetail.Title = mainPart.Properties.Text?.FirstOrDefault()?.Text;
@@ -332,13 +332,13 @@ public class EventCalendarDetailViewModel : BaseViewModel
         eventDetail.Location = mainPart.Properties.Details?.ParticipationFormat?.Location ?? "World";
 
         var text = string.Empty;
-        var unlimitedText = PageItems.FirstOrDefault(x => x.Type == "UnlimitedText");
+        var unlimitedText = PageItems?.FirstOrDefault(x => x.Type == "UnlimitedText");
         if (unlimitedText != null)
         {
-            text = unlimitedText.Properties?.UnlimitedText ?? string.Empty;
+            text = unlimitedText.Properties.UnlimitedText ?? string.Empty;
         }
 
-        var iconPointsPart = PageItems.FirstOrDefault(x => x.Type == "IconPoints");
+        var iconPointsPart = PageItems?.FirstOrDefault(x => x.Type == "IconPoints");
         if (iconPointsPart?.Properties != null)
         {
             var texts = iconPointsPart.Properties.Text?.Select(x => $"<p>{x.Text}</p>") ?? [];
@@ -351,7 +351,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             else if (icons.Count != 0)
             {
                 text += "<ul>";
-                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon.Main + "</li>" + "<p>" + icon.Description + "</p>");
+                text = icons.Aggregate(text, (current, icon) => current + "<li>" + icon?.Main + "</li>" + "<p>" + icon?.Description + "</p>");
                 text += "</ul>";
             }
             else
@@ -367,9 +367,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
     private async Task SetAgendaPage(CalEventDetail eventDetail)
     {
-        if (PageItems == null) return;
-
-        var agendaPart = PageItems.FirstOrDefault(x => x.Type == "Agenda");
+        var agendaPart = PageItems?.FirstOrDefault(x => x.Type == "Agenda");
         if (agendaPart?.Properties == null) return;
 
         await GetAgenda(TappedEventId);
@@ -378,7 +376,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
         {
             var agendaItem = AgendaPage.Agenda.Items.First();
 
-            if (agendaItem?.Speakers?.Any() == true)
+            if (agendaItem.Speakers.Any())
             {
                 foreach (var speaker in agendaItem.Speakers)
                 {
@@ -393,7 +391,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            if (agendaItem?.Moderators?.Any() == true)
+            if (agendaItem.Moderators.Any())
             {
                 foreach (var moderator in agendaItem.Moderators)
                 {
@@ -408,7 +406,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
                 }
             }
 
-            var html = agendaItem?.Info?.DescriptionHtml;
+            var html = agendaItem.Info?.DescriptionHtml;
             if (!string.IsNullOrWhiteSpace(html))
             {
                 var isDark = IsDarkMode();

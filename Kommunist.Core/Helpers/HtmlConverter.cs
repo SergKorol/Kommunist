@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using HtmlAgilityPack;
@@ -6,12 +7,13 @@ namespace Kommunist.Core.Helpers;
 
 public static class HtmlConverter
 {
-    public static string HtmlToPlainText(string html)
+    [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
+    public static string HtmlToPlainText(string? html)
     {
         if (string.IsNullOrWhiteSpace(html))
             return string.Empty;
 
-        if (!html.Contains("<"))
+        if (!html.Contains('<'))
             return HtmlEntity.DeEntitize(html.Trim());
         
         html = html.Replace("<br>", "\n", StringComparison.OrdinalIgnoreCase)
@@ -55,7 +57,7 @@ public static class HtmlConverter
         {
             var bullet = $"•{HtmlEntity.DeEntitize(listItems[i].InnerText.Trim())}";
             var lines = HtmlEntity.DeEntitize(listParagraphs[i].InnerText.Trim())
-                ?.Replace("\r", "")
+                .Replace("\r", "")
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             sb.AppendLine(CultureInfo.InvariantCulture, $"{bullet}");

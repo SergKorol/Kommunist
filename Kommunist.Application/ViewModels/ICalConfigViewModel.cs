@@ -7,6 +7,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using JetBrains.Annotations;
 using Kommunist.Application.Models;
 using Kommunist.Core.Services.Interfaces;
 
@@ -17,14 +18,14 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
     private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
     private readonly ICoordinatesService _coordinatesService;
-    private readonly IAndroidCalendarService _androidCalendarService;
+    [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
 
     // Abstractions for testability
     private readonly IToastService _toastService;
     private readonly IFileSaverService _fileSaverService;
     private readonly IFileSystemService _fileSystemService;
     private readonly ILauncherService _launcherService;
-    private readonly IPageDialogService _pageDialogService;
+    [UsedImplicitly] private readonly IPageDialogService _pageDialogService;
     
     public List<CalEvent> Events { get; set; } = [];
 
@@ -240,8 +241,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
     }
 
-    // Exposed as internal for testing completeness if needed
-    internal async Task UploadOrSendFile(string path)
+    private async Task UploadOrSendFile(string? path)
     {
         if (SendEmail)
         {

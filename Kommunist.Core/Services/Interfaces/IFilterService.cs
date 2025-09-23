@@ -5,6 +5,6 @@ namespace Kommunist.Core.Services.Interfaces;
 public interface IFilterService
 {
     void SetFilters(FilterOptions filters);
-    FilterOptions GetFilters();
+    FilterOptions? GetFilters();
     void ClearFilters();
 }

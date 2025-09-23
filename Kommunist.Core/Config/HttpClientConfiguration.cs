@@ -6,7 +6,7 @@ namespace Kommunist.Core.Config;
 
 public static class HttpClientConfiguration
 {
-    public static IServiceCollection AddHttpClientConfiguration(this IServiceCollection services)
+    public static void AddHttpClientConfiguration(this IServiceCollection services)
     {
         services.AddHttpClient<IEventService, EventService>((sp, client) =>
         {
@@ -27,6 +27,5 @@ public static class HttpClientConfiguration
         services.AddSingleton<IFilterService, FilterService>();
         services.AddSingleton<ICoordinatesService, CoordinatesService>();
         services.AddSingleton<IAndroidCalendarService, AndroidCalendarService>();
-        return services;
     }
 }

@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http;
 using FluentAssertions;
 using Kommunist.Core.Services;
 
@@ -12,14 +11,14 @@ public class CoordinatesServiceTests
     [InlineData("")]
     public async Task GetCoordinatesAsync_ReturnsZeroZero_WhenLocationIsNullOrEmpty(string? location)
     {
-        var handler = new TestHandler((req, ct) => new HttpResponseMessage(HttpStatusCode.OK)
+        var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("[]")
         });
         var client = new HttpClient(handler);
         var sut = new CoordinatesService(client);
 
-        var (lat, lon) = await sut.GetCoordinatesAsync(location!);
+        var (lat, lon) = await sut.GetCoordinatesAsync(location);
 
         lat.Should().Be(0);
         lon.Should().Be(0);
@@ -28,10 +27,10 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_ReturnsParsedCoordinates_WhenApiReturnsOneResult()
     {
-        var json = "[{\"lat\":\"48.8584\",\"lon\":\"2.2945\"}]";
+        const string json = "[{\"lat\":\"48.8584\",\"lon\":\"2.2945\"}]";
         string? capturedUserAgent = null;
 
-        var handler = new TestHandler((req, ct) =>
+        var handler = new TestHandler((req, _) =>
         {
             capturedUserAgent = req.Headers.UserAgent.ToString();
             return new HttpResponseMessage(HttpStatusCode.OK)
@@ -52,11 +51,11 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_ReturnsFirstResult_WhenApiReturnsMultipleResults()
     {
-        var json = "[" +
-                   "{\"lat\":\"10.1\",\"lon\":\"20.2\"}," +
-                   "{\"lat\":\"30.3\",\"lon\":\"40.4\"}" +
-                   "]";
-        var handler = new TestHandler((req, ct) => new HttpResponseMessage(HttpStatusCode.OK)
+        const string json = "[" +
+                            "{\"lat\":\"10.1\",\"lon\":\"20.2\"}," +
+                            "{\"lat\":\"30.3\",\"lon\":\"40.4\"}" +
+                            "]";
+        var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent(json)
         });
@@ -72,7 +71,7 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_Throws_WhenApiReturnsEmptyArray()
     {
-        var handler = new TestHandler((req, ct) => new HttpResponseMessage(HttpStatusCode.OK)
+        var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("[]")
         });
@@ -88,7 +87,7 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_Throws_WhenApiReturnsNull()
     {
-        var handler = new TestHandler((req, ct) => new HttpResponseMessage(HttpStatusCode.OK)
+        var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("null")
         });
@@ -104,7 +103,7 @@ public class CoordinatesServiceTests
     [Fact]
     public async Task GetCoordinatesAsync_ThrowsHttpRequestException_OnNonSuccessStatus()
     {
-        var handler = new TestHandler((req, ct) => new HttpResponseMessage(HttpStatusCode.BadRequest)
+        var handler = new TestHandler((_, _) => new HttpResponseMessage(HttpStatusCode.BadRequest)
         {
             Content = new StringContent("Bad request")
         });
@@ -120,9 +119,9 @@ public class CoordinatesServiceTests
     public async Task GetCoordinatesAsync_EncodesQueryParameter()
     {
         string? requestedUrl = null;
-        var handler = new TestHandler((req, ct) =>
+        var handler = new TestHandler((req, _) =>
         {
-            requestedUrl = req.RequestUri!.ToString();
+            requestedUrl = req.RequestUri?.ToString();
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("[{\"lat\":\"1\",\"lon\":\"2\"}]")
@@ -131,32 +130,34 @@ public class CoordinatesServiceTests
         var client = new HttpClient(handler);
         var sut = new CoordinatesService(client);
 
-        var location = "New York, NY";
+        const string location = "New York, NY";
         await sut.GetCoordinatesAsync(location);
 
         requestedUrl.Should().NotBeNullOrEmpty();
 
-        var uri = new Uri(requestedUrl!);
-        var query = uri.Query.TrimStart('?');
-        var qParam = query.Split('&', StringSplitOptions.RemoveEmptyEntries)
-                          .FirstOrDefault(p => p.StartsWith("q=", StringComparison.Ordinal))?
-                          .Substring(2);
+        if (requestedUrl != null)
+        {
+            var uri = new Uri(requestedUrl);
+            var query = uri.Query.TrimStart('?');
+            var qParam = query.Split('&', StringSplitOptions.RemoveEmptyEntries)
+                .FirstOrDefault(p => p.StartsWith("q=", StringComparison.Ordinal))?[2..];
 
-        qParam.Should().NotBeNull("q parameter should be present in the request URL");
+            qParam.Should().NotBeNull("q parameter should be present in the request URL");
 
-        var decoded = Uri.UnescapeDataString(qParam!).Replace("+", " ");
-        decoded.Should().Be(location);
+            if (qParam != null)
+            {
+                var decoded = Uri.UnescapeDataString(qParam).Replace("+", " ");
+                decoded.Should().Be(location);
+            }
+        }
+
         requestedUrl.Should().Contain("format=json");
     }
 
-    private sealed class TestHandler : HttpMessageHandler
+    private sealed class TestHandler(Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> responder)
+        : HttpMessageHandler
     {
-        private readonly Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> _responder;
-
-        public TestHandler(Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> responder)
-        {
-            _responder = responder ?? throw new ArgumentNullException(nameof(responder));
-        }
+        private readonly Func<HttpRequestMessage, CancellationToken, HttpResponseMessage> _responder = responder ?? throw new ArgumentNullException(nameof(responder));
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             => Task.FromResult(_responder(request, cancellationToken));

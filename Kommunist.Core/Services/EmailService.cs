@@ -10,7 +10,7 @@ public class EmailService(IConfiguration config, ISmtpClientFactory? smtpClientF
 {
     private readonly ISmtpClientFactory _smtpClientFactory = smtpClientFactory ?? new SmtpClientFactory();
 
-    public async Task SendEmailAsync(string to, string subject, string body, string attachmentPath, string email)
+    public async Task SendEmailAsync(string? to, string subject, string body, string? attachmentPath, string? email)
     {
         try
         {
@@ -19,21 +19,24 @@ public class EmailService(IConfiguration config, ISmtpClientFactory? smtpClientF
             smtpClient.Credentials = new NetworkCredential(config["SmtpProvider:UserName"], config["SmtpProvider:Password"]);
             smtpClient.EnableSsl = true;
 
-            var mailMessage = new MailMessage(config["SmtpProvider:Sender"] ?? "", email)
+            if (email != null)
             {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
+                var mailMessage = new MailMessage(config["SmtpProvider:Sender"] ?? "", email)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
 
-            mailMessage.To.Add(new MailAddress(to));
+                if (to != null) mailMessage.To.Add(new MailAddress(to));
 
-            if (attachmentPath is not (null or ""))
-            {
-                mailMessage.Attachments.Add(new Attachment(attachmentPath));
+                if (attachmentPath is not (null or ""))
+                {
+                    mailMessage.Attachments.Add(new Attachment(attachmentPath));
+                }
+
+                await smtpClient.SendMailAsync(mailMessage);
             }
-
-            await smtpClient.SendMailAsync(mailMessage);
         }
         catch (Exception e)
         {

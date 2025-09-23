@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
 using FluentAssertions;
 using Kommunist.Application.Helpers;
-using Xunit;
 
 namespace Kommunist.Tests.Helpers;
 
-public class CountryExtensionsTests
+public static class CountryExtensionsTests
 {
     public class WithoutFlags
     {
@@ -19,7 +18,7 @@ public class CountryExtensionsTests
             var result = input.WithoutFlags();
 
             // Assert
-            result.Should().BeEquivalentTo(new[] { "English", "Ukrainian", "Russian" }, options => options.WithStrictOrdering());
+            result.Should().BeEquivalentTo(["English", "Ukrainian", "Russian"], options => options.WithStrictOrdering());
         }
 
         [Fact]
@@ -72,8 +71,8 @@ public class CountryExtensionsTests
             var result = input.WithoutFlags();
 
             // Assert
-            input.Should().Equal(snapshot); // original unchanged
-            result.Should().NotBeSameAs(input); // new list returned
+            input.Should().Equal(snapshot); 
+            result.Should().NotBeSameAs(input);
         }
     }
 
@@ -173,7 +172,7 @@ public class CountryExtensionsTests
 
     public class ReplaceCodesWithFlags
     {
-        // [Fact]
+        [Fact]
         public void Replaces_known_codes_with_names()
         {
             // Arrange
@@ -236,8 +235,8 @@ public class CountryExtensionsTests
             var result = codes.ReplaceCodesWithFlags();
 
             // Assert
-            codes.Should().Equal(snapshot); // original unchanged
-            result.Should().NotBeSameAs(codes); // new list returned
+            codes.Should().Equal(snapshot);
+            result.Should().NotBeSameAs(codes);
         }
     }
 }

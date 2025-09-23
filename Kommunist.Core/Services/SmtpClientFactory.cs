@@ -4,5 +4,5 @@ namespace Kommunist.Core.Services;
 
 public sealed class SmtpClientFactory : ISmtpClientFactory
 {
-    public ISmtpClient Create(string host) => new SmtpClientWrapper(host);
+    public ISmtpClient Create(string? host) => new SmtpClientWrapper(host);
 }

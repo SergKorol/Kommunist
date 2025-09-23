@@ -1,17 +1,15 @@
-using System.Linq;
 using FluentAssertions;
 using Kommunist.Core.Converters;
 using Kommunist.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Kommunist.Tests.Converters;
 
 public class TextItemListConverterTests
 {
     private static JsonSerializerSettings CreateSettings() =>
-        new JsonSerializerSettings
+        new()
         {
             Converters = { new TextItemListConverter() }
         };
@@ -27,7 +25,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().BeEmpty();
+        result?.Should().BeEmpty();
     }
 
     [Theory]
@@ -43,15 +41,15 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        result[0].Text.Should().Be(expectedText);
+        result?.Should().ContainSingle();
+        result?[0].Text.Should().Be(expectedText);
     }
 
     [Fact]
     public void ReadJson_ObjectToken_ReturnsSingleItem()
     {
         // Arrange
-        var json = "{\"text\":\"hi\",\"type\":\"paragraph\",\"maxLength\":10}";
+        const string json = "{\"text\":\"hi\",\"type\":\"paragraph\",\"maxLength\":10}";
         var settings = CreateSettings();
 
         // Act
@@ -59,18 +57,18 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        var item = result.Single();
-        item.Text.Should().Be("hi");
-        item.Type.Should().Be("paragraph");
-        item.MaxLength.Should().Be(10);
+        result?.Should().ContainSingle();
+        var item = result?.Single();
+        item?.Text.Should().Be("hi");
+        item?.Type.Should().Be("paragraph");
+        item?.MaxLength.Should().Be(10);
     }
 
     [Fact]
     public void ReadJson_EmptyObjectToken_ReturnsSingleItemWithDefaults()
     {
         // Arrange
-        var json = "{}";
+        const string json = "{}";
         var settings = CreateSettings();
 
         // Act
@@ -78,18 +76,18 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().ContainSingle();
-        var item = result.Single();
-        item.Text.Should().BeNull();        // default string
-        item.Type.Should().BeNull();        // default string
-        item.MaxLength.Should().Be(0);      // default int
+        result.Should().ContainSingle();
+        var item = result?.Single();
+        item?.Text.Should().BeNull();
+        item?.Type.Should().BeNull();
+        item?.MaxLength.Should().Be(0);
     }
 
     [Fact]
     public void ReadJson_ArrayToken_MixedValues_MapsValidAndIgnoresOthers()
     {
         // Arrange
-        var json = "[\"a\", {\"text\":\"b\"}, 123, null, true]";
+        const string json = "[\"a\", {\"text\":\"b\"}, 123, null, true]";
         var settings = CreateSettings();
 
         // Act
@@ -97,14 +95,14 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Select(x => x.Text).Should().Equal("a", "b");
+        result?.Select(x => x.Text).Should().Equal("a", "b");
     }
 
     [Fact]
     public void ReadJson_ArrayToken_NestedArrayAndNulls_Ignored()
     {
         // Arrange
-        var json = "[\"x\", [\"y\"], {\"text\":\"z\"}, null]";
+        const string json = "[\"x\", [\"y\"], {\"text\":\"z\"}, null]";
         var settings = CreateSettings();
 
         // Act
@@ -112,14 +110,14 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Select(i => i.Text).Should().Equal("x", "z");
+        result?.Select(i => i.Text).Should().Equal("x", "z");
     }
 
     [Fact]
     public void ReadJson_EmptyArray_ReturnsEmptyList()
     {
         // Arrange
-        var json = "[]";
+        const string json = "[]";
         var settings = CreateSettings();
 
         // Act
@@ -127,7 +125,7 @@ public class TextItemListConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Should().BeEmpty();
+        result?.Should().BeEmpty();
     }
 
     [Theory]
@@ -163,9 +161,9 @@ public class TextItemListConverterTests
         // Assert
         var array = JArray.Parse(json);
         array.Count.Should().Be(2);
-        array[0]["text"]!.Value<string>().Should().Be("alpha");
-        array[1]["text"]!.Value<string>().Should().Be("beta");
-        array[1]["maxLength"]!.Value<int>().Should().Be(5);
+        array[0]["text"]?.Value<string>().Should().Be("alpha");
+        array[1]["text"]?.Value<string>().Should().Be("beta");
+        array[1]["maxLength"]?.Value<int>().Should().Be(5);
     }
 
     [Fact]
@@ -173,7 +171,7 @@ public class TextItemListConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var input = "\"hello\"";
+        const string input = "\"hello\"";
 
         // Act
         var list = JsonConvert.DeserializeObject<List<TextItem>>(input, settings);
@@ -181,11 +179,11 @@ public class TextItemListConverterTests
 
         // Assert
         list.Should().NotBeNull();
-        list!.Should().ContainSingle();
-        list[0].Text.Should().Be("hello");
+        list.Should().ContainSingle();
+        list?[0].Text.Should().Be("hello");
 
         var array = JArray.Parse(output);
         array.Should().HaveCount(1);
-        array[0]["text"]!.Value<string>().Should().Be("hello");
+        array[0]["text"]?.Value<string>().Should().Be("hello");
     }
 }

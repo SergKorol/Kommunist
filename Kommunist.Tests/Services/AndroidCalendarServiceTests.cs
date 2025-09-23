@@ -15,7 +15,7 @@ public class AndroidCalendarServiceTests
 
         var sut = new AndroidCalendarService(store.Object);
 
-        Func<Task> act = () => sut.AddEvents("Z:\\does-not-exist\\file.ics");
+        var act = () => sut.AddEvents(@"Z:\does-not-exist\file.ics");
 
         await act.Should().ThrowAsync<FileNotFoundException>();
     }
@@ -24,7 +24,7 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WhenNoDeviceCalendars_ThrowsInvalidOperationException()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Strict);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(Array.Empty<Calendar>());
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
         var icsPath = CreateTempIcs(
@@ -33,7 +33,7 @@ public class AndroidCalendarServiceTests
 
         try
         {
-            Func<Task> act = () => sut.AddEvents(icsPath);
+            var act = () => sut.AddEvents(icsPath);
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("Wasn't able to get calendars from the device.");
         }
@@ -47,18 +47,17 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WhenTargetCalendarNameNotFound_ThrowsInvalidOperationException()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Loose);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Work"),
             NewCalendar("calB", "Personal")
-        });
+        ]);
 
         var sut = new AndroidCalendarService(store.Object);
         var icsPath = CreateTempIcs(VEvent("20250101T100000Z", "20250101T110000Z", "Some Event"));
 
         try
         {
-            Func<Task> act = () => sut.AddEvents(icsPath, targetCalendarName: "NonExistingName");
+            var act = () => sut.AddEvents(icsPath, targetCalendarName: "NonExistingName");
             await act.Should().ThrowAsync<InvalidOperationException>()
                 .WithMessage("Не вдалося знайти календар з вказаною назвою.");
         }
@@ -72,19 +71,18 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WhenIcsHasNoEvents_DoesNotCreateOrUpdate()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Loose);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Default")
-        });
+        ]);
         store.Setup(s => s.GetEvents(
                 It.IsAny<string?>(),
                 It.IsAny<DateTimeOffset?>(),
                 It.IsAny<DateTimeOffset?>()
             ))
-            .ReturnsAsync(Array.Empty<CalendarEvent>());
+            .ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
-        var icsPath = CreateTempIcs(); // No VEVENT entries
+        var icsPath = CreateTempIcs();
 
         try
         {
@@ -114,12 +112,12 @@ public class AndroidCalendarServiceTests
                 It.IsAny<DateTimeOffset?>(),
                 It.IsAny<DateTimeOffset?>()
             ))
-            .ReturnsAsync(Array.Empty<CalendarEvent>());
+            .ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
 
-        var dtStartZ = "2025-01-01T10:00:00Z";
-        var dtEndZ = "2025-01-01T11:00:00Z";
+        const string dtStartZ = "2025-01-01T10:00:00Z";
+        const string dtEndZ = "2025-01-01T11:00:00Z";
         var icsPath = CreateTempIcs(VEvent(dtStartZ, dtEndZ, summary: "Test Event", description: "Desc", location: "Loc"));
 
         try
@@ -163,21 +161,20 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WithAlarmTrigger_UsesAlarmMinutes()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Loose);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Default")
-        });
+        ]);
         store.Setup(s => s.GetEvents(
                 It.IsAny<string?>(),
                 It.IsAny<DateTimeOffset?>(),
                 It.IsAny<DateTimeOffset?>()
             ))
-            .ReturnsAsync(Array.Empty<CalendarEvent>());
+            .ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
 
-        var dtStartZ = "2025-03-20T08:00:00Z";
-        var dtEndZ = "2025-03-20T09:00:00Z";
+        const string dtStartZ = "2025-03-20T08:00:00Z";
+        const string dtEndZ = "2025-03-20T09:00:00Z";
         var icsPath = CreateTempIcs(VEventWithAlarm(dtStartZ, dtEndZ, "Has Alarm", trigger: "-PT15M"));
 
         try
@@ -202,20 +199,19 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WhenEndMissing_DefaultsToPlusOneHour()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Loose);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Default")
-        });
+        ]);
         store.Setup(s => s.GetEvents(
                 It.IsAny<string?>(),
                 It.IsAny<DateTimeOffset?>(),
                 It.IsAny<DateTimeOffset?>()
             ))
-            .ReturnsAsync(Array.Empty<CalendarEvent>());
+            .ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
 
-        var dtStartZ = "2025-02-10T12:30:00Z";
+        const string dtStartZ = "2025-02-10T12:30:00Z";
         var icsPath = CreateTempIcs(VEvent(dtStartZ, end: null, summary: "No End"));
 
         try
@@ -228,7 +224,6 @@ public class AndroidCalendarServiceTests
             var startDtoArg = (DateTimeOffset)args[4];
             var endDtoArg = (DateTimeOffset)args[5];
 
-            // When DTEND is missing, it should default to start + 1 hour
             (endDtoArg - startDtoArg).Should().Be(TimeSpan.Zero);
         }
         finally
@@ -241,16 +236,15 @@ public class AndroidCalendarServiceTests
     public async Task AddEvents_WhenStartMissing_SkipsEvent()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Loose);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Default")
-        });
+        ]);
         store.Setup(s => s.GetEvents(
                 It.IsAny<string?>(),
                 It.IsAny<DateTimeOffset?>(),
                 It.IsAny<DateTimeOffset?>()
             ))
-            .ReturnsAsync(Array.Empty<CalendarEvent>());
+            .ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
 
@@ -273,7 +267,7 @@ public class AndroidCalendarServiceTests
     public async Task GetCalendarNames_WhenNoCalendars_ThrowsInvalidOperationException()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Strict);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(Array.Empty<Calendar>());
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([]);
 
         var sut = new AndroidCalendarService(store.Object);
 
@@ -287,18 +281,17 @@ public class AndroidCalendarServiceTests
     public async Task GetCalendarNames_ReturnsCalendarNames()
     {
         var store = new Mock<ICalendarStore>(MockBehavior.Strict);
-        store.Setup(s => s.GetCalendars()).ReturnsAsync(new[]
-        {
+        store.Setup(s => s.GetCalendars()).ReturnsAsync([
             NewCalendar("calA", "Work"),
             NewCalendar("calB", "Personal"),
             NewCalendar("calC", "Holidays")
-        });
+        ]);
 
         var sut = new AndroidCalendarService(store.Object);
 
         var names = await sut.GetCalendarNames();
 
-        names.Should().BeEquivalentTo(new[] { "Work", "Personal", "Holidays" });
+        names.Should().BeEquivalentTo("Work", "Personal", "Holidays");
     }
 
     private static string VEvent(string? start, string? end, string summary = "Event", string? description = null, string? location = null)
@@ -306,7 +299,7 @@ public class AndroidCalendarServiceTests
         var lines = new List<string>
         {
             "BEGIN:VEVENT",
-            $"UID:{Guid.NewGuid()}",
+            $"UID:{Guid.NewGuid()}"
         };
 
         if (!string.IsNullOrEmpty(start))
@@ -354,7 +347,7 @@ public class AndroidCalendarServiceTests
         var lines = new List<string>
         {
             "BEGIN:VCALENDAR",
-            "VERSION:2.0",
+            "VERSION:2.0"
         };
         lines.AddRange(vevents);
         lines.Add("END:VCALENDAR");
@@ -364,16 +357,11 @@ public class AndroidCalendarServiceTests
     private static string NormalizeIcsDate(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) return value;
-        // Parse any ISO-like input and output RFC5545 basic UTC format
-        if (DateTimeOffset.TryParse(
-                value,
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
-                out var dto))
-        {
-            return dto.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'");
-        }
-        return value;
+        return DateTimeOffset.TryParse(
+            value,
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
+            out var dto) ? dto.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") : value;
     }
 
     private static void TryDelete(string path)
@@ -402,7 +390,7 @@ public class AndroidCalendarServiceTests
         var parameters = ctor.GetParameters();
         var args = new object?[parameters.Length];
 
-        for (int i = 0; i < parameters.Length; i++)
+        for (var i = 0; i < parameters.Length; i++)
         {
             var p = parameters[i];
             if (p.ParameterType == typeof(string) && p.Name?.Contains("id", StringComparison.OrdinalIgnoreCase) == true)
@@ -415,20 +403,29 @@ public class AndroidCalendarServiceTests
             }
         }
 
-        int stringAssigned = args.Count(a => a is string);
-        for (int i = 0; i < parameters.Length; i++)
+        var stringAssigned = args.Count(a => a is string);
+        for (var i = 0; i < parameters.Length; i++)
         {
             if (args[i] is not null) continue;
             var p = parameters[i];
             if (p.ParameterType == typeof(string))
             {
-                if (stringAssigned == 0) { args[i] = id; stringAssigned++; }
-                else if (stringAssigned == 1) { args[i] = name; stringAssigned++; }
-                else { args[i] = string.Empty; }
+                switch (stringAssigned)
+                {
+                    case 0:
+                        args[i] = id; stringAssigned++;
+                        break;
+                    case 1:
+                        args[i] = name; stringAssigned++;
+                        break;
+                    default:
+                        args[i] = string.Empty;
+                        break;
+                }
             }
             else
             {
-                args[i] = p.HasDefaultValue ? p.DefaultValue : (p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null);
+                args[i] = p.HasDefaultValue ? p.DefaultValue : p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null;
             }
         }
 
@@ -449,46 +446,13 @@ public class AndroidCalendarServiceTests
         return instance;
     }
 
-    private static object GetFirstReminder(object remindersArg)
-    {
-        if (remindersArg is null) throw new InvalidOperationException("Reminders argument is null.");
-        if (remindersArg is System.Collections.IEnumerable enumerable)
-        {
-            foreach (var item in enumerable)
-            {
-                if (item is not null) return item;
-            }
-        }
-        throw new InvalidOperationException("No reminders found.");
-    }
-
     private static int CountEnumerable(object obj)
     {
         if (obj is System.Collections.IEnumerable enumerable)
         {
-            var count = 0;
-            foreach (var _ in enumerable) count++;
-            return count;
+            return enumerable.Cast<object?>().Count();
         }
 
         throw new InvalidOperationException("Object is not enumerable.");
-    }
-
-    // Extract Reminder.TriggerAt as DateTimeOffset (supports DateTime or DateTimeOffset and case-insensitive property name)
-    private static DateTimeOffset ExtractReminderTriggerAt(object reminder)
-    {
-        var t = reminder.GetType();
-        var prop = t.GetProperty("TriggerAt", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
-                   ?? t.GetProperty("TriggerAtUtc", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-        if (prop == null)
-            throw new InvalidOperationException("Reminder type does not expose a TriggerAt property.");
-
-        var val = prop.GetValue(reminder);
-        return val switch
-        {
-            DateTimeOffset dto => dto,
-            DateTime dt => new DateTimeOffset(dt),
-            _ => throw new InvalidOperationException("Unsupported TriggerAt type on Reminder.")
-        };
     }
 }

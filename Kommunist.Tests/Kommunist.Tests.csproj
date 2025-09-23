@@ -17,6 +17,7 @@
         <PackageReference Include="Plugin.Maui.CalendarStore" Version="4.0.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-rc.1.25451.107" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
     </ItemGroup>
 
     <ItemGroup>

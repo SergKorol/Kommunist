@@ -8,11 +8,11 @@ public record ParticipationFormat
     public bool Online { get; set; }
     
     [JsonProperty("online_label")]
-    public string OnlineLabel { get; set; }
+    public string? OnlineLabel { get; set; }
 
     [JsonProperty("indoor")]
     public bool Indoor { get; set; }
 
     [JsonProperty("location")]
-    public string Location { get; set; }
+    public string? Location { get; set; }
 }

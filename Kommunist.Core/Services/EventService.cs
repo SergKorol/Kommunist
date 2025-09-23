@@ -10,7 +10,7 @@ namespace Kommunist.Core.Services;
 
 public class EventService(HttpClient httpClient, IFilterService filterService) : IEventService
 {
-    public async Task<IEnumerable<ServiceEvent>> LoadEvents(DateTime startDate, DateTime endDate)
+    public async Task<IEnumerable<ServiceEvent>?> LoadEvents(DateTime startDate, DateTime endDate)
     {
         var filters = filterService.GetFilters();
         var fromDate = EncodeDateString(startDate.ToString("MM/dd/yyyy"));
@@ -35,7 +35,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         }
     }
 
-    public async Task<IEnumerable<PageItem>> GetHomePage(int eventId)
+    public async Task<IEnumerable<PageItem>?> GetHomePage(int eventId)
     {
         var url = $"/api/v2/events/{eventId}/pages/home";
         try
@@ -54,7 +54,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         }
     }
 
-    public async Task<AgendaPage> GetAgenda(int eventId)
+    public async Task<AgendaPage?> GetAgenda(int eventId)
     {
         var url = $"/api/v2/events/{eventId}/agenda";
         try
@@ -125,7 +125,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
         if (isOnline) url += "&online=Online";
     }
 
-    private async Task<T> SendRequestAsync<T>(string url, JsonSerializerSettings settings = null)
+    private async Task<T?> SendRequestAsync<T>(string url, JsonSerializerSettings? settings = null)
     {
         var response = await httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
@@ -136,7 +136,7 @@ public class EventService(HttpClient httpClient, IFilterService filterService) :
             : JsonConvert.DeserializeObject<T>(json);
     }
 
-    private static string BuildUrl(string baseUrl, Dictionary<string, string> parameters, FilterOptions filters = null)
+    private static string BuildUrl(string baseUrl, Dictionary<string, string> parameters, FilterOptions? filters = null)
     {
         var url = baseUrl;
         var isFirstParam = !url.Contains('?');

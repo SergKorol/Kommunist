@@ -1,4 +1,3 @@
-using System;
 using FluentAssertions;
 using Kommunist.Core.Converters;
 using Kommunist.Core.Entities;
@@ -12,14 +11,13 @@ using Kommunist.Core.Entities.PageProperties.UnlimitedText;
 using Kommunist.Core.Entities.PageProperties.Venue;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace Kommunist.Tests.Converters;
 
 public class PropertiesConverterTests
 {
     private static JsonSerializerSettings CreateSettings() =>
-        new JsonSerializerSettings
+        new()
         {
             Converters = { new PropertiesConverter() }
         };
@@ -48,16 +46,16 @@ public class PropertiesConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Type.Should().Be(expectedPageType);
-        result.Properties.Should().NotBeNull();
-        result.Properties.Should().BeOfType(expectedPropertiesType);
+        result?.Type.Should().Be(expectedPageType);
+        result?.Properties.Should().NotBeNull();
+        result?.Properties.Should().BeOfType(expectedPropertiesType);
     }
 
     [Fact]
     public void ReadJson_NumericTypeToken_DeserializesUsingFallback()
     {
-        // Arrange: 5 corresponds to PageType.Venue
-        var json = "{\"type\":5,\"properties\":{}}";
+        // Arrange
+        const string json = "{\"type\":5,\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -65,9 +63,9 @@ public class PropertiesConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Type.Should().Be(PageType.Venue);
-        result.Properties.Should().NotBeNull();
-        result.Properties.Should().BeOfType<VenueProperties>();
+        result?.Type.Should().Be(PageType.Venue);
+        result?.Properties.Should().NotBeNull();
+        result?.Properties.Should().BeOfType<VenueProperties>();
     }
 
     [Theory]
@@ -89,7 +87,7 @@ public class PropertiesConverterTests
     public void ReadJson_UnknownStringType_ThrowsJsonSerializationException()
     {
         // Arrange
-        var json = "{\"type\":\"NotAValidType\",\"properties\":{}}";
+        const string json = "{\"type\":\"NotAValidType\",\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -103,7 +101,7 @@ public class PropertiesConverterTests
     public void ReadJson_UnsupportedNumericType_ThrowsNotSupportedException()
     {
         // Arrange
-        var json = "{\"type\":999,\"properties\":{}}";
+        const string json = "{\"type\":999,\"properties\":{}}";
         var settings = CreateSettings();
 
         // Act
@@ -127,8 +125,8 @@ public class PropertiesConverterTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.Type.Should().Be(PageType.Venue);
-        result.Properties.Should().BeNull();
+        result?.Type.Should().Be(PageType.Venue);
+        result?.Properties.Should().BeNull();
     }
 
     [Fact]
@@ -153,7 +151,7 @@ public class PropertiesConverterTests
         var value = new EventPage
         {
             Type = PageType.Venue,
-            Properties = null!
+            Properties = null
         };
 
         // Act
@@ -161,8 +159,8 @@ public class PropertiesConverterTests
 
         // Assert
         var obj = JObject.Parse(json);
-        obj["type"]!.Value<string>().Should().Be("Venue");
-        obj["properties"]!.Type.Should().Be(JTokenType.Null);
+        obj["type"]?.Value<string>().Should().Be("Venue");
+        obj["properties"]?.Type.Should().Be(JTokenType.Null);
     }
 
     [Fact]
@@ -181,8 +179,8 @@ public class PropertiesConverterTests
 
         // Assert
         var obj = JObject.Parse(json);
-        obj["type"]!.Value<string>().Should().Be("Venue");
-        obj["properties"]!.Type.Should().Be(JTokenType.Object);
+        obj["type"]?.Value<string>().Should().Be("Venue");
+        obj["properties"]?.Type.Should().Be(JTokenType.Object);
     }
 
     [Fact]
@@ -201,8 +199,8 @@ public class PropertiesConverterTests
 
         // Assert
         var obj = JObject.Parse(json);
-        obj["type"]!.Value<string>().Should().Be("Venue");
-        obj["properties"]!.Type.Should().Be(JTokenType.Object);
+        obj["type"]?.Value<string>().Should().Be("Venue");
+        obj["properties"]?.Type.Should().Be(JTokenType.Object);
     }
 
     [Fact]
@@ -210,7 +208,7 @@ public class PropertiesConverterTests
     {
         // Arrange
         var settings = CreateSettings();
-        var input = "{\"type\":\"Venue\",\"properties\":{}}";
+        const string input = "{\"type\":\"Venue\",\"properties\":{}}";
 
         // Act
         var model = JsonConvert.DeserializeObject<EventPage>(input, settings);
@@ -219,10 +217,10 @@ public class PropertiesConverterTests
 
         // Assert
         model.Should().NotBeNull();
-        model!.Type.Should().Be(PageType.Venue);
-        model.Properties.Should().BeOfType<VenueProperties>();
+        model?.Type.Should().Be(PageType.Venue);
+        model?.Properties.Should().BeOfType<VenueProperties>();
 
-        jObj["type"]!.Value<string>().Should().Be("Venue");
-        jObj["properties"]!.Type.Should().Be(JTokenType.Object);
+        jObj["type"]?.Value<string>().Should().Be("Venue");
+        jObj["properties"]?.Type.Should().Be(JTokenType.Object);
     }
 }

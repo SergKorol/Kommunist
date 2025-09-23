@@ -3,9 +3,13 @@ using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Application.Services;
 
-public class FileSystemService : IFileSystemService
+public class FileSystemService(string appDataDirectory) : IFileSystemService
 {
-    public string AppDataDirectory => FileSystem.AppDataDirectory;
+    public FileSystemService() : this(FileSystem.AppDataDirectory)
+    {
+    }
+
+    public string AppDataDirectory { get; } = appDataDirectory ?? throw new ArgumentNullException(nameof(appDataDirectory));
 
     public async Task<string> SaveTextAsync(string fileName, string content)
     {

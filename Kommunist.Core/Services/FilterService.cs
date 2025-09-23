@@ -9,7 +9,7 @@ public class FilterService : IFilterService
     private const string StorageKey = "AppFilters";
 
     private readonly IAppPreferences _preferences;
-    private FilterOptions _filters;
+    private FilterOptions? _filters;
 
     public FilterService() : this(new MauiPreferences())
     {
@@ -27,7 +27,7 @@ public class FilterService : IFilterService
         SaveFilters();
     }
 
-    public FilterOptions GetFilters()
+    public FilterOptions? GetFilters()
     {
         LoadFilters();
         return _filters;

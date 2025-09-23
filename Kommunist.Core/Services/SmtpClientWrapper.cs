@@ -1,18 +1,12 @@
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Core.Services;
 
-public sealed class SmtpClientWrapper : ISmtpClient
+public sealed class SmtpClientWrapper(string? host) : ISmtpClient
 {
-    private readonly SmtpClient _inner;
-
-    public SmtpClientWrapper(string host)
-    {
-        _inner = new SmtpClient(host);
-    }
+    private readonly SmtpClient _inner = new(host);
 
     public int Port
     {
@@ -32,7 +26,10 @@ public sealed class SmtpClientWrapper : ISmtpClient
         set => _inner.EnableSsl = value;
     }
 
-    public Task SendMailAsync(MailMessage message) => _inner.SendMailAsync(message);
+    public Task SendMailAsync(MailMessage? message)
+    {
+        return message != null ? _inner.SendMailAsync(message) : throw new ArgumentNullException(nameof(message));
+    }
 
     public void Dispose() => _inner.Dispose();
 }

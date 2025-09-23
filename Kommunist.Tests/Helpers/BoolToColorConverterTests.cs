@@ -7,7 +7,6 @@ public class BoolToColorConverterTests
 {
     private static void EnsureApp()
     {
-        // Ensure a Microsoft.Maui.Controls.Application instance exists to control theme.
         if (Microsoft.Maui.Controls.Application.Current is null)
         {
             _ = new Microsoft.Maui.Controls.Application();
@@ -27,7 +26,8 @@ public class BoolToColorConverterTests
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
 
         // Act
@@ -42,7 +42,8 @@ public class BoolToColorConverterTests
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
 
         // Act
@@ -57,7 +58,8 @@ public class BoolToColorConverterTests
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
 
         // Act
@@ -74,7 +76,8 @@ public class BoolToColorConverterTests
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
 
         // Act
@@ -86,15 +89,16 @@ public class BoolToColorConverterTests
     }
 
     [Theory]
-    [InlineData(true, "#FF0000|#00FF00", "#FF0000")]  // true => first color
-    [InlineData(false, "#FF0000|#00FF00", "#00FF00")] // false => second color
+    [InlineData(true, "#FF0000|#00FF00", "#FF0000")]
+    [InlineData(false, "#FF0000|#00FF00", "#00FF00")] 
     [InlineData(true, "#112233|#445566", "#112233")]
     [InlineData(false, "#112233|#445566", "#445566")]
     public void Convert_ValidParameters_LightTheme_UsesProvidedColors(bool value, string parameter, string expectedHex)
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
         Assert.True(Color.TryParse(expectedHex, out var expectedColor));
 
@@ -112,9 +116,10 @@ public class BoolToColorConverterTests
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Light;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Light;
         var converter = new BoolToColorConverter();
-        var parameter = "#ZZZZZZ|#QQQQQQ"; // not parseable
+        const string parameter = "#ZZZZZZ|#QQQQQQ";
 
         // Act
         var result = (Color)converter.Convert(value, typeof(Color), parameter, CultureInfo.InvariantCulture);
@@ -125,15 +130,16 @@ public class BoolToColorConverterTests
     }
 
     [Theory]
-    [InlineData(true, "#3A2D78")]  // Expected dark theme true color
-    [InlineData(false, "#1E1E1E")] // Expected dark theme false color
+    [InlineData(true, "#3A2D78")]
+    [InlineData(false, "#1E1E1E")]
     public void Convert_DarkTheme_IgnoresParameters_UsesHardcodedDarkColors(bool value, string expectedHex)
     {
         // Arrange
         EnsureApp();
-        Microsoft.Maui.Controls.Application.Current!.UserAppTheme = AppTheme.Dark;
+        if (Microsoft.Maui.Controls.Application.Current != null)
+            Microsoft.Maui.Controls.Application.Current.UserAppTheme = AppTheme.Dark;
         var converter = new BoolToColorConverter();
-        var parameter = "#FF0000|#00FF00"; // should be ignored in dark theme
+        const string parameter = "#FF0000|#00FF00";
         Assert.True(Color.TryParse(expectedHex, out var expectedColor));
 
         // Act

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using FluentAssertions;
 using Kommunist.Core.Services;
-using Xunit;
 
 namespace Kommunist.Tests.Services;
 
@@ -9,16 +7,12 @@ public class MauiPreferencesTests
 {
     private static MauiPreferences CreateWithDictionaryBackend()
     {
-        Dictionary<string, string> store;
-        store = new Dictionary<string, string>();
+        var store = new Dictionary<string, string>();
 
-        var getStore = store;
-        var setStore = store;
-        var removeStore = store;
         return new MauiPreferences(
-            (key, defaultValue) => getStore.TryGetValue(key, out var value) ? value : defaultValue,
-            (key, value) => setStore[key] = value,
-            key => removeStore.Remove(key));
+            (key, defaultValue) => store.GetValueOrDefault(key, defaultValue),
+            (key, value) => store[key] = value,
+            key => store.Remove(key));
     }
 
     [Fact]
@@ -92,8 +86,8 @@ public class MauiPreferencesTests
                 capturedDefault = @default;
                 return "computed-value";
             },
-            (key, value) => { },
-            key => { });
+            (_, _) => { },
+            _ => { });
 
         // Act
         var result = sut.Get("some-key", "some-default");
@@ -112,13 +106,13 @@ public class MauiPreferencesTests
         string? capturedValue = null;
 
         var sut = new MauiPreferences(
-            (key, @default) => @default,
+            (_, @default) => @default,
             (key, value) =>
             {
                 capturedKey = key;
                 capturedValue = value;
             },
-            key => { });
+            _ => { });
 
         // Act
         sut.Set("api-url", "https://example.test");
@@ -135,8 +129,8 @@ public class MauiPreferencesTests
         string? capturedKey = null;
 
         var sut = new MauiPreferences(
-            (key, @default) => @default,
-            (key, value) => { },
+            (_, @default) => @default,
+            (_, _) => { },
             key => capturedKey = key);
 
         // Act

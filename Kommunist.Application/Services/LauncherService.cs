@@ -1,10 +1,16 @@
 using Kommunist.Core.Services.Interfaces;
 namespace Kommunist.Application.Services;
 
-public class LauncherService : ILauncherService
+public class LauncherService(ILauncher launcher) : ILauncherService
 {
-    public Task OpenAsync(string url)
+    private readonly ILauncher _launcher = launcher ?? throw new ArgumentNullException(nameof(launcher));
+
+    public LauncherService() : this(Launcher.Default)
     {
-        return Launcher.OpenAsync(url);
+    }
+
+    public Task OpenAsync(string? url)
+    {
+        return url != null ? _launcher.OpenAsync(url) : throw new ArgumentNullException(nameof(url));
     }
 }

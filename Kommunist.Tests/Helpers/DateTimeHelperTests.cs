@@ -1,7 +1,5 @@
-using System;
 using FluentAssertions;
 using Kommunist.Application.Helpers;
-using Xunit;
 
 namespace Kommunist.Tests.Helpers;
 
@@ -42,7 +40,7 @@ public class DateTimeHelperTests
     public void ToLocalDateTime_SupportsMinimumUnixSeconds()
     {
         // Arrange
-        long minSeconds = DateTimeOffset.MinValue.ToUnixTimeSeconds();
+        var minSeconds = DateTimeOffset.MinValue.ToUnixTimeSeconds();
         var dto = DateTimeOffset.FromUnixTimeSeconds(minSeconds);
         var expected = TimeZoneInfo.ConvertTime(dto, TimeZoneInfo.Local).DateTime;
 
@@ -57,7 +55,7 @@ public class DateTimeHelperTests
     public void ToLocalDateTime_SupportsMaximumUnixSeconds()
     {
         // Arrange
-        long maxSeconds = DateTimeOffset.MaxValue.ToUnixTimeSeconds();
+        var maxSeconds = DateTimeOffset.MaxValue.ToUnixTimeSeconds();
         var dto = DateTimeOffset.FromUnixTimeSeconds(maxSeconds);
         var expected = TimeZoneInfo.ConvertTime(dto, TimeZoneInfo.Local).DateTime;
 
@@ -72,7 +70,7 @@ public class DateTimeHelperTests
     public void ToLocalDateTime_BelowMinimumUnixSeconds_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
-        long belowMin = DateTimeOffset.MinValue.ToUnixTimeSeconds() - 1;
+        var belowMin = DateTimeOffset.MinValue.ToUnixTimeSeconds() - 1;
 
         // Act
         Action act = () => belowMin.ToLocalDateTime();
@@ -85,7 +83,7 @@ public class DateTimeHelperTests
     public void ToLocalDateTime_AboveMaximumUnixSeconds_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
-        long aboveMax = DateTimeOffset.MaxValue.ToUnixTimeSeconds() + 1;
+        var aboveMax = DateTimeOffset.MaxValue.ToUnixTimeSeconds() + 1;
 
         // Act
         Action act = () => aboveMax.ToLocalDateTime();

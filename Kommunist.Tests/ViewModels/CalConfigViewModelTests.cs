@@ -29,24 +29,21 @@ public class CalConfigViewModelTests
         out Mock<IFileHostingService> fileHosting,
         out Mock<IEmailService> email,
         out Mock<ICoordinatesService> coords,
-        out Mock<IAndroidCalendarService> android,
         out Mock<IToastService> toast,
         out Mock<IFileSaverService> saver,
         out Mock<IFileSystemService> fileSystem,
-        out Mock<ILauncherService> launcher,
-        out Mock<IPageDialogService> pageDialog)
+        out Mock<ILauncherService> launcher)
     {
         fileHosting = new Mock<IFileHostingService>(MockBehavior.Strict);
         email = new Mock<IEmailService>(MockBehavior.Strict);
         coords = new Mock<ICoordinatesService>(MockBehavior.Strict);
-        android = new Mock<IAndroidCalendarService>(MockBehavior.Strict);
+        var android = new Mock<IAndroidCalendarService>(MockBehavior.Strict);
         toast = new Mock<IToastService>(MockBehavior.Strict);
         saver = new Mock<IFileSaverService>(MockBehavior.Strict);
         fileSystem = new Mock<IFileSystemService>(MockBehavior.Strict);
         launcher = new Mock<ILauncherService>(MockBehavior.Strict);
-        pageDialog = new Mock<IPageDialogService>(MockBehavior.Strict);
+        var pageDialog = new Mock<IPageDialogService>(MockBehavior.Strict);
 
-        // Default "no-op" setups where harmless; avoid launcher default to not break VerifyAll
         fileSystem.SetupGet(fs => fs.AppDataDirectory).Returns("/tmp");
         pageDialog.Setup(p => p.DisplayActionSheet(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>()))
             .ReturnsAsync("Cancel");
@@ -66,11 +63,11 @@ public class CalConfigViewModelTests
     [Fact]
     public void ApplyQueryAttributes_SetsEventsAndDateRange()
     {
-        var sut = CreateSut(out _, out _, out _, out _, out _, out _, out _, out _, out _);
+        var sut = CreateSut(out _, out _, out _, out _, out _, out _, out _);
 
         var ev1 = CreateEvent("A", new DateTime(2025, 1, 10, 9, 0, 0), TimeSpan.FromHours(1));
         var ev2 = CreateEvent("B", new DateTime(2025, 1, 12, 9, 0, 0), TimeSpan.FromHours(1));
-        var events = new List<CalEvent> { ev2, ev1 }; // out of order on purpose
+        var events = new List<CalEvent> { ev2, ev1 };
 
         sut.ApplyQueryAttributes(new Dictionary<string, object>
         {
@@ -85,7 +82,7 @@ public class CalConfigViewModelTests
     [Fact]
     public void AlarmCommands_IncrementAndDecrementWithBounds()
     {
-        var sut = CreateSut(out _, out _, out _, out _, out _, out _, out _, out _, out _);
+        var sut = CreateSut(out _, out _, out _, out _, out _, out _, out _);
 
         sut.AlarmMinutes.Should().Be(10);
         sut.IncrementAlarmCommand.Execute(null);
@@ -108,8 +105,8 @@ public class CalConfigViewModelTests
     [Fact]
     public async Task SaveAndValidateIcalFileAsync_ShowsError_WhenInviteesMissing()
     {
-        var sut = CreateSut(out _, out _, out _, out _, out var toast, out _, out _, out _, out _);
-        sut.Events = new List<CalEvent> { CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1)) };
+        var sut = CreateSut(out _, out _, out _, out var toast, out _, out _, out _);
+        sut.Events = [CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1))];
         sut.Invitees = null;
 
         toast.Setup(t => t.ShowAsync("Email is required.")).Returns(Task.CompletedTask);
@@ -122,8 +119,8 @@ public class CalConfigViewModelTests
     [Fact]
     public async Task SaveAndValidateIcalFileAsync_ShowsError_WhenInviteesInvalidEmail()
     {
-        var sut = CreateSut(out _, out _, out _, out _, out var toast, out _, out _, out _, out _);
-        sut.Events = new List<CalEvent> { CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1)) };
+        var sut = CreateSut(out _, out _, out _, out var toast, out _, out _, out _);
+        sut.Events = [CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1))];
         sut.Invitees = "not-an-email";
 
         toast.Setup(t => t.ShowAsync("Invalid email format.")).Returns(Task.CompletedTask);
@@ -136,8 +133,8 @@ public class CalConfigViewModelTests
     [Fact]
     public async Task SaveAndValidateIcalFileAsync_SaveFileTrue_EmailFlow_Success()
     {
-        var sut = CreateSut(out var hosting, out var email, out var coords, out _, out var toast, out var saver, out _, out var launcher, out _);
-        sut.Events = new List<CalEvent> { CreateEvent("Meeting", DateTime.Now, TimeSpan.FromHours(1), "Some place") };
+        var sut = CreateSut(out var hosting, out var email, out var coords, out var toast, out var saver, out _, out var launcher);
+        sut.Events = [CreateEvent("Meeting", DateTime.Now, TimeSpan.FromHours(1), "Some place")];
         sut.Invitees = "user@example.com";
         sut.Email = "sender@example.com";
         sut.SaveFile = true;
@@ -162,8 +159,8 @@ public class CalConfigViewModelTests
     [Fact]
     public async Task SaveAndValidateIcalFileAsync_SaveFileTrue_SaveFails_ShowsError()
     {
-        var sut = CreateSut(out var hosting, out var email, out _, out _, out var toast, out var saver, out _, out var launcher, out _);
-        sut.Events = new List<CalEvent> { CreateEvent("Meeting", DateTime.Now, TimeSpan.FromHours(1)) };
+        var sut = CreateSut(out var hosting, out var email, out _, out var toast, out var saver, out _, out var launcher);
+        sut.Events = [CreateEvent("Meeting", DateTime.Now, TimeSpan.FromHours(1))];
         sut.Invitees = "user@example.com";
         sut.SaveFile = true;
         sut.SendEmail = true;
@@ -183,10 +180,10 @@ public class CalConfigViewModelTests
     [Fact]
     public async Task SaveAndValidateIcalFileAsync_SaveFileFalse_UploadFlow_OpensUrlAndShowsToast()
     {
-        var sut = CreateSut(out var hosting, out var email, out var coords, out _, out var toast, out _, out var fileSystem, out var launcher, out _);
-        var ev1 = CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1), null);
+        var sut = CreateSut(out var hosting, out var email, out var coords, out var toast, out _, out var fileSystem, out var launcher);
+        var ev1 = CreateEvent("A", DateTime.Now, TimeSpan.FromHours(1));
         var ev2 = CreateEvent("B", DateTime.Now.AddHours(2), TimeSpan.FromHours(1), "Venue");
-        sut.Events = new List<CalEvent> { ev1, ev2 };
+        sut.Events = [ev1, ev2];
         sut.Invitees = "user@example.com";
         sut.Email = "sender@example.com";
         sut.SaveFile = false;
@@ -194,7 +191,7 @@ public class CalConfigViewModelTests
 
         fileSystem.Setup(fs => fs.SaveTextAsync("events.ics", It.IsAny<string>()))
             .ReturnsAsync("/app/data/events.ics");
-        coords.Setup(c => c.GetCoordinatesAsync("Venue")).ReturnsAsync((0.0, 0.0)); // edge: no geo set
+        coords.Setup(c => c.GetCoordinatesAsync("Venue")).ReturnsAsync((0.0, 0.0));
         hosting.Setup(h => h.UploadFileAsync("/app/data/events.ics", "sender@example.com"))
             .ReturnsAsync(" https://example.com/ics ");
         toast.Setup(t => t.ShowAsync("The file was uploaded successfully")).Returns(Task.CompletedTask);

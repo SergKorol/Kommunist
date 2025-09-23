@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
-        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-        <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+        <TargetFrameworks>net9.0;net9.0-android;net9.0-ios</TargetFrameworks>
         <OutputType Condition="'$(TargetFramework)' != 'net9.0'">Exe</OutputType>
         <RootNamespace>Kommunist.Application</RootNamespace>
         <UseMaui>true</UseMaui>
@@ -69,6 +66,7 @@
 <!--        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />-->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="Ical.Net" Version="5.0.0-pre.41" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
         <PackageReference Include="Markdig" Version="0.40.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0-preview.3.25171.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />

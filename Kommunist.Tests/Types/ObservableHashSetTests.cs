@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using FluentAssertions;
 using Kommunist.Core.Types;
-using Xunit;
 
 namespace Kommunist.Tests.Types;
 
@@ -15,9 +11,9 @@ public class ObservableHashSetTests
     {
         private readonly ObservableHashSet<T> _set;
 
-        public List<NotifyCollectionChangedEventArgs> CollectionChangedEvents { get; } = new();
-        public List<PropertyChangedEventArgs> PropertyChangedEvents { get; } = new();
-        public List<string> CallOrder { get; } = new();
+        public List<NotifyCollectionChangedEventArgs> CollectionChangedEvents { get; } = [];
+        public List<PropertyChangedEventArgs> PropertyChangedEvents { get; } = [];
+        public List<string> CallOrder { get; } = [];
 
         public EventSink(ObservableHashSet<T> set)
         {
@@ -26,13 +22,13 @@ public class ObservableHashSetTests
             _set.PropertyChanged += OnPropertyChanged;
         }
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             CollectionChangedEvents.Add(e);
             CallOrder.Add(nameof(_set.CollectionChanged));
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             PropertyChangedEvents.Add(e);
             CallOrder.Add(nameof(_set.PropertyChanged));
@@ -52,6 +48,9 @@ public class ObservableHashSetTests
 
         set.Count.Should().Be(0);
         set.IsReadOnly.Should().BeFalse();
+
+        set.Add(1);
+        set.Remove(1);
     }
 
     [Fact]
@@ -69,8 +68,8 @@ public class ObservableHashSetTests
         var cc = sink.CollectionChangedEvents[0];
         cc.Action.Should().Be(NotifyCollectionChangedAction.Add);
         cc.NewItems.Should().NotBeNull();
-        cc.NewItems!.Count.Should().Be(1);
-        cc.NewItems![0].Should().Be(42);
+        cc.NewItems?.Count.Should().Be(1);
+        cc.NewItems?[0].Should().Be(42);
 
         sink.PropertyChangedEvents.Should().ContainSingle()
             .Which.PropertyName.Should().Be(nameof(set.Count));
@@ -81,8 +80,7 @@ public class ObservableHashSetTests
     [Fact]
     public void Add_WhenDuplicateItem_ShouldNotChangeOrRaiseEvents()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(7);
+        var set = new ObservableHashSet<int> { 7 };
         using var sink = new EventSink<int>(set);
 
         set.Add(7);
@@ -96,8 +94,7 @@ public class ObservableHashSetTests
     [Fact]
     public void Remove_WhenExistingItem_ShouldRemoveAndRaiseEvents()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(11);
+        var set = new ObservableHashSet<int> { 11 };
         using var sink = new EventSink<int>(set);
 
         var result = set.Remove(11);
@@ -110,7 +107,7 @@ public class ObservableHashSetTests
         var cc = sink.CollectionChangedEvents[0];
         cc.Action.Should().Be(NotifyCollectionChangedAction.Remove);
         cc.OldItems.Should().NotBeNull();
-        cc.OldItems![0].Should().Be(11);
+        cc.OldItems?[0].Should().Be(11);
         cc.NewItems.Should().BeNull();
 
         sink.PropertyChangedEvents.Should().ContainSingle()
@@ -122,8 +119,7 @@ public class ObservableHashSetTests
     [Fact]
     public void Remove_WhenMissingItem_ShouldReturnFalseAndNotRaiseEvents()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(1);
+        var set = new ObservableHashSet<int> { 1 };
         using var sink = new EventSink<int>(set);
 
         var result = set.Remove(999);
@@ -138,9 +134,11 @@ public class ObservableHashSetTests
     [Fact]
     public void Clear_WhenNotEmpty_ShouldClearAndRaiseResetAndPropertyChanged()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(1);
-        set.Add(2);
+        var set = new ObservableHashSet<int>
+        {
+            1,
+            2
+        };
         using var sink = new EventSink<int>(set);
 
         set.Clear();
@@ -185,18 +183,18 @@ public class ObservableHashSetTests
     [Fact]
     public void CopyTo_ShouldCopyElementsAtProvidedIndex()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(11);
-        set.Add(22);
+        var set = new ObservableHashSet<int>
+        {
+            11,
+            22
+        };
 
         var arr = new[] { -1, -1, -1, -1, -1 };
 
         set.CopyTo(arr, 1);
 
-        // The order from a HashSet is not guaranteed, so just verify membership
         var copied = new[] { arr[1], arr[2] };
-        copied.Should().BeEquivalentTo(new[] { 11, 22 });
-        // Unaffected slots remain the same
+        copied.Should().BeEquivalentTo([11, 22]);
         arr[0].Should().Be(-1);
         arr[3].Should().Be(-1);
         arr[4].Should().Be(-1);
@@ -205,16 +203,16 @@ public class ObservableHashSetTests
     [Fact]
     public void Enumerator_ShouldEnumerateAllElements()
     {
-        var set = new ObservableHashSet<int>();
-        set.Add(3);
-        set.Add(5);
-        set.Add(7);
+        var set = new ObservableHashSet<int>
+        {
+            3,
+            5,
+            7
+        };
 
-        var enumerated = new List<int>();
-        foreach (var x in set)
-            enumerated.Add(x);
+        var enumerated = set.ToList();
 
-        enumerated.Should().BeEquivalentTo(new[] { 3, 5, 7 });
+        enumerated.Should().BeEquivalentTo([3, 5, 7]);
     }
 
     [Fact]

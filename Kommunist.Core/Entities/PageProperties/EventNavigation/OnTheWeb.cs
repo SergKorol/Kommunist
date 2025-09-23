@@ -5,9 +5,9 @@ namespace Kommunist.Core.Entities.PageProperties.EventNavigation;
 public record OnTheWeb
 {
     [JsonProperty("icon")]
-    public string Icon { get; set; }
+    public string? Icon { get; set; }
     [JsonProperty("email")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
     [JsonProperty("link")]
-    public string Link { get; set; }
+    public string? Link { get; set; }
 }

@@ -5,8 +5,8 @@ namespace Kommunist.Core.Models;
 public record IconText
 {
     [JsonProperty("main")]
-    public string Main { get; set; }
+    public string? Main { get; set; }
 
     [JsonProperty("description")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 }

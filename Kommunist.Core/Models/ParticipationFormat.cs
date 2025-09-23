@@ -8,5 +8,5 @@ public record ParticipationFormat
     public bool Online { get; set; }
     
     [JsonProperty("location")]
-    public string Location { get; set; }
+    public string? Location { get; set; }
 }

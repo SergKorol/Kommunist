@@ -18,9 +18,8 @@ public class EventCalendarDetailViewModelTests
         var eventService = new Mock<IEventService>(MockBehavior.Strict);
         eventService.Setup(s => s.GetHomePage(eventId))
             .ReturnsAsync(pageItems);
-        // Agenda not needed for these tests; keep default behavior safe
         eventService.Setup(s => s.GetAgenda(It.IsAny<int>()))
-            .ReturnsAsync((Kommunist.Core.Entities.PageProperties.Agenda.AgendaPage?)null);
+            .ReturnsAsync((Core.Entities.PageProperties.Agenda.AgendaPage?)null);
 
         var fileHosting = new Mock<IFileHostingService>(MockBehavior.Loose);
         var androidCalendar = new Mock<IAndroidCalendarService>(MockBehavior.Loose);
@@ -39,19 +38,6 @@ public class EventCalendarDetailViewModelTests
 
         var tcs = new TaskCompletionSource<CalEventDetail>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        void Handler(object? sender, PropertyChangedEventArgs args)
-        {
-            if (args.PropertyName == nameof(EventCalendarDetailViewModel.SelectedEventDetail) ||
-                string.IsNullOrEmpty(args.PropertyName))
-            {
-                if (vm.SelectedEventDetail is not null)
-                {
-                    vm.PropertyChanged -= Handler;
-                    tcs.TrySetResult(vm.SelectedEventDetail);
-                }
-            }
-        }
-
         vm.PropertyChanged += Handler;
 
         using var cts = new CancellationTokenSource(timeout.Value);
@@ -62,22 +48,35 @@ public class EventCalendarDetailViewModelTests
         });
 
         return await tcs.Task.ConfigureAwait(false);
+
+        void Handler(object? sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName != nameof(EventCalendarDetailViewModel.SelectedEventDetail) &&
+                !string.IsNullOrEmpty(args.PropertyName)) return;
+            if (vm.SelectedEventDetail is null) return;
+            vm.PropertyChanged -= Handler;
+            tcs.TrySetResult(vm.SelectedEventDetail);
+        }
     }
 
     private static T CallPrivateStatic<T>(string methodName, Type[]? parameterTypes, params object?[] args)
     {
         var type = typeof(EventCalendarDetailViewModel);
-        var flags = BindingFlags.NonPublic | BindingFlags.Static;
-        MethodInfo? method;
+        const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
 
-        if (parameterTypes is null)
-            method = type.GetMethod(methodName, flags);
-        else
-            method = type.GetMethod(methodName, flags, binder: null, types: parameterTypes, modifiers: null);
+        var method = parameterTypes is null ? type.GetMethod(methodName, flags) : type.GetMethod(methodName, flags, binder: null, types: parameterTypes, modifiers: null);
 
         Assert.NotNull(method);
-        var result = method!.Invoke(null, args);
-        return (T)result!;
+        var result = method.Invoke(null, args);
+
+        return result switch
+        {
+            null => throw new Xunit.Sdk.XunitException(
+                $"Invoked method '{methodName}' returned null, expected a value of type '{typeof(T)}'."),
+            T typed => typed,
+            _ => throw new Xunit.Sdk.XunitException(
+                $"Invoked method '{methodName}' returned type '{result.GetType()}' which is not assignable to expected type '{typeof(T)}'.")
+        };
     }
 
     [Fact]
@@ -96,9 +95,9 @@ public class EventCalendarDetailViewModelTests
                 Details = new Details
                 {
                     DatesTimestamp = new DatesTimestamp { Start = start, End = end },
-                    ParticipationFormat = null // triggers Offline + World
+                    ParticipationFormat = null
                 },
-                Languages = new List<string> { "en", "ru" },
+                Languages = ["en", "ru"],
                 EventUrl = "https://event.example.com"
             }
         };
@@ -112,7 +111,7 @@ public class EventCalendarDetailViewModelTests
             }
         };
 
-        var vm = CreateVmWithPageItems(new[] { main, unlimitedText });
+        var vm = CreateVmWithPageItems([main, unlimitedText]);
 
         // Act
         var detail = await WaitForSelectedEventDetailAsync(vm);
@@ -183,12 +182,12 @@ public class EventCalendarDetailViewModelTests
     public void MakeSafeFileName_Replaces_Invalid_Chars_And_Trims()
     {
         // Arrange
-        var input = "  in:va*lid?name  ";
+        const string input = "  in:va*lid?name  ";
 
         // Act
         var result = CallPrivateStatic<string>(
             "MakeSafeFileName",
-            new[] { typeof(string) },
+            [typeof(string)],
             input
         );
 
@@ -204,7 +203,7 @@ public class EventCalendarDetailViewModelTests
         // Act
         var result = CallPrivateStatic<string>(
             "BuildIcsDescription",
-            new[] { typeof(string), typeof(string) },
+            [typeof(string), typeof(string)],
             null, null
         );
 
@@ -222,7 +221,7 @@ public class EventCalendarDetailViewModelTests
         // Act
         var result = CallPrivateStatic<DateTime>(
             "ConvertDateTime",
-            new[] { typeof(long) },
+            [typeof(long)],
             unix
         );
 
@@ -239,9 +238,8 @@ public class EventCalendarDetailViewModelTests
         var start = new DateTimeOffset(2024, 1, 1, 10, 0, 0, TimeSpan.Zero).ToUnixTimeSeconds();
         var end = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero).ToUnixTimeSeconds();
 
-        // Force deterministic culture
         var originalCulture = CultureInfo.CurrentCulture;
-        var originalUICulture = CultureInfo.CurrentUICulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
         try
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
@@ -250,7 +248,7 @@ public class EventCalendarDetailViewModelTests
             // Act
             var result = CallPrivateStatic<string>(
                 "GetEventPeriod",
-                new[] { typeof(long?), typeof(long?) },
+                [typeof(long?), typeof(long?)],
                 (long?)start, (long?)end
             );
 
@@ -263,7 +261,7 @@ public class EventCalendarDetailViewModelTests
         finally
         {
             CultureInfo.CurrentCulture = originalCulture;
-            CultureInfo.CurrentUICulture = originalUICulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
         }
     }
 
@@ -275,7 +273,7 @@ public class EventCalendarDetailViewModelTests
         var end = new DateTimeOffset(2024, 1, 2, 9, 0, 0, TimeSpan.Zero).ToUnixTimeSeconds();
 
         var originalCulture = CultureInfo.CurrentCulture;
-        var originalUICulture = CultureInfo.CurrentUICulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
         try
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
@@ -284,7 +282,7 @@ public class EventCalendarDetailViewModelTests
             // Act
             var result = CallPrivateStatic<string>(
                 "GetEventPeriod",
-                new[] { typeof(long?), typeof(long?) },
+                [typeof(long?), typeof(long?)],
                 (long?)start, (long?)end
             );
 
@@ -297,7 +295,7 @@ public class EventCalendarDetailViewModelTests
         finally
         {
             CultureInfo.CurrentCulture = originalCulture;
-            CultureInfo.CurrentUICulture = originalUICulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
         }
     }
 
@@ -317,8 +315,8 @@ public class EventCalendarDetailViewModelTests
             }
         };
 
-        var vm = CreateVmWithPageItems(new[] { main });
-        var _ = await WaitForSelectedEventDetailAsync(vm);
+        var vm = CreateVmWithPageItems([main]);
+        _ = await WaitForSelectedEventDetailAsync(vm);
 
         // Act + Assert: command should execute without throwing, despite internal Toast/Launcher usage
         var ex = await Record.ExceptionAsync(async () =>
@@ -332,7 +330,7 @@ public class EventCalendarDetailViewModelTests
     }
 
     [Fact]
-    public void IsWebViewLoading_Raises_PropertyChanged()
+    public async Task IsWebViewLoading_Raises_PropertyChanged()
     {
         // Arrange
         var eventService = new Mock<IEventService>(MockBehavior.Strict);
@@ -343,7 +341,7 @@ public class EventCalendarDetailViewModelTests
         var vm = new EventCalendarDetailViewModel(eventService.Object, 0, fileHosting.Object, androidCalendar.Object);
 
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        vm.PropertyChanged += (s, e) =>
+        vm.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(EventCalendarDetailViewModel.IsWebViewLoading))
                 tcs.TrySetResult(true);
@@ -353,7 +351,8 @@ public class EventCalendarDetailViewModelTests
         vm.IsWebViewLoading = !vm.IsWebViewLoading;
 
         // Assert
-        Assert.True(tcs.Task.Wait(TimeSpan.FromSeconds(1)));
+        var completed = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(1))) == tcs.Task;
+        Assert.True(completed);
     }
 }
 

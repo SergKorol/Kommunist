@@ -17,20 +17,13 @@ public sealed class ServiceHelperTests : IDisposable
 
     private static void ResetServiceProvider()
     {
-        // Reset the private static field to ensure isolated tests
         var field = typeof(ServiceHelper).GetField("_services", BindingFlags.Static | BindingFlags.NonPublic);
         field?.SetValue(null, null);
     }
 
-    private interface IDummyService
-    {
-        Guid Id { get; }
-    }
+    private interface IDummyService;
 
-    private sealed class DummyService : IDummyService
-    {
-        public Guid Id { get; } = Guid.NewGuid();
-    }
+    private sealed class DummyService : IDummyService;
 
     [Fact]
     public void Get_ReturnsRegisteredService_WhenInitialized()
@@ -58,7 +51,7 @@ public sealed class ServiceHelperTests : IDisposable
         ServiceHelper.Initialize(services);
 
         // Act
-        var ex = Assert.Throws<InvalidOperationException>(() => ServiceHelper.Get<IDummyService>());
+        var ex = Assert.Throws<InvalidOperationException>(ServiceHelper.Get<IDummyService>);
 
         // Assert
         Assert.Equal($"Service {typeof(IDummyService)} not found.", ex.Message);
@@ -68,10 +61,10 @@ public sealed class ServiceHelperTests : IDisposable
     public void Get_ThrowsInvalidOperationException_WhenNoServicesAreAvailable()
     {
         // Arrange
-        ResetServiceProvider(); // Ensure not initialized and no fallback services in test env
+        ResetServiceProvider();
 
         // Act
-        var ex = Assert.Throws<InvalidOperationException>(() => ServiceHelper.Get<IDummyService>());
+        var ex = Assert.Throws<InvalidOperationException>(ServiceHelper.Get<IDummyService>);
 
         // Assert
         Assert.Equal("MAUI Services are not available.", ex.Message);

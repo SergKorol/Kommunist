@@ -49,7 +49,6 @@ public class EventCalendarViewModel : BaseViewModel
     private readonly IFileHostingService _fileHostingService;
     private readonly IAndroidCalendarService _androidCalendarService;
 
-    // Concurrency + month events cache
     private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
     private readonly Dictionary<string, List<CalEvent>> _monthEventsCache = new();
 
@@ -180,7 +179,6 @@ public class EventCalendarViewModel : BaseViewModel
 
             await LoadAndPopulateEventsAsync();
 
-            // Cache freshly loaded events for current month
             _monthEventsCache[monthKey] = CalEvents.ToList();
 
             UpdateDaysWithCalEvents();
@@ -224,20 +222,23 @@ public class EventCalendarViewModel : BaseViewModel
         return (start, end);
     }
 
-    private static List<CalEvent> ConvertToCalEvents(IEnumerable<ServiceEvent> serviceEvents)
+    private static List<CalEvent> ConvertToCalEvents(IEnumerable<ServiceEvent>? serviceEvents)
     {
-        return serviceEvents.Select(e => new CalEvent
-        {
-            EventId = e.Id,
-            Title = e.Title,
-            Location = e.ParticipationFormat.Online ? string.Empty : e.ParticipationFormat.Location,
-            Description = BuildEventDescription(e),
-            DateTime = e.Start.ToLocalDateTime(),
-            Start = e.Start,
-            End = e.End,
-            Color = Colors[Random.Next(Colors.Count)],
-            Url = $"https://wearecommunity.io/events/{e.EventUrl}"
-        }).ToList();
+        if (serviceEvents != null)
+            return serviceEvents.Select(e => new CalEvent
+            {
+                EventId = e.Id,
+                Title = e.Title,
+                Location = e.ParticipationFormat is { Online: true } ? string.Empty : e.ParticipationFormat?.Location,
+                Description = BuildEventDescription(e),
+                DateTime = e.Start.ToLocalDateTime(),
+                Start = e.Start,
+                End = e.End,
+                Color = Colors[Random.Next(Colors.Count)],
+                Url = $"https://wearecommunity.io/events/{e.EventUrl}"
+            }).ToList();
+        
+        return [];
     }
 
     private static string BuildEventDescription(ServiceEvent serviceEvent)
@@ -249,11 +250,11 @@ public class EventCalendarViewModel : BaseViewModel
             ? startLocal.ToString("dd.MM.yyyy")
             : $"{startLocal:dd.MM.yyyy} - {endLocal:dd.MM.yyyy}";
 
-        var languages = serviceEvent.Languages?.Any() == true
+        var languages = serviceEvent.Languages is { Count: > 0 }
             ? string.Join("/", serviceEvent.Languages.ReplaceCodesWithFlags())
             : "N/A";
 
-        var location = serviceEvent.ParticipationFormat.Online ? string.Empty : serviceEvent.ParticipationFormat.Location;
+        var location = serviceEvent.ParticipationFormat is { Online: true } ? string.Empty : serviceEvent.ParticipationFormat?.Location;
 
         var baseDescription = $"{datePart}, {languages}";
 
