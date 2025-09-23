@@ -4,7 +4,6 @@ using Kommunist.Core.Models;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
-using Xunit;
 
 namespace Kommunist.Tests.Services;
 
@@ -13,12 +12,12 @@ public class FilterServiceTests
     private static FilterOptions CreateSampleFilters() => new()
     {
         TagFilter = "dotnet",
-        TagFilters = new() { "maui", "xunit" },
+        TagFilters = ["maui", "xunit"],
         SpeakerFilter = "Jane Doe",
-        SpeakerFilters = new() { "Alice", "Bob" },
-        CountryFilters = new() { "US", "DE" },
+        SpeakerFilters = ["Alice", "Bob"],
+        CountryFilters = ["US", "DE"],
         CommunityFilter = "DevCommunity",
-        CommunityFilters = new() { "Group1" },
+        CommunityFilters = ["Group1"],
         OnlineOnly = true
     };
 
@@ -137,8 +136,10 @@ public class FilterServiceTests
     {
         private readonly Dictionary<string, string> _storage = new();
 
-        public string Get(string key, string defaultValue) =>
-            _storage.TryGetValue(key, out var v) ? v : defaultValue;
+        public string Get(string key, string? defaultValue)
+        {
+            return _storage.TryGetValue(key, out var value) ? value : defaultValue ?? string.Empty;
+        }
 
         public void Set(string key, string value) => _storage[key] = value;
 
