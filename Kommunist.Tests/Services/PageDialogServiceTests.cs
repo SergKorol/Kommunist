@@ -7,25 +7,27 @@ namespace Kommunist.Tests.Services;
 
 public class PageDialogServiceTests
 {
+    private const string Title = "Choose";
+    private const string Cancel = "Cancel";
+    private const string Destruction = "Delete";
+    
     [Fact]
     public async Task DisplayActionSheet_ReturnsUnderlyingResult()
     {
         // Arrange
-        var title = "Choose";
-        var cancel = "Cancel";
-        var destruction = "Delete";
+
         var buttons = new[] { "A", "B" };
-        var expected = "B";
+        const string expected = "B";
 
         var dialogMock = new Mock<IMainPageDialog>(MockBehavior.Strict);
         dialogMock
-            .Setup(d => d.DisplayActionSheet(title, cancel, destruction, It.Is<string[]>(a => a.SequenceEqual(buttons))))
+            .Setup(d => d.DisplayActionSheet(Title, Cancel, Destruction, It.Is<string[]>(a => a.SequenceEqual(buttons))))
             .ReturnsAsync(expected);
 
         var sut = new PageDialogService(dialogMock.Object);
 
         // Act
-        var result = await sut.DisplayActionSheet(title, cancel, destruction, buttons);
+        var result = await sut.DisplayActionSheet(Title, Cancel, Destruction, buttons);
 
         // Assert
         result.Should().Be(expected);
@@ -36,20 +38,17 @@ public class PageDialogServiceTests
     public async Task DisplayActionSheet_ReturnsNull_WhenUnderlyingReturnsNull()
     {
         // Arrange
-        var title = "Choose";
-        var cancel = "Cancel";
-        var destruction = "Delete";
         var buttons = Array.Empty<string>();
 
         var dialogMock = new Mock<IMainPageDialog>(MockBehavior.Strict);
         dialogMock
-            .Setup(d => d.DisplayActionSheet(title, cancel, destruction, It.Is<string[]>(a => a.SequenceEqual(buttons))))
+            .Setup(d => d.DisplayActionSheet(Title, Cancel, Destruction, It.Is<string[]>(a => a.SequenceEqual(buttons))))
             .ReturnsAsync((string?)null);
 
         var sut = new PageDialogService(dialogMock.Object);
 
         // Act
-        var result = await sut.DisplayActionSheet(title, cancel, destruction, buttons);
+        var result = await sut.DisplayActionSheet(Title, Cancel, Destruction, buttons);
 
         // Assert
         result.Should().BeNull();
@@ -60,9 +59,9 @@ public class PageDialogServiceTests
     public async Task DisplayActionSheet_PassesParametersThrough()
     {
         // Arrange
-        var title = "Title-123";
-        var cancel = "Cancel-456";
-        var destruction = "Destroy-789";
+        const string title = "Title-123";
+        const string cancel = "Cancel-456";
+        const string destruction = "Destroy-789";
         var buttons = new[] { "One", "Two", "Three" };
 
         var called = false;
@@ -72,7 +71,7 @@ public class PageDialogServiceTests
             .Setup(d => d.DisplayActionSheet(
                 It.Is<string>(t => t == title),
                 It.Is<string>(c => c == cancel),
-                It.Is<string>(d => d == destruction),
+                It.Is<string>(x => x == destruction),
                 It.Is<string[]>(b => b.SequenceEqual(buttons))))
             .Callback(() => called = true)
             .ReturnsAsync("One");
@@ -80,7 +79,7 @@ public class PageDialogServiceTests
         var sut = new PageDialogService(dialogMock.Object);
 
         // Act
-        var _ = await sut.DisplayActionSheet(title, cancel, destruction, buttons);
+        _ = await sut.DisplayActionSheet(title, cancel, destruction, buttons);
 
         // Assert
         called.Should().BeTrue("the service should forward all parameters to the underlying dialog");
@@ -91,9 +90,9 @@ public class PageDialogServiceTests
     public async Task DisplayActionSheet_PropagatesException()
     {
         // Arrange
-        var title = "Error title";
-        var cancel = "Cancel";
-        var destruction = "Destroy";
+        const string title = "Error title";
+        const string cancel = "Cancel";
+        const string destruction = "Destroy";
         var buttons = new[] { "X" };
 
         var dialogMock = new Mock<IMainPageDialog>(MockBehavior.Strict);
