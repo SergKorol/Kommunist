@@ -1,6 +1,5 @@
 using System.Windows.Input;
 using Kommunist.Core.Services.Interfaces;
-using Microsoft.Maui.Controls;
 using Moq;
 
 namespace Kommunist.Tests.Controls;
@@ -9,9 +8,9 @@ public class TestableMyTabBar
     private readonly INavigationService _navigationService;
     private readonly IToastService _toastService;
 
-    public ICommand NavigateToCommand { get; init; }
+    public ICommand NavigateToCommand { get; }
 
-    public TestableMyTabBar(INavigationService navigationService, IToastService toastService)
+    public TestableMyTabBar(INavigationService? navigationService, IToastService? toastService)
     {
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _toastService = toastService ?? throw new ArgumentNullException(nameof(toastService));
@@ -63,7 +62,7 @@ public class MyTabBarTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new TestableMyTabBar(null!, _mockToastService.Object));
+            new TestableMyTabBar(null, _mockToastService.Object));
 
         Assert.Equal("navigationService", exception.ParamName);
     }
@@ -73,7 +72,7 @@ public class MyTabBarTests
     {
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
-            new TestableMyTabBar(_mockNavigationService.Object, null!));
+            new TestableMyTabBar(_mockNavigationService.Object, null));
 
         Assert.Equal("toastService", exception.ParamName);
     }
