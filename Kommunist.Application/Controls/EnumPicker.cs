@@ -22,7 +22,7 @@ internal class EnumPicker : Picker
                 picker.ItemsSource = Enum.GetValues((Type)newValue);
             });
 
-    public Type EnumType
+    public Type? EnumType
     {
         set => SetValue(EnumTypeProperty, value);
         get => (Type)GetValue(EnumTypeProperty);
