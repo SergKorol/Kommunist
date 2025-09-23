@@ -9,7 +9,7 @@ public sealed class MauiNavigationServiceTests
     [Fact]
     public void Ctor_WhenShellNavigatorIsNull_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => new MauiNavigationService(null!));
+        Assert.Throws<ArgumentNullException>(() => new MauiNavigationService(null));
     }
 
     [Fact]
@@ -18,7 +18,7 @@ public sealed class MauiNavigationServiceTests
         // Arrange
         var shellMock = new Mock<IShellNavigator>(MockBehavior.Strict);
         var sut = new MauiNavigationService(shellMock.Object);
-        var route = "home/details";
+        const string route = "home/details";
         var expectedTask = Task.CompletedTask;
 
         shellMock
@@ -41,7 +41,7 @@ public sealed class MauiNavigationServiceTests
         var shellMock = new Mock<IShellNavigator>(MockBehavior.Loose);
         var sut = new MauiNavigationService(shellMock.Object);
 
-        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.GoToAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.GoToAsync(null));
     }
 
     [Theory]
@@ -64,14 +64,14 @@ public sealed class MauiNavigationServiceTests
         // Arrange
         var shellMock = new Mock<IShellNavigator>(MockBehavior.Strict);
         var sut = new MauiNavigationService(shellMock.Object);
-        var route = "home/details";
+        const string route = "home/details";
         var fault = new InvalidOperationException("boom");
 
         shellMock
             .Setup(s => s.GoToAsync(route))
             .Returns(Task.FromException(fault));
 
-        // Act + Assert (exception observed when awaited)
+        // Act + Assert
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await sut.GoToAsync(route));
         Assert.Same(fault, ex);
         shellMock.VerifyAll();
