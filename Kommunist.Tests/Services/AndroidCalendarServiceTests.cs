@@ -299,7 +299,7 @@ public class AndroidCalendarServiceTests
         var lines = new List<string>
         {
             "BEGIN:VEVENT",
-            $"UID:{Guid.NewGuid()}",
+            $"UID:{Guid.NewGuid()}"
         };
 
         if (!string.IsNullOrEmpty(start))
@@ -347,7 +347,7 @@ public class AndroidCalendarServiceTests
         var lines = new List<string>
         {
             "BEGIN:VCALENDAR",
-            "VERSION:2.0",
+            "VERSION:2.0"
         };
         lines.AddRange(vevents);
         lines.Add("END:VCALENDAR");
@@ -425,7 +425,7 @@ public class AndroidCalendarServiceTests
             }
             else
             {
-                args[i] = p.HasDefaultValue ? p.DefaultValue : (p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null);
+                args[i] = p.HasDefaultValue ? p.DefaultValue : p.ParameterType.IsValueType ? Activator.CreateInstance(p.ParameterType) : null;
             }
         }
 

@@ -130,7 +130,7 @@ public class CoordinatesServiceTests
         var client = new HttpClient(handler);
         var sut = new CoordinatesService(client);
 
-        var location = "New York, NY";
+        const string location = "New York, NY";
         await sut.GetCoordinatesAsync(location);
 
         requestedUrl.Should().NotBeNullOrEmpty();
