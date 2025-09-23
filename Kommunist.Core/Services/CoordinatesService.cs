@@ -8,7 +8,7 @@ public class CoordinatesService(HttpClient httpClient) : ICoordinatesService
 {
     private readonly HttpClient? _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-    public async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string location)
+    public async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string? location)
     {
         if (string.IsNullOrEmpty(location))
         {
