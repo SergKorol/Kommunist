@@ -1,12 +1,12 @@
 using System.Net;
 using System.Text;
 using FluentAssertions;
+using Kommunist.Core.ApiModels;
+using Kommunist.Core.Models;
 using Moq;
 using Newtonsoft.Json;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Kommunist.Core.Models;
-using Kommunist.Core.Entities;
 
 namespace Kommunist.Tests.Services;
 
@@ -59,10 +59,8 @@ public class EventServiceTests
         var request = handler.Requests.Should().ContainSingle().Subject;
         var uri = request.RequestUri?.ToString();
 
-        // Base and mandatory params in order
         uri.Should().StartWith($"https://example.com/api/v2/calendar?start_date={expectedFrom}&end_date={expectedTo}");
 
-        // Filters presence
         uri.Should().Contain("&tag[]=tag1")
            .And.Contain("&tag[]=tag2")
            .And.Contain("&speaker[]=sp1")

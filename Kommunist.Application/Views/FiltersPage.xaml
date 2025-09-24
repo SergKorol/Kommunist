@@ -9,7 +9,7 @@
              x:DataType="{x:Type viewModels:EventFiltersViewModel}"
              Style="{StaticResource DefaultPageStyle}"
              x:Name="Filters"
-             ControlTemplate="{StaticResource SecondaryColorTemplate}">
+             ControlTemplate="{StaticResource TapBarTemplate}">
     
     <controls:MyTabBar.Resources>
         <ResourceDictionary>

@@ -29,7 +29,7 @@ public class AndroidCalendarServiceTests
         var sut = new AndroidCalendarService(store.Object);
         var icsPath = CreateTempIcs(
             VEvent("2025-01-01T10:00:00Z", "2025-01-01T11:00:00Z", "Any Event")
-        ); // ensure there is at least one event
+        );
 
         try
         {
@@ -59,7 +59,7 @@ public class AndroidCalendarServiceTests
         {
             var act = () => sut.AddEvents(icsPath, targetCalendarName: "NonExistingName");
             await act.Should().ThrowAsync<InvalidOperationException>()
-                .WithMessage("Не вдалося знайти календар з вказаною назвою.");
+                .WithMessage("Wasn't able to find calendar with specified name.");
         }
         finally
         {
@@ -145,10 +145,8 @@ public class AndroidCalendarServiceTests
             location.Should().Be("Loc");
             isAllDay.Should().BeFalse();
 
-            // Assert duration equals 1 hour regardless of timezone conversions
             (endDtoArg - startDtoArg).Should().Be(TimeSpan.FromHours(1));
 
-            // Assert exactly one reminder is added
             CountEnumerable(remindersArg).Should().Be(1);
         }
         finally
@@ -186,7 +184,6 @@ public class AndroidCalendarServiceTests
 
             var remindersArg = args[7];
 
-            // Assert exactly one reminder is added
             CountEnumerable(remindersArg).Should().Be(1);
         }
         finally

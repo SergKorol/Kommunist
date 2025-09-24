@@ -7,9 +7,9 @@ public class DateTimeHelperTests
 {
     [Theory]
     [InlineData(0L)]
-    [InlineData(1_600_000_000L)]      // 2020-09-13T12:26:40Z
-    [InlineData(-1_000_000_000L)]     // 1938-04-24T22:13:20Z
-    [InlineData(2_147_483_647L)]      // Int32.MaxValue seconds
+    [InlineData(1_600_000_000L)]// 2020-09-13T12:26:40Z
+    [InlineData(-1_000_000_000L)]// 1938-04-24T22:13:20Z
+    [InlineData(2_147_483_647L)]// Int32.MaxValue seconds
     public void ToLocalDateTime_ReturnsExpected_LocalClockTime(long seconds)
     {
         // Arrange

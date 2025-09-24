@@ -4,6 +4,5 @@
              x:Class="Kommunist.Application.Controls.MyTabBar"
              x:Name="Menu">
 <ContentPage.Resources>
-    
 </ContentPage.Resources>
 </ContentPage>

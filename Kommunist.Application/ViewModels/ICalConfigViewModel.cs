@@ -8,44 +8,38 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using JetBrains.Annotations;
-using Kommunist.Application.Models;
+using Kommunist.Application.Services.Dialog;
+using Kommunist.Application.Services.File;
+using Kommunist.Application.Services.Launch;
+using Kommunist.Application.Services.Toasts;
+using Kommunist.Application.XCalendar;
+using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 
 namespace Kommunist.Application.ViewModels;
 
 public partial class CalConfigViewModel : ObservableValidator, IQueryAttributable
 {
+    #region Services
     private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
     private readonly ICoordinatesService _coordinatesService;
     [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
-
-    // Abstractions for testability
     private readonly IToastService _toastService;
     private readonly IFileSaverService _fileSaverService;
     private readonly IFileSystemService _fileSystemService;
     private readonly ILauncherService _launcherService;
     [UsedImplicitly] private readonly IPageDialogService _pageDialogService;
+    #endregion
     
+    #region Properties
     public List<CalEvent> Events { get; set; } = [];
-
-    [ObservableProperty]
-    [Required(ErrorMessage = "Email is required.")]
-    [EmailAddress(ErrorMessage = "Invalid email format.")]
-    private string? _invitees;
-
     public int AlarmMinutes { get; set; } = 10;
-
     public string? Email { get; set; }
-
     public string? FirstEventDateTime { get; set; }
     public string? LastEventDateTime { get; set; }
-
-    public ICommand IncrementAlarmCommand => new Command(() => AlarmMinutes = Math.Min(120, AlarmMinutes + 5));
-    public ICommand DecrementAlarmCommand => new Command(() => AlarmMinutes = Math.Max(0, AlarmMinutes - 5));
-
-
-    private bool _sendEmail;
+    
     public bool SendEmail
     {
         get => _sendEmail;
@@ -56,8 +50,7 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             OnPropertyChanged();
         }
     }
-
-    private bool _saveFile;
+    
     public bool SaveFile
     {
         get => _saveFile;
@@ -68,10 +61,24 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             OnPropertyChanged();
         }
     }
+    #endregion
 
+    #region Fields
+    [ObservableProperty]
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email format.")]
+    private string? _invitees;
+    private bool _sendEmail;
+    private bool _saveFile;
+    #endregion
+
+    #region Commands
+    public ICommand IncrementAlarmCommand => new Command(() => AlarmMinutes = Math.Min(120, AlarmMinutes + 5));
+    public ICommand DecrementAlarmCommand => new Command(() => AlarmMinutes = Math.Max(0, AlarmMinutes - 5));
     public ICommand GenerateIcalCommand { get; }
-
-    // Original constructor preserved; chain to extended one with default wrappers
+    #endregion
+    
+    #region Ctor
     public CalConfigViewModel(
         IFileHostingService fileHostingService,
         IEmailService emailService,
@@ -82,15 +89,14 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
             emailService,
             coordinatesService,
             androidCalendarService,
-            new Services.ToastService(),
-            new Services.FileSaverService(),
-            new Services.FileSystemService(),
-            new Services.LauncherService(),
-            new Services.PageDialogService())
+            new ToastService(),
+            new FileSaverService(),
+            new FileSystemService(),
+            new LauncherService(),
+            new PageDialogService())
     {
     }
 
-    // Extended constructor for DI and tests
     public CalConfigViewModel(
         IFileHostingService fileHostingService,
         IEmailService emailService,
@@ -116,7 +122,9 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         
         GenerateIcalCommand = new Command(SaveIcalFile);
     }
+    #endregion
 
+    #region Public
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (!query.TryGetValue("SelectedEvents", out var events)) return;
@@ -125,7 +133,9 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         FirstEventDateTime = dates.Min().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
         LastEventDateTime = dates.Max().Date.ToString("d MMM yyyy", CultureInfo.CurrentCulture);
     }
+    #endregion
 
+    #region Private
     private async void SaveIcalFile()
     {
         try
@@ -138,7 +148,6 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
         }
     }
 
-    // Exposed as internal for testing
     internal async Task SaveAndValidateIcalFileAsync()
     {
         ValidateAllProperties();
@@ -276,7 +285,6 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
 
     private async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
     {
-        // Delegate to the file system abstraction
         return await _fileSystemService.SaveTextAsync(fileName, icalString);
     }
 
@@ -319,4 +327,5 @@ public partial class CalConfigViewModel : ObservableValidator, IQueryAttributabl
                                </html>
                """;
     }
+    #endregion
 }

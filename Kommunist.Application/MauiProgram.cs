@@ -2,11 +2,15 @@
 using System.Reflection;
 using CommunityToolkit.Maui;
 using Kommunist.Application.Helpers;
-using Kommunist.Application.Services;
+using Kommunist.Application.Services.Dialog;
+using Kommunist.Application.Services.File;
+using Kommunist.Application.Services.Launch;
+using Kommunist.Application.Services.Toasts;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
@@ -68,7 +72,6 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            // .UseMauiCommunityToolkitMarkup()
             .ConfigureFonts(ConfigureFonts);
     }
 
@@ -98,6 +101,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MainPage>();
         
         builder.Services.AddHttpClientConfiguration();
+        builder.Services.AddLibraryServices();
     }
 
     private static void ConfigureLogging(MauiAppBuilder builder)

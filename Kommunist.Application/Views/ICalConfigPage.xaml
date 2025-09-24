@@ -9,7 +9,7 @@
              x:Class="Kommunist.Application.Views.CalConfigPage"
              x:DataType="{x:Type viewModels:CalConfigViewModel}"
              Style="{StaticResource DefaultPageStyle}"
-             ControlTemplate="{StaticResource SecondaryColorTemplate}">
+             ControlTemplate="{StaticResource TapBarTemplate}">
        <controls:MyTabBar.Resources>
            <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
            <helpers:HasItemsConverter x:Key="HasItemsConverter" />

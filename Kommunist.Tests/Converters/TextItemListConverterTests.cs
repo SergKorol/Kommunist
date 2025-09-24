@@ -1,6 +1,6 @@
 using FluentAssertions;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Converters;
-using Kommunist.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

@@ -1,12 +1,12 @@
-using Kommunist.Core.Entities;
-using Kommunist.Core.Entities.Enums;
-using Kommunist.Core.Entities.PageProperties.Agenda;
-using Kommunist.Core.Entities.PageProperties.BasicText;
-using Kommunist.Core.Entities.PageProperties.EventNavigation;
-using Kommunist.Core.Entities.PageProperties.Main;
-using Kommunist.Core.Entities.PageProperties.StayConnected;
-using Kommunist.Core.Entities.PageProperties.UnlimitedText;
-using Kommunist.Core.Entities.PageProperties.Venue;
+using Kommunist.Core.ApiModels;
+using Kommunist.Core.ApiModels.Enums;
+using Kommunist.Core.ApiModels.PageProperties.Agenda;
+using Kommunist.Core.ApiModels.PageProperties.BasicText;
+using Kommunist.Core.ApiModels.PageProperties.EventNavigation;
+using Kommunist.Core.ApiModels.PageProperties.Main;
+using Kommunist.Core.ApiModels.PageProperties.StayConnected;
+using Kommunist.Core.ApiModels.PageProperties.UnlimitedText;
+using Kommunist.Core.ApiModels.PageProperties.Venue;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

@@ -1,3 +1,4 @@
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Models;
 
 namespace Kommunist.Core.Services.Interfaces;

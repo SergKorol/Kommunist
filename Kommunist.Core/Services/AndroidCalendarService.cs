@@ -29,7 +29,7 @@ public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCale
             : calendars.First();
 
         if (targetCalendar == null)
-            throw new InvalidOperationException("Не вдалося знайти календар з вказаною назвою.");
+            throw new InvalidOperationException("Wasn't able to find calendar with specified name.");
 
         var icalEvents = calendar.Events.ToArray();
 

@@ -1,7 +1,9 @@
 using System.Windows.Input;
-using Kommunist.Application.Services;
 using Kommunist.Application.Services.Navigation;
+using Kommunist.Application.Services.Toasts;
+using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 
 namespace Kommunist.Application.Controls;
 
@@ -19,7 +21,6 @@ public partial class MyTabBar
         init => SetValue(NavigateToCommandProperty, value);
     }
 
-    // Default constructor used by XAML/runtime
     public MyTabBar()
         : this(new MauiNavigationService(new MauiShellNavigator()), new MauiToastService(), initializeComponent: true)
     {

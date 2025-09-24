@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 using Moq;
 
 namespace Kommunist.Tests.Controls;
@@ -119,7 +120,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute("HomePage");
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -136,7 +136,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute("FiltersPage");
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -153,7 +152,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute("SettingsPage");
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -170,7 +168,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute("UnknownPage");
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -187,7 +184,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute(null);
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -204,7 +200,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute(string.Empty);
 
-        // Allow async operation to complete
         await Task.Delay(50);
 
         // Assert
@@ -228,7 +223,6 @@ public class MyTabBarTests
         // Act
         tabBar.NavigateToCommand.Execute("HomePage");
 
-        // Allow async operation to complete
         await Task.Delay(100);
 
         // Assert
@@ -247,13 +241,11 @@ public class MyTabBarTests
         _mockNavigationService.Setup(x => x.GoToAsync("//Home")).ThrowsAsync(exception);
         _mockToastService.Setup(x => x.ShowAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
 
-        // Act & Assert - Should not throw
+        // Act & Assert
         tabBar.NavigateToCommand.Execute("HomePage");
 
-        // Allow async operation to complete
         await Task.Delay(100);
 
-        // Verify toast was called (exception was handled)
         _mockToastService.Verify(x => x.ShowAsync(It.IsAny<string>()), Times.Once);
     }
 
@@ -268,13 +260,11 @@ public class MyTabBarTests
         _mockNavigationService.Setup(x => x.GoToAsync("//Home")).ThrowsAsync(navigationException);
         _mockToastService.Setup(x => x.ShowAsync(It.IsAny<string>())).ThrowsAsync(toastException);
 
-        // Act & Assert - Should not throw even if both services throw
+        // Act & Assert
         tabBar.NavigateToCommand.Execute("HomePage");
 
-        // Allow async operation to complete
         await Task.Delay(100);
 
-        // Verify both services were called
         _mockNavigationService.Verify(x => x.GoToAsync("//Home"), Times.Once);
         _mockToastService.Verify(x => x.ShowAsync(It.IsAny<string>()), Times.Once);
     }

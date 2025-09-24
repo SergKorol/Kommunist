@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Kommunist.Application.Services;
+using Kommunist.Core.Services;
 
 namespace Kommunist.Tests.Services;
 
@@ -115,7 +115,6 @@ public class FileSystemServiceTests
             returnedPath.Should().Be(expectedPath);
             File.Exists(expectedPath).Should().BeTrue();
 
-            // Validate textual content is empty (independent of BOM presence)
             var text = await File.ReadAllTextAsync(expectedPath);
             text.Should().BeEmpty();
         }
@@ -135,8 +134,6 @@ public class FileSystemServiceTests
         var tempDir = UniqueTempDir();
         var sut = new FileSystemService(tempDir);
 
-        // Build a filename that is invalid across platforms where possible.
-        // Otherwise, force a non-existent subdirectory to trigger an error.
         var invalidChars = Path.GetInvalidFileNameChars();
         char? invalidChar = invalidChars.FirstOrDefault(c =>
             c != Path.DirectorySeparatorChar && c != Path.AltDirectorySeparatorChar);
@@ -151,7 +148,6 @@ public class FileSystemServiceTests
         // Assert
         await act.Should().ThrowAsync<Exception>("an invalid filename or missing directory should cause an exception");
 
-        // Cleanup
         if (Directory.Exists(tempDir))
             Directory.Delete(tempDir, true);
     }

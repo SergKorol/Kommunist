@@ -1,9 +1,9 @@
 using FluentAssertions;
-using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 using System.Reflection;
+using Kommunist.Application.XCalendar;
 using XCalendar.Core.Models;
 
 namespace Kommunist.Tests.ViewModels;
@@ -29,7 +29,6 @@ public class EventCalendarViewModelTests
         calendar.Navigate(delta);
     }
 
-    // Detach the VM's internal DaysUpdated handler to prevent it from overwriting CalEvents during tests
     private static void DetachDaysUpdated(EventCalendarViewModel vm)
     {
         var method = typeof(EventCalendarViewModel).GetMethod("EventCalendar_DaysUpdated", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -49,10 +48,8 @@ public class EventCalendarViewModelTests
 
         var vm = CreateViewModel(out _, eventServiceMock.Object);
 
-        // Prevent DaysUpdated from triggering a service call during navigation
         DetachDaysUpdated(vm);
 
-        // Navigate calendar to a specific month to control date range (leap year to check boundaries)
         var navigated = new DateTime(2024, 2, 15);
         SetCalendarNavigatedDate(vm.EventCalendar, navigated);
 
@@ -71,11 +68,9 @@ public class EventCalendarViewModelTests
                 It.Is<DateTime>(d => d == expectedEnd)),
             Times.Once);
 
-        // PropertyChanged raised for both collections
         propertyChanges.Should().Contain(nameof(vm.CalEvents));
         propertyChanges.Should().Contain(nameof(vm.SelectedEvents));
 
-        // No events returned => both collections should be empty
         vm.CalEvents.Should().BeEmpty();
         vm.SelectedEvents.Should().BeEmpty();
     }
@@ -89,7 +84,6 @@ public class EventCalendarViewModelTests
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync([]);
 
-        // Prevent DaysUpdated from overwriting CalEvents
         DetachDaysUpdated(vm);
 
         var nav = vm.EventCalendar.NavigatedDate;
@@ -119,7 +113,6 @@ public class EventCalendarViewModelTests
             .Setup(s => s.LoadEvents(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
             .ReturnsAsync([]);
 
-        // Prevent DaysUpdated from overwriting CalEvents
         DetachDaysUpdated(vm);
 
         var nav = vm.EventCalendar.NavigatedDate;
@@ -134,7 +127,6 @@ public class EventCalendarViewModelTests
         vm.EventCalendar.SelectedDates.Add(date.Date);
         vm.SelectedEvents.Should().HaveCount(2);
 
-        // Toggle off (same date) - simulate by removing from SelectedDates
         vm.EventCalendar.SelectedDates.Remove(date.Date);
 
         // Assert
@@ -176,14 +168,14 @@ public class EventCalendarViewModelTests
         var initial = new DateTime(2025, 4, 15);
         SetCalendarNavigatedDate(vm.EventCalendar, initial);
 
-        // Act - forward one month
+        // Act
         vm.NavigateCalendarCommand.Execute(1);
 
         // Assert
         vm.EventCalendar.NavigatedDate.Year.Should().Be(2025);
         vm.EventCalendar.NavigatedDate.Month.Should().Be(5);
 
-        // Act - backwards two months from May -> March
+        // Act
         vm.NavigateCalendarCommand.Execute(-2);
 
         // Assert

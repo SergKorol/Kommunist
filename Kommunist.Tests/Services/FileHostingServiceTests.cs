@@ -135,7 +135,6 @@ public class FileHostingServiceTests
         var config = BuildConfigWithConnectionString("UseDevelopmentStorage=true");
         var service = new FileHostingService(config, logger.Object);
 
-        // Mock Azure Blob client chain
         var mockBlobService = new Mock<BlobServiceClient>();
         var mockContainer = new Mock<BlobContainerClient>();
         var mockBlob = new Mock<BlobClient>();
@@ -269,8 +268,6 @@ public class FileHostingServiceTests
             Times.Once);
     }
 
-    // Helpers
-
     private static IConfiguration BuildConfigWithConnectionString(string? connectionString)
     {
         var dict = new Dictionary<string, string?>
@@ -330,10 +327,7 @@ public class FileHostingServiceTests
                     File.Delete(Path);
                 }
             }
-            catch
-            {
-                // ignored
-            }
+            catch { /* ignored */ }
         }
     }
 }

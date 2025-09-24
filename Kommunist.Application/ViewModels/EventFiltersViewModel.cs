@@ -10,46 +10,31 @@ namespace Kommunist.Application.ViewModels;
 
 public class EventFiltersViewModel : BaseViewModel, IDisposable
 {
-    #region Fields
-
+    #region Services
     private readonly ISearchService _searchService;
     private readonly IFilterService _filterService;
-
-    private string? _tagFilter;
-    private string? _speakerFilter;
-    private string? _countryFilter;
-    private string? _communityFilter;
-    private bool _onlineOnly;
-
+    #endregion
+    
+    #region Properties
     private string? SelectedTagFilter { get; set; }
     private string? SelectedSpeakerFilter { get; set; }
     private string? SelectedCountryFilter { get; set; }
     private string? SelectedCommunityFilter { get; set; }
 
     private ObservableCollection<string>? Countries { get; set; }
-
+    #endregion
+    
+    #region Fields
+    private string? _tagFilter;
+    private string? _speakerFilter;
+    private string? _countryFilter;
+    private string? _communityFilter;
+    private bool _onlineOnly;
+    
     private CancellationTokenSource? _tagDebounceCts;
     private CancellationTokenSource? _speakerDebounceCts;
     private CancellationTokenSource? _countryDebounceCts;
     private CancellationTokenSource? _communityDebounceCts;
-
-    // Cached commands
-    private Command<string>? _selectTagCommand;
-    private Command<string>? _deselectTagCommand;
-    private Command? _clearTagFilterCommand;
-
-    private Command<string>? _selectSpeakerCommand;
-    private Command<string>? _deselectSpeakerCommand;
-    private Command? _clearSpeakerFilterCommand;
-
-    private Command<string>? _selectCountryCommand;
-    private Command<string>? _deselectCountryCommand;
-    private Command? _clearCountryFilterCommand;
-
-    private Command<string>? _selectCommunityCommand;
-    private Command<string>? _deselectCommunityCommand;
-    private Command? _clearCommunityFilterCommand;
-
     #endregion
 
     #region Ctor
@@ -69,10 +54,25 @@ public class EventFiltersViewModel : BaseViewModel, IDisposable
     #endregion
 
     #region Commands
-
     public ICommand ApplyFiltersCommand { get; }
     public ICommand ClearFiltersCommand { get; }
     public ICommand DeleteFiltersCommand { get; }
+    
+    private Command<string>? _selectTagCommand;
+    private Command<string>? _deselectTagCommand;
+    private Command? _clearTagFilterCommand;
+
+    private Command<string>? _selectSpeakerCommand;
+    private Command<string>? _deselectSpeakerCommand;
+    private Command? _clearSpeakerFilterCommand;
+
+    private Command<string>? _selectCountryCommand;
+    private Command<string>? _deselectCountryCommand;
+    private Command? _clearCountryFilterCommand;
+
+    private Command<string>? _selectCommunityCommand;
+    private Command<string>? _deselectCommunityCommand;
+    private Command? _clearCommunityFilterCommand;
 
     public Command<string> SelectTagCommand => _selectTagCommand ??= new Command<string>(tag =>
     {

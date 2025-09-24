@@ -1,6 +1,5 @@
-using Kommunist.Core.Entities;
-using Kommunist.Core.Entities.PageProperties.Agenda;
-using Kommunist.Core.Models;
+using Kommunist.Core.ApiModels;
+using Kommunist.Core.ApiModels.PageProperties.Agenda;
 
 namespace Kommunist.Core.Services.Interfaces;
 

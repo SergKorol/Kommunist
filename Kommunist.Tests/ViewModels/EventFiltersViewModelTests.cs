@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Kommunist.Application.ViewModels;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
