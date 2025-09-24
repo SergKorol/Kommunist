@@ -4,6 +4,7 @@ using System.Reflection;
 using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Models;
+using Kommunist.Core.Models.VmModels;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 

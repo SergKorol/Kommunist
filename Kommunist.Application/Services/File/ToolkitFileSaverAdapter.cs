@@ -1,8 +1,10 @@
+
+
+using Kommunist.Core.Services.Interfaces;
 // ReSharper disable once RedundantUsingDirective
 using CommunityToolkit.Maui.Storage;
-using Kommunist.Core.Services.Interfaces;
 
-namespace Kommunist.Application.Services;
+namespace Kommunist.Application.Services.File;
 
 public sealed class ToolkitFileSaverAdapter : IToolkitFileSaverAdapter
 {

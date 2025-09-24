@@ -1,4 +1,4 @@
-namespace Kommunist.Application.Services.Navigation;
+namespace Kommunist.Core.Services.Interfaces.Shared;
 
 public interface IShellNavigator
 {

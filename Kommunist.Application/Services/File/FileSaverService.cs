@@ -1,5 +1,6 @@
 using Kommunist.Core.Services.Interfaces;
-namespace Kommunist.Application.Services;
+
+namespace Kommunist.Application.Services.File;
 
 public class FileSaverService(IToolkitFileSaverAdapter? adapter = null) : IFileSaverService
 {

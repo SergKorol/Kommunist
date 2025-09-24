@@ -7,7 +7,7 @@
              xmlns:enums="clr-namespace:Kommunist.Application.Enums"
              Style="{StaticResource DefaultPageStyle}"
              x:Class="Kommunist.Application.Views.SettingsPage"
-             ControlTemplate="{StaticResource SecondaryColorTemplate}">
+             ControlTemplate="{StaticResource TapBarTemplate}">
     <controls:MyTabBar.Content>
         <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <VerticalStackLayout Margin="20"

@@ -1,5 +1,6 @@
 using Kommunist.Core.Services.Interfaces;
-namespace Kommunist.Application.Services;
+
+namespace Kommunist.Application.Services.Launch;
 
 public class LauncherService(ILauncher launcher) : ILauncherService
 {

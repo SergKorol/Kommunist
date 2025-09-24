@@ -1,4 +1,4 @@
-namespace Kommunist.Application.Models;
+namespace Kommunist.Core.Models.VmModels;
 
 public class CalEventDetail
 {

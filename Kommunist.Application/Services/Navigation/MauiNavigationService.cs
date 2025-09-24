@@ -1,7 +1,7 @@
-using Kommunist.Application.Services.Navigation;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 
-namespace Kommunist.Application.Services;
+namespace Kommunist.Application.Services.Navigation;
 
 public sealed class MauiNavigationService(IShellNavigator? shellNavigator) : INavigationService
 {

@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Kommunist.Core.Services.Interfaces;
 
-namespace Kommunist.Application.Services;
+namespace Kommunist.Application.Services.Toasts;
 
 public sealed class ToolkitToastFactory : IToolkitToastFactory
 {

@@ -3,7 +3,7 @@
     x:Class="Kommunist.Application.Views.CalEventDetailPage"
     x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:models="clr-namespace:Kommunist.Application.Models"
+    xmlns:models="clr-namespace:Kommunist.Core.Models.VmModels;assembly=Kommunist.Core"
     xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:DataType="{x:Type viewModels:EventCalendarDetailViewModel}"

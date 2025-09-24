@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Alerts;
 using Kommunist.Core.Services.Interfaces;
-namespace Kommunist.Application.Services;
+
+namespace Kommunist.Application.Services.Toasts;
 
 public class ToastService : IToastService
 {

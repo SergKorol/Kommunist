@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Kommunist.Application.Services;
+using Kommunist.Application.Services.Dialog;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 
@@ -15,7 +16,6 @@ public class PageDialogServiceTests
     public async Task DisplayActionSheet_ReturnsUnderlyingResult()
     {
         // Arrange
-
         var buttons = new[] { "A", "B" };
         const string expected = "B";
 

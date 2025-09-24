@@ -7,10 +7,10 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using JetBrains.Annotations;
 using Kommunist.Application.Helpers;
-using Kommunist.Application.Models;
 using Kommunist.Core.Entities.PageProperties.Agenda;
 using Kommunist.Core.Helpers;
 using Kommunist.Core.Models;
+using Kommunist.Core.Models.VmModels;
 using Kommunist.Core.Services.Interfaces;
 using Attendee = Ical.Net.DataTypes.Attendee;
 using Trigger = Ical.Net.DataTypes.Trigger;
@@ -19,10 +19,13 @@ namespace Kommunist.Application.ViewModels;
 
 public class EventCalendarDetailViewModel : BaseViewModel
 {
+    #region Services
     private readonly IFileHostingService _fileHostingService;
+    private readonly IEventService _eventService;
     [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
+    #endregion
     
-    private CalEventDetail? _selectedEventDetail;
+    #region Properties
     public CalEventDetail? SelectedEventDetail
     {
         get => _selectedEventDetail;
@@ -34,12 +37,6 @@ public class EventCalendarDetailViewModel : BaseViewModel
             OnPropertyChanged(nameof(HasParticipants));
         }
     }
-
-    private IEnumerable<PageItem>? PageItems { get; set; }
-    private AgendaPage? AgendaPage { get; set; }
-
-
-    private bool _isWebViewLoading;
     public bool IsWebViewLoading
     {
         get => _isWebViewLoading;
@@ -50,15 +47,22 @@ public class EventCalendarDetailViewModel : BaseViewModel
             OnPropertyChanged();
         }
     }
-
-
+    private IEnumerable<PageItem>? PageItems { get; set; }
+    private AgendaPage? AgendaPage { get; set; }
     private int TappedEventId { get; }
+    #endregion
 
-    private readonly IEventService _eventService;
+    #region Fields
+    private CalEventDetail? _selectedEventDetail;
+    private bool _isWebViewLoading;
+    #endregion
 
+    #region Commands
     public ICommand AddToCalendar { get; }
     public ICommand JoinToEvent { get; }
+    #endregion
 
+    #region Ctor
     public EventCalendarDetailViewModel(IEventService eventService, int tappedEventId, IFileHostingService fileHostingService, IAndroidCalendarService androidCalendarService)
     {
         _eventService = eventService;
@@ -90,7 +94,17 @@ public class EventCalendarDetailViewModel : BaseViewModel
             }
         });
     }
+    #endregion
 
+    #region Public
+    public bool HasParticipants =>
+        SelectedEventDetail != null &&
+        (SelectedEventDetail.Speakers is { Count: > 0 } ||
+         SelectedEventDetail.Moderators is { Count: > 0 });
+
+    #endregion
+    
+    #region Private
     private async Task CreateEventCalendarDetailPage()
     {
         await GetHomePage(TappedEventId);
@@ -101,12 +115,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
 
         SelectedEventDetail = eventDetail;
     }
-
-    public bool HasParticipants =>
-        SelectedEventDetail != null &&
-        (SelectedEventDetail.Speakers is { Count: > 0 } ||
-         SelectedEventDetail.Moderators is { Count: > 0 });
-
+    
     private async Task GetAgenda(int eventId)
     {
         if (eventId == 0) return;
@@ -120,7 +129,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"Failed to load agenda: {e.Message}").Show();
         }
     }
-
+    
     private async Task OpenEventPage()
     {
         try
@@ -139,7 +148,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"Event page wasn't opened: {e.Message}").Show();
         }
     }
-
+    
     private async Task GenerateEventAndUpload()
     {
         try
@@ -230,18 +239,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"Event wasn't added: {e.Message}").Show();
         }
     }
-
-    private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
-    {
-        var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
-
-        await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-        await using var writer = new StreamWriter(stream, Encoding.UTF8);
-        await writer.WriteAsync(icalString);
-
-        return filePath;
-    }
-
+    
     private async Task UploadOrSendFile(string path)
     {
         try
@@ -278,7 +276,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"File upload/open failed: {e.Message}").Show();
         }
     }
-
+    
     private async Task GetHomePage(int eventId)
     {
         if (eventId == 0) return;
@@ -292,26 +290,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
             await Toast.Make($"Failed to load event: {e.Message}").Show();
         }
     }
-
-    private static string GetEventPeriod(long? start, long? end)
-    {
-        if (start == null || end == null) return string.Empty;
-        var startDate = start.Value.ToLocalDateTime();
-        var endDate = end.Value.ToLocalDateTime();
-        if (startDate.Day == endDate.Day)
-        {
-            return startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
-        }
-
-        return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
-    }
-
-    private static DateTime ConvertDateTime(long dt)
-    {
-        // Convert Unix seconds to local DateTime (Ical.Net will apply provided timezone)
-        return DateTimeOffset.FromUnixTimeSeconds(dt).LocalDateTime;
-    }
-
+    
     private void SetMainCalEventDetail(CalEventDetail eventDetail)
     {
         var mainPart = PageItems?.FirstOrDefault(x => x.Type == "Main");
@@ -364,7 +343,7 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var isDark = IsDarkMode();
         eventDetail.Description = isDark ? BuildDarkHtmlContent(text) : BuildLightHtmlContent(text);
     }
-
+    
     private async Task SetAgendaPage(CalEventDetail eventDetail)
     {
         var agendaPart = PageItems?.FirstOrDefault(x => x.Type == "Agenda");
@@ -414,7 +393,38 @@ public class EventCalendarDetailViewModel : BaseViewModel
             }
         }
     }
+    #endregion
+    
+    #region Static
+    private static async Task<string> SaveIcalToInternalStorageAsync(string icalString, string fileName = "events.ics")
+    {
+        var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
+        await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        await using var writer = new StreamWriter(stream, Encoding.UTF8);
+        await writer.WriteAsync(icalString);
+
+        return filePath;
+    }
+    
+    private static string GetEventPeriod(long? start, long? end)
+    {
+        if (start == null || end == null) return string.Empty;
+        var startDate = start.Value.ToLocalDateTime();
+        var endDate = end.Value.ToLocalDateTime();
+        if (startDate.Day == endDate.Day)
+        {
+            return startDate.ToString("d MMM yyyy, HH:mm") + "-" + endDate.ToString("HH:mm");
+        }
+
+        return startDate.ToString("d MMM yyyy, HH:mm") + " - " + endDate.ToString("d MMM yyyy, HH:mm");
+    }
+    private static DateTime ConvertDateTime(long dt)
+    {
+        // Convert Unix seconds to local DateTime (Ical.Net will apply provided timezone)
+        return DateTimeOffset.FromUnixTimeSeconds(dt).LocalDateTime;
+    }
+    
     private static bool IsDarkMode()
     {
         var theme = Microsoft.Maui.Controls.Application.Current?.UserAppTheme;
@@ -504,4 +514,5 @@ public class EventCalendarDetailViewModel : BaseViewModel
         var result = sb.ToString().Trim();
         return string.IsNullOrWhiteSpace(result) ? "event" : result;
     }
+    #endregion
 }

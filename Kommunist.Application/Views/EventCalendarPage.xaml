@@ -11,7 +11,7 @@
                    x:Name="This"
                    Style="{StaticResource DefaultPageStyle}"
                    Loaded="VisualElement_OnLoaded"
-                   ControlTemplate="{StaticResource SecondaryColorTemplate}">
+                   ControlTemplate="{StaticResource TapBarTemplate}">
 
     <controls:MyTabBar.Resources>
         <mct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />

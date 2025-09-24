@@ -45,13 +45,17 @@ public class EventCalendarViewModel : BaseViewModel
     public ICommand OpenIcalConfigCommand { get; }
     #endregion
 
+    #region Services
     private readonly IEventService _eventService;
     private readonly IFileHostingService _fileHostingService;
     private readonly IAndroidCalendarService _androidCalendarService;
+    #endregion
 
+    #region Fields
     private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
     private readonly Dictionary<string, List<CalEvent>> _monthEventsCache = new();
-
+    #endregion
+    
     #region Constructors
     public EventCalendarViewModel(IEventService eventService, IFileHostingService fileHostingService, IAndroidCalendarService androidCalendarService)
     {
@@ -69,7 +73,37 @@ public class EventCalendarViewModel : BaseViewModel
     }
     #endregion
 
-    #region Methods
+    #region Public
+    public async Task RefreshCalendarEvents()
+    {
+        try
+        {
+            var monthKey = GetMonthKey(EventCalendar.NavigatedDate);
+            _monthEventsCache.Remove(monthKey);
+
+            await LoadAndPopulateEventsAsync();
+
+            _monthEventsCache[monthKey] = CalEvents.ToList();
+
+            UpdateDaysWithCalEvents();
+
+            if (EventCalendar.SelectedDates.Any())
+            {
+                UpdateSelectedEvents();
+            }
+
+            OnPropertyChanged(nameof(CalEvents));
+            OnPropertyChanged(nameof(SelectedEvents));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error refreshing calendar events: {ex.Message}");
+            await Toast.Make("Failed to refresh events. Please try again.").Show();
+        }
+    }
+    #endregion
+    
+    #region Private
     private async void EventCalendar_DaysUpdated(object? sender, EventArgs e)
     {
         try
@@ -152,8 +186,7 @@ public class EventCalendarViewModel : BaseViewModel
             await Toast.Make($"Failed to load iCal config: {e.Message}").Show();
         }
     }
-    #endregion
-
+    
     private async Task LoadAndPopulateEventsAsync()
     {
         await _loadSemaphore.WaitAsync();
@@ -169,35 +202,7 @@ public class EventCalendarViewModel : BaseViewModel
             _loadSemaphore.Release();
         }
     }
-
-    public async Task RefreshCalendarEvents()
-    {
-        try
-        {
-            var monthKey = GetMonthKey(EventCalendar.NavigatedDate);
-            _monthEventsCache.Remove(monthKey);
-
-            await LoadAndPopulateEventsAsync();
-
-            _monthEventsCache[monthKey] = CalEvents.ToList();
-
-            UpdateDaysWithCalEvents();
-
-            if (EventCalendar.SelectedDates.Any())
-            {
-                UpdateSelectedEvents();
-            }
-
-            OnPropertyChanged(nameof(CalEvents));
-            OnPropertyChanged(nameof(SelectedEvents));
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error refreshing calendar events: {ex.Message}");
-            await Toast.Make("Failed to refresh events. Please try again.").Show();
-        }
-    }
-
+    
     private void UpdateDaysWithCalEvents()
     {
         foreach (var day in EventCalendar.Days)
@@ -205,7 +210,7 @@ public class EventCalendarViewModel : BaseViewModel
             day.CalEvents.ReplaceRange(CalEvents.Where(x => x.DateTime.Date == day.DateTime.Date));
         }
     }
-
+    
     private void UpdateSelectedEvents()
     {
         SelectedEvents.ReplaceRange(
@@ -213,7 +218,7 @@ public class EventCalendarViewModel : BaseViewModel
                 .Where(x => EventCalendar.SelectedDates.Any(y => x.DateTime.Date == y.Date))
                 .OrderByDescending(x => x.DateTime));
     }
-
+    
     private (DateTime StartDate, DateTime EndDate) GetDateRangeForNavigatedMonth()
     {
         var nav = EventCalendar.NavigatedDate.Date;
@@ -221,7 +226,9 @@ public class EventCalendarViewModel : BaseViewModel
         var end = start.AddMonths(1).AddTicks(-1);
         return (start, end);
     }
-
+    #endregion
+    
+    #region Static
     private static List<CalEvent> ConvertToCalEvents(IEnumerable<ServiceEvent>? serviceEvents)
     {
         if (serviceEvents != null)
@@ -264,4 +271,5 @@ public class EventCalendarViewModel : BaseViewModel
     }
 
     private static string GetMonthKey(DateTime date) => $"{date:yyyy-MM}";
+    #endregion
 }

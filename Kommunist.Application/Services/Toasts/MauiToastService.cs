@@ -1,6 +1,6 @@
 using Kommunist.Core.Services.Interfaces;
 
-namespace Kommunist.Application.Services;
+namespace Kommunist.Application.Services.Toasts;
 
 public sealed class MauiToastService(IToolkitToastFactory toastFactory) : IToastService
 {

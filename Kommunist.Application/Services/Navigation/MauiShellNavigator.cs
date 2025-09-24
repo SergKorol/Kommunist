@@ -1,3 +1,5 @@
+using Kommunist.Core.Services.Interfaces.Shared;
+
 namespace Kommunist.Application.Services.Navigation;
 
 public sealed class MauiShellNavigator : IShellNavigator

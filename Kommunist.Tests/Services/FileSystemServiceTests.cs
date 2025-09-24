@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Kommunist.Application.Services;
+using Kommunist.Application.Services.File;
 
 namespace Kommunist.Tests.Services;
 
