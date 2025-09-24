@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                   xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
                    xmlns:controls="clr-namespace:Kommunist.Application.Controls"
                    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
                    xmlns:xCalendar="clr-namespace:Kommunist.Application.XCalendar"
                    xmlns:models="clr-namespace:Kommunist.Application.XCalendar"
+                   xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
@@ -15,8 +15,8 @@
                    ControlTemplate="{StaticResource TapBarTemplate}">
 
     <controls:MyTabBar.Resources>
-        <mct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />
-        <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        <helpers:AllTrueMultiValueConverter x:Key="AllTrueConverter" />
+        <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </controls:MyTabBar.Resources>
 
     <Grid BackgroundColor="{DynamicResource BackgroundColor}" RowSpacing="8">
