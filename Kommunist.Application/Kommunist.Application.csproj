@@ -63,7 +63,6 @@
     <ItemGroup>
         <PackageReference Include="CalendarView.MAUI" Version="1.1.0" />
         <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
-<!--        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />-->
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="Ical.Net" Version="5.0.0-pre.41" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
@@ -75,7 +74,7 @@
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
         <PackageReference Include="XCalendar.Core" Version="4.6.0" />
         <PackageReference Include="XCalendar.Maui" Version="4.6.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.82" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
     </ItemGroup>
 
     <ItemGroup>
