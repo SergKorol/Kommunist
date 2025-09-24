@@ -1,6 +1,6 @@
 using XCalendar.Core.Models;
 
-namespace Kommunist.Application.Models;
+namespace Kommunist.Application.XCalendar;
 
 public class CalEvent : Event
 {

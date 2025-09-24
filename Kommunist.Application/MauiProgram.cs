@@ -2,7 +2,6 @@
 using System.Reflection;
 using CommunityToolkit.Maui;
 using Kommunist.Application.Helpers;
-using Kommunist.Application.Services;
 using Kommunist.Application.Services.Dialog;
 using Kommunist.Application.Services.File;
 using Kommunist.Application.Services.Launch;

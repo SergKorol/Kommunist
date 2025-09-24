@@ -1,5 +1,4 @@
 using System.Windows.Input;
-using Kommunist.Application.Services;
 using Kommunist.Application.Services.Navigation;
 using Kommunist.Application.Services.Toasts;
 using Kommunist.Core.Services;

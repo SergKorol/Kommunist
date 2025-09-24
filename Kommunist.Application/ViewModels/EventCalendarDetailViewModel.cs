@@ -7,6 +7,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using JetBrains.Annotations;
 using Kommunist.Application.Helpers;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.ApiModels.PageProperties.Agenda;
 using Kommunist.Core.Helpers;
 using Kommunist.Core.Models;

@@ -2,7 +2,6 @@ using System.Text;
 using Kommunist.Core.ApiModels;
 using Kommunist.Core.ApiModels.PageProperties.Agenda;
 using Kommunist.Core.Converters;
-using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Newtonsoft.Json;
 

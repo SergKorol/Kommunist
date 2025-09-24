@@ -1,6 +1,6 @@
 using System.Text.Json;
 using FluentAssertions;
-using Kommunist.Core.Models;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
 using Moq;

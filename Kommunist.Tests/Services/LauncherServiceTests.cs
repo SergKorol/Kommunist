@@ -1,4 +1,3 @@
-using Kommunist.Application.Services;
 using Kommunist.Application.Services.Launch;
 using Moq;
 

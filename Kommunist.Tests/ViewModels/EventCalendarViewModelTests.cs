@@ -1,9 +1,9 @@
 using FluentAssertions;
-using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 using System.Reflection;
+using Kommunist.Application.XCalendar;
 using XCalendar.Core.Models;
 
 namespace Kommunist.Tests.ViewModels;

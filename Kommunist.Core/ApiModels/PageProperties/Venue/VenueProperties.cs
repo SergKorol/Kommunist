@@ -1,6 +1,5 @@
 using Kommunist.Core.ApiModels.BaseType;
 using Newtonsoft.Json;
-using Location = Kommunist.Core.ApiModels.PageProperties.Venue.Location;
 
 namespace Kommunist.Core.ApiModels.PageProperties.Venue;
 

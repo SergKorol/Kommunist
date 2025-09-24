@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.ApiModels;
 using Kommunist.Core.ApiModels.PageProperties.Agenda;

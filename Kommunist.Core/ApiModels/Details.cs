@@ -1,4 +1,3 @@
-using Kommunist.Core.Models;
 using Newtonsoft.Json;
 
 namespace Kommunist.Core.ApiModels;

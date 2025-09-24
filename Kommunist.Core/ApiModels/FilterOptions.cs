@@ -1,4 +1,4 @@
-namespace Kommunist.Core.Models;
+namespace Kommunist.Core.ApiModels;
 
 public class FilterOptions
 {

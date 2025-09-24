@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.Helpers;
-using Kommunist.Core.Models;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Services.Interfaces;
 using Kommunist.Core.Types;
 

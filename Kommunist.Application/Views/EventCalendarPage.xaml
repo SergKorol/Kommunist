@@ -5,7 +5,8 @@
                    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
                    xmlns:controls="clr-namespace:Kommunist.Application.Controls"
                    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
-                   xmlns:models="clr-namespace:Kommunist.Application.Models"
+                   xmlns:xCalendar="clr-namespace:Kommunist.Application.XCalendar"
+                   xmlns:models="clr-namespace:Kommunist.Application.XCalendar"
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
@@ -94,7 +95,7 @@
                 
                 <!-- Calendar day style -->
                 <xc:CalendarView.DayTemplate>
-                    <DataTemplate x:DataType="{x:Type models:EventDay}">
+                    <DataTemplate x:DataType="{x:Type xCalendar:EventDay}">
                         <Grid Padding="2">
                             <Border BackgroundColor="Transparent"
                                     HeightRequest="48"
@@ -113,7 +114,7 @@
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
-                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type models:EventDay}}}"
+                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
                                                   RowSpacing="2">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="1.5*" />

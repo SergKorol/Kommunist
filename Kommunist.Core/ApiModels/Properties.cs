@@ -1,8 +1,7 @@
-using Kommunist.Core.ApiModels;
 using Kommunist.Core.Converters;
 using Newtonsoft.Json;
 
-namespace Kommunist.Core.Models;
+namespace Kommunist.Core.ApiModels;
 
 public class Properties
 {

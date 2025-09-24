@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Kommunist.Core.Models;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Services.Interfaces;
 
 namespace Kommunist.Core.Services;

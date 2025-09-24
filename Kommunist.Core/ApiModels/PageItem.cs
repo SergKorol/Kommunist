@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Kommunist.Core.Models;
+namespace Kommunist.Core.ApiModels;
 
 public record PageItem
 {

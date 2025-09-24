@@ -1,7 +1,7 @@
 using XCalendar.Core.Collections;
 using XCalendar.Core.Models;
 
-namespace Kommunist.Application.Models;
+namespace Kommunist.Application.XCalendar;
 
 public class EventDay : CalendarDay<Event>
 {

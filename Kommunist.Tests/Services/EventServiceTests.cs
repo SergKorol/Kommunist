@@ -6,7 +6,6 @@ using Moq;
 using Newtonsoft.Json;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
-using Kommunist.Core.Models;
 
 namespace Kommunist.Tests.Services;
 
