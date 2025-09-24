@@ -106,13 +106,14 @@
                                     <Ellipse />
                                 </Border.StrokeShape>
                                 
-                                <xc:DayView Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ChangeDateSelectionCommand}"
-                                          CommandParameter="{Binding DateTime}"
-                                          DateTime="{Binding DateTime}"
-                                          IsCurrentMonth="{Binding IsCurrentMonth}"
-                                          IsInvalid="{Binding IsInvalid}"
-                                          IsSelected="{Binding IsSelected}"
-                                          IsToday="{Binding IsToday}">
+                                <xc:DayView 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=., Converter={helpers:ViewModelCommandConverter CommandPath=ChangeDateSelectionCommand}}"
+                                            CommandParameter="{Binding DateTime}"
+                                            DateTime="{Binding DateTime}"
+                                            IsCurrentMonth="{Binding IsCurrentMonth}"
+                                            IsInvalid="{Binding IsInvalid}"
+                                            IsSelected="{Binding IsSelected}"
+                                            IsToday="{Binding IsToday}">
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
@@ -270,7 +271,7 @@
                                         <RoundRectangle CornerRadius="12" />
                                     </Border.StrokeShape>
                                     <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}, Path=EventSelectedCommand}"
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=., Converter={helpers:ViewModelCommandConverter CommandPath=EventSelectedCommand}}"
                                                              CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     
