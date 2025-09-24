@@ -101,8 +101,6 @@ public class BooleanToVisibilityConverterTests
         result.Should().Be(true);
     }
 
-    // ConvertBack tests
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

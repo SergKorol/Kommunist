@@ -1,6 +1,5 @@
-
-
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 // ReSharper disable once RedundantUsingDirective
 using CommunityToolkit.Maui.Storage;
 

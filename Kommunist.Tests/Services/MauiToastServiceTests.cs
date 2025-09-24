@@ -3,6 +3,7 @@ using Moq;
 using Kommunist.Application.Services;
 using Kommunist.Application.Services.Toasts;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 
 namespace Kommunist.Tests.Services;
 

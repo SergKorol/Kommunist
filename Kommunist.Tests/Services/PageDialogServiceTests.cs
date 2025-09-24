@@ -2,6 +2,7 @@ using FluentAssertions;
 using Kommunist.Application.Services;
 using Kommunist.Application.Services.Dialog;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 using Moq;
 
 namespace Kommunist.Tests.Services;

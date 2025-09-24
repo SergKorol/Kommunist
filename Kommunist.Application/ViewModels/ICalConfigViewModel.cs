@@ -13,7 +13,9 @@ using Kommunist.Application.Services.Dialog;
 using Kommunist.Application.Services.File;
 using Kommunist.Application.Services.Launch;
 using Kommunist.Application.Services.Toasts;
+using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 
 namespace Kommunist.Application.ViewModels;
 

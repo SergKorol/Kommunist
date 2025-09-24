@@ -3,8 +3,9 @@ using System.Globalization;
 using System.Reflection;
 using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
+using Kommunist.Core.ApiModels;
+using Kommunist.Core.ApiModels.PageProperties.Agenda;
 using Kommunist.Core.Models;
-using Kommunist.Core.Models.VmModels;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 
@@ -20,7 +21,7 @@ public class EventCalendarDetailViewModelTests
         eventService.Setup(s => s.GetHomePage(eventId))
             .ReturnsAsync(pageItems);
         eventService.Setup(s => s.GetAgenda(It.IsAny<int>()))
-            .ReturnsAsync((Core.Entities.PageProperties.Agenda.AgendaPage?)null);
+            .ReturnsAsync((AgendaPage?)null);
 
         var fileHosting = new Mock<IFileHostingService>(MockBehavior.Loose);
         var androidCalendar = new Mock<IAndroidCalendarService>(MockBehavior.Loose);
@@ -121,24 +122,18 @@ public class EventCalendarDetailViewModelTests
         Assert.NotNull(detail);
         Assert.Equal("https://img.example.com/bg.jpg", detail.BgImageUrl);
 
-        // Language should be upper-cased and comma-separated
         Assert.Equal("EN, RU", detail.Language);
 
-        // Online/Offline should default to Offline when ParticipationFormat is null
         Assert.Equal("Offline", detail.FormatEvent);
 
-        // Location should fallback to World when ParticipationFormat is null
         Assert.Equal("World", detail.Location);
 
-        // Description should be HTML-wrapped (light mode by default)
         Assert.False(string.IsNullOrWhiteSpace(detail.Description));
         Assert.Contains("Hello world", detail.Description);
         Assert.Contains("<html>", detail.Description, StringComparison.OrdinalIgnoreCase);
 
-        // Event URL mapped
         Assert.Equal("https://event.example.com", detail.Url);
 
-        // Period string present
         Assert.False(string.IsNullOrWhiteSpace(detail.PeriodDateTime));
     }
 
@@ -164,14 +159,11 @@ public class EventCalendarDetailViewModelTests
         var vm = CreateVmWithPageItems(pageItems);
         var detail = await WaitForSelectedEventDetailAsync(vm);
 
-        // Initially false
         Assert.False(vm.HasParticipants);
 
-        // Add a speaker
         detail.Speakers.Add(new PersonCard { Name = "Alice" });
         Assert.True(vm.HasParticipants);
 
-        // Clear and add a moderator
         detail.Speakers.Clear();
         Assert.False(vm.HasParticipants);
 
@@ -303,7 +295,7 @@ public class EventCalendarDetailViewModelTests
     [Fact]
     public async Task JoinToEvent_With_Missing_Url_Does_Not_Throw()
     {
-        // Arrange: Provide only Main item without EventUrl
+        // Arrange
         var main = new PageItem
         {
             Type = "Main",
@@ -319,10 +311,9 @@ public class EventCalendarDetailViewModelTests
         var vm = CreateVmWithPageItems([main]);
         _ = await WaitForSelectedEventDetailAsync(vm);
 
-        // Act + Assert: command should execute without throwing, despite internal Toast/Launcher usage
+        // Act + Assert
         var ex = await Record.ExceptionAsync(async () =>
         {
-            // Command is async void; execute and wait a tiny delay to allow inner await to run
             vm.JoinToEvent.Execute(null);
             await Task.Delay(100);
         });
@@ -338,7 +329,6 @@ public class EventCalendarDetailViewModelTests
         var fileHosting = new Mock<IFileHostingService>(MockBehavior.Loose);
         var androidCalendar = new Mock<IAndroidCalendarService>(MockBehavior.Loose);
 
-        // Use eventId=0 to avoid background loading during this test
         var vm = new EventCalendarDetailViewModel(eventService.Object, 0, fileHosting.Object, androidCalendar.Object);
 
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

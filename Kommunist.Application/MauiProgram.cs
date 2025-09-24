@@ -11,6 +11,7 @@ using Kommunist.Application.ViewModels;
 using Kommunist.Core.Config;
 using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Handlers;
@@ -101,6 +102,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MainPage>();
         
         builder.Services.AddHttpClientConfiguration();
+        builder.Services.AddLibraryServices();
     }
 
     private static void ConfigureLogging(MauiAppBuilder builder)

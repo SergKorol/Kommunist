@@ -21,11 +21,5 @@ public static class HttpClientConfiguration
             var baseUrl = config["ApiBaseUrl"] ?? "https://wearecommunity.io";
             client.BaseAddress = new Uri(baseUrl);
         });
-
-        services.AddSingleton<IFileHostingService, FileHostingService>();
-        services.AddSingleton<IEmailService, EmailService>();
-        services.AddSingleton<IFilterService, FilterService>();
-        services.AddSingleton<ICoordinatesService, CoordinatesService>();
-        services.AddSingleton<IAndroidCalendarService, AndroidCalendarService>();
     }
 }

@@ -1,5 +1,4 @@
-using Kommunist.Application.Services;
-using Kommunist.Application.Services.Navigation;
+using Kommunist.Core.Services;
 using Kommunist.Core.Services.Interfaces.Shared;
 using Moq;
 

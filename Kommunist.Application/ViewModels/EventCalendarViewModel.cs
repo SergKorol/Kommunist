@@ -4,7 +4,7 @@ using CommunityToolkit.Maui.Alerts;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Models;
 using Kommunist.Application.Views;
-using Kommunist.Core.Entities;
+using Kommunist.Core.ApiModels;
 using Kommunist.Core.Services.Interfaces;
 using XCalendar.Core.Collections;
 using XCalendar.Core.Enums;

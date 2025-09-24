@@ -3,6 +3,7 @@ using FluentAssertions;
 using Kommunist.Application.Models;
 using Kommunist.Application.ViewModels;
 using Kommunist.Core.Services.Interfaces;
+using Kommunist.Core.Services.Interfaces.Shared;
 using Moq;
 
 namespace Kommunist.Tests.ViewModels;
