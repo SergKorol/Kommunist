@@ -60,12 +60,15 @@
                 <xc:CalendarView.NavigationViewTemplate>
                     <ControlTemplate>
                         <Grid Padding="4,8">
-                            <xc:NavigationView ArrowColor="{DynamicResource PrimaryColor}"
+                            <xc:NavigationView
+                                              x:DataType="{x:Type xc:CalendarView}"
+                                              BindingContext="{Binding Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                              ArrowColor="{DynamicResource PrimaryColor}"
                                               BackgroundColor="Transparent"
-                                              LeftArrowCommand="{Binding LeftArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              LeftArrowCommandParameter="{Binding LeftArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                              LeftArrowCommand="{Binding LeftArrowCommand}"
+                                              LeftArrowCommandParameter="{Binding LeftArrowCommandParameter}"
+                                              RightArrowCommand="{Binding RightArrowCommand}"
+                                              RightArrowCommandParameter="{Binding RightArrowCommandParameter}"
                                               HeightRequest="48"
                                               Text="{TemplateBinding Text}"
                                               Style="{StaticResource DefaultNavigationViewStyle}">
