@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using FluentAssertions;
 using Kommunist.Core.ApiModels;
+using Kommunist.Core.Models;
 using Moq;
 using Newtonsoft.Json;
 using Kommunist.Core.Services;
