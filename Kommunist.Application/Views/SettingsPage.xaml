@@ -23,7 +23,7 @@
                                                          EnumType="{x:Type enums:Theme}"
                                                          Title="Select Theme"
                                                          TextColor="{DynamicResource TextColor}"
-                                                         SelectedIndexChanged="OnPickerSelectionChanged" />
+                                                         SelectedIndexChanged="HandlePickerSelectionChanged" />
                                 </VerticalStackLayout>
                                 </Border>
                             </VerticalStackLayout>
