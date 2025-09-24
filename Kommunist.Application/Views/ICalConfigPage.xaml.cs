@@ -12,7 +12,7 @@ public partial class CalConfigPage
         BindingContext = eventCalendarViewModel;
     }
     
-    private void OnAlarmMinutesChanged(object sender, TextChangedEventArgs e)
+    private void HandleAlarmMinutesTextChanged(object sender, TextChangedEventArgs e)
     {
         if (BindingContext is CalConfigViewModel viewModel && int.TryParse(e.NewTextValue, out var value))
         {
@@ -20,7 +20,7 @@ public partial class CalConfigPage
         }
     }
 
-    private void OnAlarmEmailChanged(object sender, TextChangedEventArgs e)
+    private void HandleAlarmEmailChanged(object sender, TextChangedEventArgs e)
     {
         if (BindingContext is CalConfigViewModel viewModel)
         {
