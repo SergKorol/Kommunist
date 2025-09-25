@@ -107,13 +107,13 @@
                                 </Border.StrokeShape>
                                 
                                 <xc:DayView 
-                                            Command="{Binding Source={x:Reference This}, Path=BindingContext.ChangeDateSelectionCommand}"
-                                            CommandParameter="{Binding DateTime}"
-                                            DateTime="{Binding DateTime}"
-                                            IsCurrentMonth="{Binding IsCurrentMonth}"
-                                            IsInvalid="{Binding IsInvalid}"
-                                            IsSelected="{Binding IsSelected}"
-                                            IsToday="{Binding IsToday}">
+                                            Command="{Binding ChangeDateSelectionCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
+                                            CommandParameter="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            DateTime="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsCurrentMonth="{Binding IsCurrentMonth, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsInvalid="{Binding IsInvalid, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsSelected="{Binding IsSelected, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsToday="{Binding IsToday, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}">
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
