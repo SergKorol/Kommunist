@@ -248,13 +248,20 @@ public class EventCalendarDetailViewModel : BaseViewModel
             try
             {
                 var calendarNames = await _androidCalendarService.GetCalendarNames();
-                var chosenName = await App.Current.MainPage.DisplayActionSheet(
-                    "Choose calendar", "Cancel", null, calendarNames);
+                var app = Microsoft.Maui.Controls.Application.Current
+                          ?? throw new InvalidOperationException("Application.Current is not available.");
+                var mainPage = app.Windows.Count > 0
+                    ? app.Windows[0].Page
+                    : throw new InvalidOperationException("No application windows are available.");
+                if (mainPage != null)
+                {
+                    var chosenName = await mainPage.DisplayActionSheet("Choose calendar", "Cancel", null, calendarNames);
         
-                if (string.IsNullOrEmpty(chosenName) || chosenName == "Cancel")
-                    return;
+                    if (string.IsNullOrEmpty(chosenName) || chosenName == "Cancel")
+                        return;
                 
-                await _androidCalendarService.AddEvents(path, chosenName);
+                    await _androidCalendarService.AddEvents(path, chosenName);
+                }
             }
             catch (Exception e)
             {
