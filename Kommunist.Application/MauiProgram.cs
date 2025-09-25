@@ -46,20 +46,14 @@ public static class MauiProgram
                 pv.BackgroundTintList =
                     Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
 
-                int h = (int)Android.Util.TypedValue.ApplyDimension(
-                    Android.Util.ComplexUnitType.Dip, 12, pv.Context.Resources.DisplayMetrics);
-                int v = (int)Android.Util.TypedValue.ApplyDimension(
-                    Android.Util.ComplexUnitType.Dip, 8, pv.Context.Resources.DisplayMetrics);
+                var h = (int)Android.Util.TypedValue.ApplyDimension(
+                    Android.Util.ComplexUnitType.Dip, 12, pv.Context?.Resources?.DisplayMetrics);
+                var v = (int)Android.Util.TypedValue.ApplyDimension(
+                    Android.Util.ComplexUnitType.Dip, 8, pv.Context?.Resources?.DisplayMetrics);
                 pv.SetPadding(h, v, h, v);
 #endif
 #if IOS
                 handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
-#endif
-#if WINDOWS
-                var tb = handler.PlatformView;
-                tb.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
-                tb.Background =
-                    new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
 #endif
             }
         });
