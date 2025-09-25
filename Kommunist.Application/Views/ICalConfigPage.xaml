@@ -30,7 +30,7 @@
                                            Text="{Binding Invitees, Mode=TwoWay}"
                                            Placeholder="example@email.com"
                                            Keyboard="Email"
-                                           TextChanged="OnAlarmEmailChanged"
+                                           TextChanged="HandleAlarmEmailChanged"
                                            StyleClass="borderless"
                                            Style="{StaticResource EntryStyle}">
                                         <Entry.Behaviors>
@@ -46,6 +46,7 @@
                                            VerticalOptions="Center" 
                                            HorizontalOptions="End"
                                            Margin="0,0,5,0"
+                                           x:DataType="toolkit:EmailValidationBehavior"
                                            IsVisible="{Binding Source={x:Reference EmailValidator}, Path=IsValid}"/>
                                 </Grid>
                             </Border>
@@ -88,7 +89,7 @@
                                            Keyboard="Numeric"
                                            Placeholder="10"
                                            MaxLength="3"
-                                           TextChanged="OnAlarmMinutesChanged"
+                                           TextChanged="HandleAlarmMinutesTextChanged"
                                            StyleClass="borderless"
                                            Style="{StaticResource EntryStyle}"/>
                                            

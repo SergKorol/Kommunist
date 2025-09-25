@@ -38,30 +38,22 @@ public static class MauiProgram
         
         EntryHandler.Mapper.AppendToMapping("BorderlessEntry", ([SuppressMessage("ReSharper", "UnusedParameter.Local")] handler, view) =>
         {
-            if (view is Entry e && e.StyleClass?.Contains("borderless") == true)
-            {
+            if (view is not Entry e || e.StyleClass?.Contains("borderless") != true) return;
 #if ANDROID
-                var pv = handler.PlatformView;
-                pv.Background = null;
-                pv.BackgroundTintList =
-                    Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+            var pv = handler.PlatformView;
+            pv.Background = null;
+            pv.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
 
-                int h = (int)Android.Util.TypedValue.ApplyDimension(
-                    Android.Util.ComplexUnitType.Dip, 12, pv.Context.Resources.DisplayMetrics);
-                int v = (int)Android.Util.TypedValue.ApplyDimension(
-                    Android.Util.ComplexUnitType.Dip, 8, pv.Context.Resources.DisplayMetrics);
-                pv.SetPadding(h, v, h, v);
+            var h = (int)Android.Util.TypedValue.ApplyDimension(
+                Android.Util.ComplexUnitType.Dip, 12, pv.Context?.Resources?.DisplayMetrics);
+            var v = (int)Android.Util.TypedValue.ApplyDimension(
+                Android.Util.ComplexUnitType.Dip, 8, pv.Context?.Resources?.DisplayMetrics);
+            pv.SetPadding(h, v, h, v);
 #endif
 #if IOS
                 handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
 #endif
-#if WINDOWS
-                var tb = handler.PlatformView;
-                tb.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
-                tb.Background =
-                    new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-#endif
-            }
         });
         
         return builder.Build();

@@ -53,7 +53,7 @@
                             HorizontalOptions="Fill"
                             BackgroundColor="SkyBlue"
                             Opacity="0.5"
-                            Source="{Binding Source={x:Reference Page}, Path=BgImg}" />
+                            Source="{Binding SelectedEventDetail.BgImageUrl, FallbackValue='', TargetNullValue=''}" />
                         <VerticalStackLayout Padding="16" Spacing="8">
                             <Label Text="{Binding SelectedEventDetail.Title, FallbackValue='', TargetNullValue=''
 }"

@@ -19,7 +19,7 @@ public partial class App
         }
 
         SetAppThemeResources(Current.RequestedTheme);
-        Current.RequestedThemeChanged += OnRequestedThemeChanged;
+        Current.RequestedThemeChanged += HandleRequestedThemeChanged;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -27,7 +27,7 @@ public partial class App
         return new Window(new AppShell());
     }
 
-    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    private void HandleRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
     {
         Preferences.Set("AppTheme", e.RequestedTheme.ToString());
         SetAppThemeResources(e.RequestedTheme);

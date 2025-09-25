@@ -11,7 +11,7 @@ public class PageDialogService(IMainPageDialog mainPageDialog) : IPageDialogServ
     {
     }
 
-    public async Task<string?> DisplayActionSheet(string title, string cancel, string destruction, string[] buttons)
+    public async Task<string?> DisplayActionSheet(string title, string cancel, string? destruction, string[] buttons)
     {
         return await _mainPageDialog.DisplayActionSheet(title, cancel, destruction, buttons);
     }

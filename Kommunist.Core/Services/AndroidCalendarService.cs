@@ -9,7 +9,7 @@ namespace Kommunist.Core.Services;
 
 public class AndroidCalendarService(ICalendarStore calendarStore) : IAndroidCalendarService
 {
-    public async Task AddEvents(string icsPath, string? targetCalendarName = null)
+    public async Task AddEvents(string? icsPath, string? targetCalendarName = null)
     {
         if (!File.Exists(icsPath))
             throw new FileNotFoundException("ICS file not found", icsPath);

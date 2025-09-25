@@ -12,7 +12,7 @@ public partial class SettingsPage
         InitializeComponent();
     }
 
-    private async void OnPickerSelectionChanged(object sender, EventArgs e)
+    private async void HandlePickerSelectionChanged(object sender, EventArgs e)
     {
         try
         {

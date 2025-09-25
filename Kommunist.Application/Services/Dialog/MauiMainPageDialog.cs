@@ -4,7 +4,7 @@ namespace Kommunist.Application.Services.Dialog;
 
 public class MauiMainPageDialog : IMainPageDialog
 {
-    public async Task<string?> DisplayActionSheet(string title, string cancel, string destruction, string[] buttons)
+    public async Task<string?> DisplayActionSheet(string title, string cancel, string? destruction, string[] buttons)
     {
         var app = Microsoft.Maui.Controls.Application.Current
             ?? throw new InvalidOperationException("Application.Current is not available.");

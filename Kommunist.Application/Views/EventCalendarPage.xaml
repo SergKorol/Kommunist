@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <controls:MyTabBar xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                   xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
                    xmlns:controls="clr-namespace:Kommunist.Application.Controls"
                    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
                    xmlns:xCalendar="clr-namespace:Kommunist.Application.XCalendar"
                    xmlns:models="clr-namespace:Kommunist.Application.XCalendar"
+                   xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
@@ -15,8 +15,8 @@
                    ControlTemplate="{StaticResource TapBarTemplate}">
 
     <controls:MyTabBar.Resources>
-        <mct:VariableMultiValueConverter ConditionType="All" x:Key="AllTrueConverter" />
-        <mct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        <helpers:AllTrueMultiValueConverter x:Key="AllTrueConverter" />
+        <helpers:InvertedBoolConverter x:Key="InvertedBoolConverter" />
     </controls:MyTabBar.Resources>
 
     <Grid BackgroundColor="{DynamicResource BackgroundColor}" RowSpacing="8">
@@ -60,7 +60,9 @@
                 <xc:CalendarView.NavigationViewTemplate>
                     <ControlTemplate>
                         <Grid Padding="4,8">
-                            <xc:NavigationView ArrowColor="{DynamicResource PrimaryColor}"
+                            <xc:NavigationView
+                                              x:DataType="{x:Type xc:NavigationView}"
+                                              ArrowColor="{DynamicResource PrimaryColor}"
                                               BackgroundColor="Transparent"
                                               LeftArrowCommand="{Binding LeftArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
                                               LeftArrowCommandParameter="{Binding LeftArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
@@ -104,13 +106,14 @@
                                     <Ellipse />
                                 </Border.StrokeShape>
                                 
-                                <xc:DayView Command="{Binding BindingContext.ChangeDateSelectionCommand, Source={x:Reference This}}"
-                                          CommandParameter="{Binding DateTime}"
-                                          DateTime="{Binding DateTime}"
-                                          IsCurrentMonth="{Binding IsCurrentMonth}"
-                                          IsInvalid="{Binding IsInvalid}"
-                                          IsSelected="{Binding IsSelected}"
-                                          IsToday="{Binding IsToday}">
+                                <xc:DayView 
+                                            Command="{Binding ChangeDateSelectionCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
+                                            CommandParameter="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            DateTime="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsCurrentMonth="{Binding IsCurrentMonth, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsInvalid="{Binding IsInvalid, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsSelected="{Binding IsSelected, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            IsToday="{Binding IsToday, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}">
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
@@ -268,8 +271,8 @@
                                         <RoundRectangle CornerRadius="12" />
                                     </Border.StrokeShape>
                                     <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}, Path=EventSelectedCommand}"
-                                                             CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding EventSelectedCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
+                                                              CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     
                                     <Grid ColumnSpacing="0" RowSpacing="0">
