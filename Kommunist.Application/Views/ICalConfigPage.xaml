@@ -46,6 +46,7 @@
                                            VerticalOptions="Center" 
                                            HorizontalOptions="End"
                                            Margin="0,0,5,0"
+                                           x:DataType="toolkit:EmailValidationBehavior"
                                            IsVisible="{Binding Source={x:Reference EmailValidator}, Path=IsValid}"/>
                                 </Grid>
                             </Border>
