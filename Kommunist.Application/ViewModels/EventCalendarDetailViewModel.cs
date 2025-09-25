@@ -20,7 +20,7 @@ namespace Kommunist.Application.ViewModels;
 public class EventCalendarDetailViewModel : BaseViewModel
 {
     #region Services
-    private readonly IFileHostingService _fileHostingService;
+    [UsedImplicitly]private readonly IFileHostingService _fileHostingService;
     private readonly IEventService _eventService;
     [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
     #endregion

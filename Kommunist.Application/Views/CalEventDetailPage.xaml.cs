@@ -7,7 +7,7 @@ namespace Kommunist.Application.Views;
 
 public partial class CalEventDetailPage
 {
-    public static readonly BindableProperty BgImgProperty =
+    private static readonly BindableProperty BgImgProperty =
         BindableProperty.Create(
             nameof(BgImg),
             typeof(string),

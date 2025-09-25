@@ -22,14 +22,14 @@ namespace Kommunist.Application.ViewModels;
 public partial class CalConfigViewModel : ObservableValidator, IQueryAttributable
 {
     #region Services
-    private readonly IFileHostingService _fileHostingService;
+    [UsedImplicitly]private readonly IFileHostingService _fileHostingService;
     private readonly IEmailService _emailService;
     private readonly ICoordinatesService _coordinatesService;
     [UsedImplicitly] private readonly IAndroidCalendarService _androidCalendarService;
     private readonly IToastService _toastService;
     private readonly IFileSaverService _fileSaverService;
     private readonly IFileSystemService _fileSystemService;
-    private readonly ILauncherService _launcherService;
+    [UsedImplicitly]private readonly ILauncherService _launcherService;
     [UsedImplicitly] private readonly IPageDialogService _pageDialogService;
     #endregion
     
