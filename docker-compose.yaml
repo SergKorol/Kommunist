@@ -1,0 +1,45 @@
+﻿version: "3.9"
+
+services:
+  android-emulator:
+    image: budtmo/docker-android:emulator_14.0
+    container_name: android_emulator
+    privileged: true
+    ports:
+      - "6080:6080"   # VNC / Web UI
+      - "5554:5554"
+      - "5555:5555"
+    environment:
+      - EMULATOR_DEVICE="Samsung Galaxy S10"    # or whatever device profile works
+      - WEB_VNC=true
+      - DEVICE="Samsung Galaxy S10"
+      - EMULATOR_ARGS="-no-audio -no-boot-anim"
+    devices:
+      - /dev/kvm:/dev/kvm   # pass through KVM (if host supports it)
+    healthcheck:
+      test: ["CMD", "adb", "devices"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  maui-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: maui_builder
+    depends_on:
+      android-emulator:
+        condition: service_healthy
+    volumes:
+      - ./src:/workspace
+    working_dir: /workspace
+    command: >
+      bash -c "
+        echo '🕒 Waiting for emulator...' &&
+        sleep 60 &&
+        dotnet build -f net9.0-android &&
+        adb connect android_emulator:5555 &&
+        adb wait-for-device &&
+        adb install -r bin/Debug/net9.0-android/com.companyname.app.apk &&
+        adb shell am start -n com.companyname.app/com.companyname.app.MainActivity
+      "

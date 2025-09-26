@@ -25,6 +25,7 @@
         <Nullable>enable</Nullable>
         <PackageIcon>Resources\Images\kommunist-logo.png</PackageIcon>
         <NeutralLanguage>en</NeutralLanguage>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -83,6 +84,12 @@
 
     <ItemGroup>
         <EmbeddedResource Include="appsettings.Development.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
