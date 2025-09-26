@@ -2,35 +2,43 @@
 
 services:
   android-emulator:
-    image: budtmo/docker-android-x86-12.0  # You can replace with dockerify-android if you prefer
+    image: budtmo/docker-android:emulator_14.0
     container_name: android_emulator
     privileged: true
     ports:
-      - "5554:5554"   # Emulator console
-      - "5555:5555"   # ADB
-      - "6080:6080"   # VNC/noVNC
+      - "6080:6080"   # VNC / Web UI
+      - "5554:5554"
+      - "5555:5555"
     environment:
-      - DEVICE="Samsung Galaxy S6"
-      - EMULATOR="true"
-      - APPIUM="false"
-      - CONNECT_TO_GRID="false"
+      - EMULATOR_DEVICE="Samsung Galaxy S10"    # or whatever device profile works
+      - WEB_VNC=true
+      - DEVICE="Samsung Galaxy S10"
+      - EMULATOR_ARGS="-no-audio -no-boot-anim"
+    devices:
+      - /dev/kvm:/dev/kvm   # pass through KVM (if host supports it)
+    healthcheck:
+      test: ["CMD", "adb", "devices"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   maui-builder:
     build:
       context: .
-      dockerfile: Dockerfile   # the Dockerfile you created with SDK + Android setup
+      dockerfile: Dockerfile
     container_name: maui_builder
     depends_on:
-      - android-emulator
+      android-emulator:
+        condition: service_healthy
     volumes:
-      - ./src:/workspace  # mount your MAUI project into the container
+      - ./src:/workspace
     working_dir: /workspace
     command: >
       bash -c "
-        echo '⏳ Waiting for emulator to boot...' &&
+        echo '🕒 Waiting for emulator...' &&
         sleep 60 &&
         dotnet build -f net9.0-android &&
-        adb connect android-emulator:5555 &&
+        adb connect android_emulator:5555 &&
         adb wait-for-device &&
         adb install -r bin/Debug/net9.0-android/com.companyname.app.apk &&
         adb shell am start -n com.companyname.app/com.companyname.app.MainActivity
