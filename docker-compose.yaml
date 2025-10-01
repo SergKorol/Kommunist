@@ -1,6 +1,4 @@
-﻿version: "3.9"
-
-services:
+﻿services:
   android-emulator:
     image: budtmo/docker-android:emulator_14.0
     container_name: android_emulator
@@ -10,12 +8,12 @@ services:
       - "5554:5554"
       - "5555:5555"
     environment:
-      - EMULATOR_DEVICE="Samsung Galaxy S10"    # or whatever device profile works
+      - EMULATOR_DEVICE=Samsung Galaxy S10
       - WEB_VNC=true
-      - DEVICE="Samsung Galaxy S10"
-      - EMULATOR_ARGS="-no-audio -no-boot-anim"
+      - DEVICE=Samsung Galaxy S10
+      - EMULATOR_ARGS=-no-audio -no-boot-anim
     devices:
-      - /dev/kvm:/dev/kvm   # pass through KVM (if host supports it)
+      - /dev/kvm:/dev/kvm
     healthcheck:
       test: ["CMD", "adb", "devices"]
       interval: 10s
@@ -25,21 +23,19 @@ services:
   maui-builder:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Kommunist.Application/Dockerfile
     container_name: maui_builder
     depends_on:
       android-emulator:
         condition: service_healthy
-    volumes:
-      - ./src:/workspace
-    working_dir: /workspace
-    command: >
-      bash -c "
-        echo '🕒 Waiting for emulator...' &&
-        sleep 60 &&
-        dotnet build -f net9.0-android &&
-        adb connect android_emulator:5555 &&
-        adb wait-for-device &&
-        adb install -r bin/Debug/net9.0-android/com.companyname.app.apk &&
-        adb shell am start -n com.companyname.app/com.companyname.app.MainActivity
-      "
+    working_dir: /app
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        echo '🕒 Waiting for emulator...'
+        sleep 30
+        adb connect android-emulator:5555
+        adb wait-for-device
+        echo '📱 Installing APK...'
+        adb install -r /app/*.apk
+        echo '✅ APK installed successfully!'

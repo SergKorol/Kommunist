@@ -46,10 +46,8 @@ RUN dotnet publish ./Kommunist.Application/Kommunist.Application.csproj \
     --no-restore \
     /p:TargetFramework=net9.0-android
 
-# -------------- runtime stage (smaller image) --------------
-FROM mcr.microsoft.com/dotnet/runtime:9.0 AS runtime
+# Set working directory to app output
 WORKDIR /app
-COPY --from=build /app ./
 
 # keep container alive for adb install / debugging; override command when running if needed
 ENTRYPOINT ["sleep","infinity"]
