@@ -1,0 +1,9 @@
+version: "3"
+services:
+  android:
+    build: .
+    container_name: android_emulator
+    ports:
+      - "6080:6080" # Web VNC (браузер)
+      - "5555:5555" # ADB
+    privileged: true
