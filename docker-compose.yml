@@ -7,3 +7,8 @@ services:
       - "6080:6080" # Web VNC (браузер)
       - "5555:5555" # ADB
     privileged: true
+    environment:
+      - DISPLAY=:0
+    shm_size: '2gb'
+    devices:
+      - /dev/kvm
