@@ -28,8 +28,19 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-android' AND '$(Configuration)' == 'Release'">
         <AndroidPackageFormat>aab</AndroidPackageFormat>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <AndroidIncludeDebugSymbols>true</AndroidIncludeDebugSymbols>
+        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+        <AndroidEnableProguard>true</AndroidEnableProguard>
+        <AndroidLinkTool>r8</AndroidLinkTool>
+        <AndroidLinkMode>Full</AndroidLinkMode>
+        <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+        <RunAOTCompilation>true</RunAOTCompilation>
+        <AndroidCreateProguardMappingFile>true</AndroidCreateProguardMappingFile>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>portable</DebugType>
         <AndroidKeyStore>true</AndroidKeyStore>
         <AndroidSigningKeyStore>kommunist.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>kommunist</AndroidSigningKeyAlias>
