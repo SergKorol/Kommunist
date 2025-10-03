@@ -49,7 +49,9 @@ RUN echo "no" | avdmanager create avd \
 RUN echo '#!/bin/bash\n\
 set -e\n\
 \n\
-echo "Starting Android Emulator in software mode (no hardware acceleration)..."\n\
+echo "=== Starting Android Emulator in software mode ==="\n\
+echo "WARNING: This will be VERY SLOW without hardware acceleration!"\n\
+echo "First boot may take 15-20 minutes. Please be patient..."\n\
 \n\
 # Start VNC server\n\
 Xvnc :0 -geometry 1920x1080 -depth 24 -SecurityTypes None &\n\
@@ -63,19 +65,20 @@ sleep 2\n\
 websockify --web=/usr/share/novnc/ 6080 localhost:5900 &\n\
 sleep 2\n\
 \n\
-echo "Starting emulator..."\n\
-echo "This will be SLOW without hardware acceleration. Please be patient..."\n\
+echo "=== Starting emulator (this takes time...) ==="\n\
 \n\
-# Run emulator with software rendering (no KVM/HAXM required)\n\
+# Run emulator with software rendering\n\
 DISPLAY=:0 emulator -avd testAVD \\\n\
   -no-accel \\\n\
-  -no-snapshot \\\n\
+  -no-snapshot-save \\\n\
   -no-audio \\\n\
-  -no-boot-anim \\\n\
   -gpu swiftshader_indirect \\\n\
   -no-metrics \\\n\
-  -memory 1536 \\\n\
-  -wipe-data\n\
+  -no-jni \\\n\
+  -netdelay none \\\n\
+  -netspeed full \\\n\
+  -prop persist.sys.usb.config=adb \\\n\
+  -skin 1080x1920\n\
 ' > /start.sh && chmod +x /start.sh
 
 CMD ["/start.sh"]
