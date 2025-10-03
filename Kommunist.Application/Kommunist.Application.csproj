@@ -30,6 +30,11 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
         <AndroidPackageFormat>aab</AndroidPackageFormat>
+        <AndroidKeyStore>true</AndroidKeyStore>
+        <AndroidSigningKeyStore>kommunist.keystore</AndroidSigningKeyStore>
+        <AndroidSigningKeyAlias>kommunist</AndroidSigningKeyAlias>
+        <AndroidSigningKeyPass>KsS29041983!@#</AndroidSigningKeyPass>
+        <AndroidSigningStorePass>KsS29041983!@#</AndroidSigningStorePass>
     </PropertyGroup>
 
     <ItemGroup>
