@@ -1,9 +1,9 @@
 using System.Collections.Specialized;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Alerts;
+using Kommunist.Application.Calendar;
 using Kommunist.Application.Helpers;
 using Kommunist.Application.Views;
-using Kommunist.Application.XCalendar;
 using Kommunist.Core.ApiModels;
 using Kommunist.Core.Services.Interfaces;
 using XCalendar.Core.Collections;

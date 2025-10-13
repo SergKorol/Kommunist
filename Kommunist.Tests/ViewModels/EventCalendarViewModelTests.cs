@@ -3,7 +3,7 @@ using Kommunist.Application.ViewModels;
 using Kommunist.Core.Services.Interfaces;
 using Moq;
 using System.Reflection;
-using Kommunist.Application.XCalendar;
+using Kommunist.Application.Calendar;
 using XCalendar.Core.Models;
 
 namespace Kommunist.Tests.ViewModels;

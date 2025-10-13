@@ -46,6 +46,9 @@
         <AndroidSigningKeyAlias>kommunist</AndroidSigningKeyAlias>
         <AndroidSigningKeyPass>KsS29041983!@#</AndroidSigningKeyPass>
         <AndroidSigningStorePass>KsS29041983!@#</AndroidSigningStorePass>
+
+        <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+        <AndroidLinkSkip>XCalendar.Core;XCalendar.Maui;CalendarView.MAUI</AndroidLinkSkip>
     </PropertyGroup>
 
     <ItemGroup>
@@ -98,18 +101,18 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+        <TrimmerRootAssembly Include="XCalendar.Core" RootMode="library" />
+        <TrimmerRootAssembly Include="XCalendar.Maui" RootMode="library" />
+        <TrimmerRootAssembly Include="CalendarView.MAUI" RootMode="library" />
+    </ItemGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="appsettings.Development.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
     </ItemGroup>
 
 </Project>
