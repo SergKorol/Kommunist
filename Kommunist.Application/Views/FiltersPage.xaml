@@ -19,8 +19,8 @@
     </controls:MyTabBar.Resources>
     <controls:MyTabBar.Content>
         <Grid RowDefinitions="Auto,*">
-            <ScrollView BindingContextChanged="BindableObject_OnBindingContextChanged">
-            <VerticalStackLayout Padding="20" Spacing="16">
+            <!-- <ScrollView BindingContextChanged="BindableObject_OnBindingContextChanged"> -->
+            <VerticalStackLayout Padding="20" Spacing="16" BindingContextChanged="BindableObject_OnBindingContextChanged">
                 <!-- Tag Search -->
                 <Border 
                     Stroke="{DynamicResource Gray300}"
@@ -59,25 +59,47 @@
     
     
                 <!-- Tag Suggestions -->
-                <CollectionView
-                    ItemsSource="{Binding TagSuggestions}"
-                    IsVisible="{Binding TagSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
-                    SelectionMode="None">
+                <!-- <CollectionView -->
+                <!--     ItemsSource="{Binding TagSuggestions}" -->
+                <!--     IsVisible="{Binding TagSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}" -->
+                <!--     InputTransparent="False" -->
+                <!--     SelectionMode="None"> -->
+                <!--     <CollectionView.ItemTemplate> -->
+                <!--         <DataTemplate x:DataType="{x:Type x:String}"> -->
+                <!--             <Label -->
+                <!--                 Text="{Binding .}" -->
+                <!--                 Padding="10" -->
+                <!--                 BackgroundColor="{DynamicResource CollectionBackgroundColor}" -->
+                <!--                 Margin="5"> -->
+                <!--                 <Label.GestureRecognizers> -->
+                <!--                     <TapGestureRecognizer Command="{Binding SelectTagCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}" -->
+                <!--                                           CommandParameter="{Binding .}" /> -->
+                <!--                 </Label.GestureRecognizers> -->
+                <!--             </Label> -->
+                <!--         </DataTemplate> -->
+                <!--     </CollectionView.ItemTemplate> -->
+                <!-- </CollectionView> -->
+                <CollectionView ItemsSource="{Binding TagSuggestions}" SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="{x:Type x:String}">
-                            <Label
-                                Text="{Binding .}"
-                                Padding="10"
+                            <Border
+                                StrokeThickness="1"
+                                Stroke="Gray"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
-                                Margin="5">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectTagCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
-                                                          CommandParameter="{Binding .}" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                                Padding="10"
+                                Margin="5"
+                                StrokeShape="RoundRectangle 16">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding SelectTagCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding .}" />
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
     
                 <!--Selected Tags -->
                 <CollectionView
@@ -377,7 +399,7 @@
                     HeightRequest="50"
                     Command="{Binding DeleteFiltersCommand}"/>
             </VerticalStackLayout>
-        </ScrollView>
+        <!-- </ScrollView> -->
         </Grid>
         
     </controls:MyTabBar.Content>

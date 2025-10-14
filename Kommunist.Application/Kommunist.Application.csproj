@@ -13,7 +13,7 @@
         <ApplicationTitle>Kommunist</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>ical-events</ApplicationId>
+        <ApplicationId>com.kommunist.app</ApplicationId>
         <ApplicationIdGuid>FC6808BF-F143-4F36-8041-11FE722155CC</ApplicationIdGuid>
 
         <!-- Versions -->
@@ -30,26 +30,30 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-android' AND '$(Configuration)' == 'Release'">
         <AndroidPackageFormat>aab</AndroidPackageFormat>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <AndroidLinkMode>None</AndroidLinkMode>
         <AndroidIncludeDebugSymbols>true</AndroidIncludeDebugSymbols>
-        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-        <AndroidEnableProguard>true</AndroidEnableProguard>
-        <AndroidLinkTool>r8</AndroidLinkTool>
-        <AndroidLinkMode>Full</AndroidLinkMode>
-        <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-        <RunAOTCompilation>true</RunAOTCompilation>
-        <AndroidCreateProguardMappingFile>true</AndroidCreateProguardMappingFile>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>portable</DebugType>
+
         <AndroidKeyStore>true</AndroidKeyStore>
         <AndroidSigningKeyStore>kommunist.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>kommunist</AndroidSigningKeyAlias>
         <AndroidSigningKeyPass>KsS29041983!@#</AndroidSigningKeyPass>
         <AndroidSigningStorePass>KsS29041983!@#</AndroidSigningStorePass>
 
-        <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-        <AndroidLinkSkip>XCalendar.Core;XCalendar.Maui;CalendarView.MAUI</AndroidLinkSkip>
+        <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+        <PublishTrimmed>false</PublishTrimmed>
+        <RunAOTCompilation>false</RunAOTCompilation>
+
+        <!-- Android specific optimizations -->
+        <AndroidUseAapt2>true</AndroidUseAapt2>
+        <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+
+        <!-- Preserve reflection for MVVM, commands, and bindings -->
+        <MtouchLink>None</MtouchLink>
     </PropertyGroup>
+
 
     <ItemGroup>
         <!-- App Icon -->
@@ -99,12 +103,6 @@
         <PackageReference Include="XCalendar.Core" Version="4.6.0" />
         <PackageReference Include="XCalendar.Maui" Version="4.6.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-        <TrimmerRootAssembly Include="XCalendar.Core" RootMode="library" />
-        <TrimmerRootAssembly Include="XCalendar.Maui" RootMode="library" />
-        <TrimmerRootAssembly Include="CalendarView.MAUI" RootMode="library" />
     </ItemGroup>
 
     <ItemGroup>
