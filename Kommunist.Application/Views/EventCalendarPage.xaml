@@ -4,9 +4,8 @@
                    xmlns:xc="clr-namespace:XCalendar.Maui.Views;assembly=XCalendar.Maui"
                    xmlns:controls="clr-namespace:Kommunist.Application.Controls"
                    xmlns:viewModels="clr-namespace:Kommunist.Application.ViewModels"
-                   xmlns:xCalendar="clr-namespace:Kommunist.Application.XCalendar"
-                   xmlns:models="clr-namespace:Kommunist.Application.XCalendar"
                    xmlns:helpers="clr-namespace:Kommunist.Application.Helpers"
+                   xmlns:calendar="clr-namespace:Kommunist.Application.Calendar"
                    x:Class="Kommunist.Application.Views.EventCalendarPage"
                    x:DataType="{x:Type viewModels:EventCalendarViewModel}"
                    x:Name="This"
@@ -97,7 +96,7 @@
                 
                 <!-- Calendar day style -->
                 <xc:CalendarView.DayTemplate>
-                    <DataTemplate x:DataType="{x:Type xCalendar:EventDay}">
+                    <DataTemplate x:DataType="{x:Type calendar:EventDay}">
                         <Grid Padding="2">
                             <Border BackgroundColor="Transparent"
                                     HeightRequest="48"
@@ -108,16 +107,16 @@
                                 
                                 <xc:DayView 
                                             Command="{Binding ChangeDateSelectionCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
-                                            CommandParameter="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
-                                            DateTime="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
-                                            IsCurrentMonth="{Binding IsCurrentMonth, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
-                                            IsInvalid="{Binding IsInvalid, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
-                                            IsSelected="{Binding IsSelected, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
-                                            IsToday="{Binding IsToday, Path=., Source={x:RelativeSource AncestorType={x:Type xCalendar:EventDay}}}">
+                                            CommandParameter="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
+                                            DateTime="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
+                                            IsCurrentMonth="{Binding IsCurrentMonth, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
+                                            IsInvalid="{Binding IsInvalid, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
+                                            IsSelected="{Binding IsSelected, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
+                                            IsToday="{Binding IsToday, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}">
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
-                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type xCalendar:EventDay}}}"
+                                            <Grid BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type calendar:EventDay}}}"
                                                   RowSpacing="2">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="1.5*" />
@@ -182,7 +181,7 @@
                                                         </MultiBinding>
                                                     </HorizontalStackLayout.IsVisible>
                                                     <BindableLayout.ItemTemplate>
-                                                        <DataTemplate x:DataType="{x:Type models:CalEvent}">
+                                                        <DataTemplate x:DataType="{x:Type calendar:CalEvent}">
                                                             <BoxView Color="{Binding Color}"
                                                                     CornerRadius="100"
                                                                     HeightRequest="6"
@@ -255,7 +254,7 @@
                             <LinearItemsLayout Orientation="Vertical" ItemSpacing="12" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="{x:Type models:CalEvent}">
+                            <DataTemplate x:DataType="{x:Type calendar:CalEvent}">
                                 <Border Margin="8,0"
                                         Padding="0"
                                         StrokeThickness="0"
