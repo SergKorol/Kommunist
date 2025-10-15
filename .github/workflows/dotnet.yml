@@ -14,10 +14,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          global-json-file: global.json
       - name: Install MAUI workloads
         run: |
-          dotnet workload install maui --source https://api.nuget.org/v3/index.json
+          dotnet workload install maui --from-rollback-file https://aka.ms/dotnet/9.0.1xx/daily/workloads.json
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
