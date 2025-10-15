@@ -11,10 +11,21 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v5
-      - name: Setup .NET MAUI
-        uses: weslleymurdock/setup-maui-action@v1.1
-        with: 
-          dotnet-version: 9.0.x
+      - name: Select Xcode 16.4
+        run: sudo xcode-select -s "/Applications/Xcode_16.4.app"
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.100
+
+      - name: Force reinstall compatible workloads
+        run: |
+          dotnet workload uninstall maui-ios || true
+          dotnet workload uninstall maui || true
+          dotnet workload clean
+          dotnet workload update
+          dotnet workload install maui ios --skip-sign-check
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
