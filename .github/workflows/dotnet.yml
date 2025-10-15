@@ -20,7 +20,7 @@ jobs:
           dotnet workload config --update-mode manifests
       - name: Install workloads for Xcode 16.4 compatibility
         run: |
-          dotnet workload install ios maccatalyst macos maui --skip-manifest-update
+          dotnet workload install ios maui --skip-manifest-update
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
