@@ -81,7 +81,7 @@
                 <!-- </CollectionView> -->
                 <CollectionView ItemsSource="{Binding TagSuggestions}" SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -91,7 +91,7 @@
                                 StrokeShape="RoundRectangle 16">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer
-                                        Command="{Binding SelectTagCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=SelectTagCommand}"
                                         CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
                                 <Label Text="{Binding .}" />
@@ -107,14 +107,14 @@
                     IsVisible="{Binding SelectedTags.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DeselectTagCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}, Path=DeselectTagCommand}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
@@ -164,35 +164,35 @@
                     IsVisible="{Binding SpeakerSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectSpeakerCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding SelectSpeakerCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-    
+
                 <!--Selected Speakers -->
                 <CollectionView
                     ItemsSource="{Binding SelectedSpeakers}"
                     IsVisible="{Binding SelectedSpeakers.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DeselectSpeakerCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding DeselectSpeakerCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
@@ -242,35 +242,35 @@
                     IsVisible="{Binding CountrySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectCountryCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding SelectCountryCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-    
+
                 <!--Selected Countries -->
                 <CollectionView
                     ItemsSource="{Binding SelectedCountries}"
                     IsVisible="{Binding SelectedCountries.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DeselectCountryCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding DeselectCountryCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
@@ -320,35 +320,35 @@
                     IsVisible="{Binding CommunitySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectCommunityCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding SelectCommunityCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-    
+
                 <!--Selected Communities -->
                 <CollectionView
                     ItemsSource="{Binding SelectedCommunities}"
                     IsVisible="{Binding SelectedCommunities.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type x:String}">
+                        <DataTemplate>
                             <Label
                                 Text="{Binding .}"
                                 Padding="10"
                                 BackgroundColor="{DynamicResource CollectionBackgroundColor}"
                                 Margin="5">
                                 <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DeselectCommunityCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
+                                    <TapGestureRecognizer Command="{Binding DeselectCommunityCommand, Source={RelativeSource AncestorType={x:Type viewModels:EventFiltersViewModel}}}"
                                                           CommandParameter="{Binding .}" />
                                 </Label.GestureRecognizers>
                             </Label>
