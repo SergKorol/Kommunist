@@ -59,17 +59,15 @@
                 <xc:CalendarView.NavigationViewTemplate>
                     <ControlTemplate>
                         <Grid Padding="4,8">
-                            <xc:NavigationView
-                                              x:DataType="{x:Type xc:NavigationView}"
-                                              ArrowColor="{DynamicResource PrimaryColor}"
-                                              BackgroundColor="Transparent"
-                                              LeftArrowCommand="{Binding LeftArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              LeftArrowCommandParameter="{Binding LeftArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
-                                              HeightRequest="48"
-                                              Text="{TemplateBinding Text}"
-                                              Style="{StaticResource DefaultNavigationViewStyle}">
+                            <xc:NavigationView ArrowColor="{DynamicResource PrimaryColor}"
+                                               BackgroundColor="Transparent"
+                                               LeftArrowCommand="{Binding LeftArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                               LeftArrowCommandParameter="{Binding LeftArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                               RightArrowCommand="{Binding RightArrowCommand, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                               RightArrowCommandParameter="{Binding RightArrowCommandParameter, Source={RelativeSource AncestorType={x:Type xc:CalendarView}}}"
+                                               HeightRequest="48"
+                                               Text="{TemplateBinding Text}"
+                                               Style="{StaticResource DefaultNavigationViewStyle}">
                                 <xc:NavigationView.TextColor>
                                     <x:DynamicResource Key="TextPrimaryColor" /> 
                                 </xc:NavigationView.TextColor>
@@ -106,13 +104,13 @@
                                 </Border.StrokeShape>
                                 
                                 <xc:DayView 
-                                            Command="{Binding ChangeDateSelectionCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
-                                            CommandParameter="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
-                                            DateTime="{Binding DateTime, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
-                                            IsCurrentMonth="{Binding IsCurrentMonth, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
-                                            IsInvalid="{Binding IsInvalid, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
-                                            IsSelected="{Binding IsSelected, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}"
-                                            IsToday="{Binding IsToday, Path=., Source={x:RelativeSource AncestorType={x:Type calendar:EventDay}}}">
+                                    Command="{Binding Source={x:Reference This}, Path=BindingContext.ChangeDateSelectionCommand}"
+                                    CommandParameter="{Binding DateTime}"
+                                    DateTime="{Binding DateTime}"
+                                    IsCurrentMonth="{Binding IsCurrentMonth}"
+                                    IsInvalid="{Binding IsInvalid}"
+                                    IsSelected="{Binding IsSelected}"
+                                    IsToday="{Binding IsToday}">
                                     
                                     <xc:DayView.ControlTemplate>
                                         <ControlTemplate>
