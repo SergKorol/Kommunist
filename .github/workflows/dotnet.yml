@@ -8,15 +8,13 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v5
       - name: Setup .NET MAUI
         uses: weslleymurdock/setup-maui-action@v1.1
         with: 
           dotnet-version: 9.0.x
-      - name: Downgrade to compatible iOS workload
-        run: dotnet workload install maui-ios --from-rollback-file https://dotnetcli.blob.core.windows.net/dotnet/workload/maui/9.0.0/rollback.json
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
