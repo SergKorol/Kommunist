@@ -57,11 +57,12 @@
                     </Grid>
                 </Border>
                 
+                <!-- Tag Suggestions -->
                 <CollectionView ItemsSource="{Binding TagSuggestions}"
                                 IsVisible="{Binding TagSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                                 SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -87,7 +88,7 @@
                     IsVisible="{Binding SelectedTags.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -147,7 +148,7 @@
                     IsVisible="{Binding SpeakerSuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -171,7 +172,7 @@
                     IsVisible="{Binding SelectedSpeakers.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -231,7 +232,7 @@
                     IsVisible="{Binding CountrySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -255,7 +256,7 @@
                     IsVisible="{Binding SelectedCountries.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -315,7 +316,7 @@
                     IsVisible="{Binding CommunitySuggestions.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
@@ -339,7 +340,7 @@
                     IsVisible="{Binding SelectedCommunities.Count, Converter={StaticResource IsGreaterThanZeroConverter}}"
                     SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
                             <Border
                                 StrokeThickness="1"
                                 Stroke="Gray"
