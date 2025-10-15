@@ -14,9 +14,9 @@ jobs:
       - name: Setup .NET MAUI
         uses: weslleymurdock/setup-maui-action@v1.1
         with: 
-          dotnet-version: 9.0.203
-      - name: Update workloads
-        run: dotnet workload install maui ios --source https://api.nuget.org/v3/index.json --skip-sign-check
+          dotnet-version: 9.0.x
+      - name: Downgrade to compatible iOS workload
+        run: dotnet workload install maui-ios --from-rollback-file https://aka.ms/dotnet/maui/9.0.0.json
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
