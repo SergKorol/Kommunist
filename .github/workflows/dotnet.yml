@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET MAUI
         uses: weslleymurdock/setup-maui-action@v1.1
         with: 
-          dotnet-version: 9.0.x
+          dotnet-version: 9.0.203
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
