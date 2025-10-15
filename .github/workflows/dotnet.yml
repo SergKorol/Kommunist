@@ -18,14 +18,9 @@ jobs:
       - name: Set workload update mode to manifests
         run: |
           dotnet workload config --update-mode manifests
-      - name: Install iOS SDK packs for Xcode 16.4
+      - name: Install workloads for Xcode 16.4 compatibility
         run: |
-          dotnet workload install ios-net9 --skip-manifest-update --source https://api.nuget.org/v3/index.json
-          dotnet workload install maccatalyst-net9 --skip-manifest-update --source https://api.nuget.org/v3/index.json
-          dotnet workload install macos-net9 --skip-manifest-update --source https://api.nuget.org/v3/index.json
-      - name: Install MAUI workload
-        run: |
-          dotnet workload install maui --skip-manifest-update
+          dotnet workload install ios maccatalyst macos maui --skip-manifest-update
       - name: Restore dependencies
         run: dotnet restore
       - name: Create appsettings.Development.json
