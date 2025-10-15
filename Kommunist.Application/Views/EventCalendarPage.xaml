@@ -268,7 +268,9 @@
                                         <RoundRectangle CornerRadius="12" />
                                     </Border.StrokeShape>
                                     <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding EventSelectedCommand, Path=., Source={x:RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}}}"
+                                        <TapGestureRecognizer BindingContext="{Binding Path=., Source={RelativeSource AncestorType={x:Type viewModels:EventCalendarViewModel}} }"
+                                                              x:DataType="{x:Type viewModels:EventCalendarViewModel}"
+                                                              Command="{Binding EventSelectedCommand}"
                                                               CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     
