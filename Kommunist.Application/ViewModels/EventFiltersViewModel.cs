@@ -5,9 +5,11 @@ using Kommunist.Application.Helpers;
 using Kommunist.Core.Models;
 using Kommunist.Core.Services.Interfaces;
 using Kommunist.Core.Types;
+using Microsoft.Maui.Controls.Internals;
 
 namespace Kommunist.Application.ViewModels;
 
+[Preserve(AllMembers = true)]
 public class EventFiltersViewModel : BaseViewModel, IDisposable
 {
     #region Services
@@ -49,102 +51,121 @@ public class EventFiltersViewModel : BaseViewModel, IDisposable
         ApplyFiltersCommand = new Command(ExecuteApplyFilters);
         ClearFiltersCommand = new Command(ExecuteClearFilters);
         DeleteFiltersCommand = new Command(ExecuteDeleteFilters);
+
+        // Initialize all tag commands
+        SelectTagCommand = new Command<string>(tag =>
+        {
+            if (string.IsNullOrWhiteSpace(tag)) return;
+            TagFilter = tag;
+            SelectedTagFilter = tag;
+            if (!SelectedTags.Contains(tag))
+                SelectedTags.Add(tag);
+            TagSuggestions.Clear();
+        });
+
+        DeselectTagCommand = new Command<string>(tag =>
+        {
+            if (string.IsNullOrWhiteSpace(tag)) return;
+            SelectedTags.Remove(tag);
+        });
+
+        ClearTagFilterCommand = new Command(() => TagFilter = string.Empty);
+
+        // Initialize all speaker commands
+        SelectSpeakerCommand = new Command<string>(speaker =>
+        {
+            if (string.IsNullOrWhiteSpace(speaker)) return;
+            SpeakerFilter = speaker;
+            SelectedSpeakerFilter = speaker;
+            if (!SelectedSpeakers.Contains(speaker))
+                SelectedSpeakers.Add(speaker);
+            SpeakerSuggestions.Clear();
+        });
+
+        DeselectSpeakerCommand = new Command<string>(speaker =>
+        {
+            if (string.IsNullOrWhiteSpace(speaker)) return;
+            SelectedSpeakers.Remove(speaker);
+        });
+
+        ClearSpeakerFilterCommand = new Command(() => SpeakerFilter = string.Empty);
+
+        // Initialize all country commands
+        SelectCountryCommand = new Command<string>(country =>
+        {
+            if (string.IsNullOrWhiteSpace(country)) return;
+            CountryFilter = country;
+            SelectedCountryFilter = country;
+            if (!SelectedCountries.Contains(country))
+                SelectedCountries.Add(country);
+            CountrySuggestions.Clear();
+        });
+
+        DeselectCountryCommand = new Command<string>(country =>
+        {
+            if (string.IsNullOrWhiteSpace(country)) return;
+            SelectedCountries.Remove(country);
+        });
+
+        ClearCountryFilterCommand = new Command(() => CountryFilter = string.Empty);
+
+        // Initialize all community commands
+        SelectCommunityCommand = new Command<string>(community =>
+        {
+            if (string.IsNullOrWhiteSpace(community)) return;
+            CommunityFilter = community;
+            SelectedCommunityFilter = community;
+            if (!SelectedCommunities.Contains(community))
+                SelectedCommunities.Add(community);
+            CommunitySuggestions.Clear();
+        });
+
+        DeselectCommunityCommand = new Command<string>(community =>
+        {
+            if (string.IsNullOrWhiteSpace(community)) return;
+            SelectedCommunities.Remove(community);
+        });
+
+        ClearCommunityFilterCommand = new Command(() => CommunityFilter = string.Empty);
     }
 
     #endregion
 
     #region Commands
+    [Preserve]
     public ICommand ApplyFiltersCommand { get; }
+    [Preserve]
     public ICommand ClearFiltersCommand { get; }
+    [Preserve]
     public ICommand DeleteFiltersCommand { get; }
-    
-    private Command<string>? _selectTagCommand;
-    private Command<string>? _deselectTagCommand;
-    private Command? _clearTagFilterCommand;
 
-    private Command<string>? _selectSpeakerCommand;
-    private Command<string>? _deselectSpeakerCommand;
-    private Command? _clearSpeakerFilterCommand;
+    [Preserve]
+    public Command<string> SelectTagCommand { get; }
+    [Preserve]
+    public Command<string> DeselectTagCommand { get; }
+    [Preserve]
+    public Command ClearTagFilterCommand { get; }
 
-    private Command<string>? _selectCountryCommand;
-    private Command<string>? _deselectCountryCommand;
-    private Command? _clearCountryFilterCommand;
+    [Preserve]
+    public Command<string> SelectSpeakerCommand { get; }
+    [Preserve]
+    public Command<string> DeselectSpeakerCommand { get; }
+    [Preserve]
+    public Command ClearSpeakerFilterCommand { get; }
 
-    private Command<string>? _selectCommunityCommand;
-    private Command<string>? _deselectCommunityCommand;
-    private Command? _clearCommunityFilterCommand;
+    [Preserve]
+    public Command<string> SelectCountryCommand { get; }
+    [Preserve]
+    public Command<string> DeselectCountryCommand { get; }
+    [Preserve]
+    public Command ClearCountryFilterCommand { get; }
 
-    public Command<string> SelectTagCommand => _selectTagCommand ??= new Command<string>(tag =>
-    {
-        if (string.IsNullOrWhiteSpace(tag)) return;
-        TagFilter = tag;
-        SelectedTagFilter = tag;
-        if (!SelectedTags.Contains(tag))
-            SelectedTags.Add(tag);
-        TagSuggestions.Clear();
-    });
-
-    public Command<string> DeselectTagCommand => _deselectTagCommand ??= new Command<string>(tag =>
-    {
-        if (string.IsNullOrWhiteSpace(tag)) return;
-        SelectedTags.Remove(tag);
-    });
-
-    public Command ClearTagFilterCommand => _clearTagFilterCommand ??= new Command(_ => TagFilter = string.Empty);
-
-    public Command<string> SelectSpeakerCommand => _selectSpeakerCommand ??= new Command<string>(speaker =>
-    {
-        if (string.IsNullOrWhiteSpace(speaker)) return;
-        SpeakerFilter = speaker;
-        SelectedSpeakerFilter = speaker;
-        if (!SelectedSpeakers.Contains(speaker))
-            SelectedSpeakers.Add(speaker);
-        SpeakerSuggestions.Clear();
-    });
-
-    public Command<string> DeselectSpeakerCommand => _deselectSpeakerCommand ??= new Command<string>(speaker =>
-    {
-        if (string.IsNullOrWhiteSpace(speaker)) return;
-        SelectedSpeakers.Remove(speaker);
-    });
-
-    public Command ClearSpeakerFilterCommand => _clearSpeakerFilterCommand ??= new Command(_ => SpeakerFilter = string.Empty);
-
-    public Command<string> SelectCountryCommand => _selectCountryCommand ??= new Command<string>(country =>
-    {
-        if (string.IsNullOrWhiteSpace(country)) return;
-        CountryFilter = country;
-        SelectedCountryFilter = country;
-        if (!SelectedCountries.Contains(country))
-            SelectedCountries.Add(country);
-        CountrySuggestions.Clear();
-    });
-
-    public Command<string> DeselectCountryCommand => _deselectCountryCommand ??= new Command<string>(country =>
-    {
-        if (string.IsNullOrWhiteSpace(country)) return;
-        SelectedCountries.Remove(country);
-    });
-
-    public Command ClearCountryFilterCommand => _clearCountryFilterCommand ??= new Command(_ => CountryFilter = string.Empty);
-
-    public Command<string> SelectCommunityCommand => _selectCommunityCommand ??= new Command<string>(community =>
-    {
-        if (string.IsNullOrWhiteSpace(community)) return;
-        CommunityFilter = community;
-        SelectedCommunityFilter = community;
-        if (!SelectedCommunities.Contains(community))
-            SelectedCommunities.Add(community);
-        CommunitySuggestions.Clear();
-    });
-
-    public Command<string> DeselectCommunityCommand => _deselectCommunityCommand ??= new Command<string>(community =>
-    {
-        if (string.IsNullOrWhiteSpace(community)) return;
-        SelectedCommunities.Remove(community);
-    });
-
-    public Command ClearCommunityFilterCommand => _clearCommunityFilterCommand ??= new Command(_ => CommunityFilter = string.Empty);
+    [Preserve]
+    public Command<string> SelectCommunityCommand { get; }
+    [Preserve]
+    public Command<string> DeselectCommunityCommand { get; }
+    [Preserve]
+    public Command ClearCommunityFilterCommand { get; }
 
     #endregion
 

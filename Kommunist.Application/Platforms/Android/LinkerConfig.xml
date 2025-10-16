@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<linker>
+    <!-- Preserve EVERYTHING - no linking at all -->
+    <assembly fullname="*" preserve="All" />
+
+    <!-- Explicitly preserve critical MAUI assemblies -->
+    <assembly fullname="Microsoft.Maui" preserve="All" />
+    <assembly fullname="Microsoft.Maui.Controls" preserve="All" />
+    <assembly fullname="Microsoft.Maui.Controls.Compatibility" preserve="All" />
+    <assembly fullname="Microsoft.Maui.Graphics" preserve="All" />
+    <assembly fullname="Microsoft.Maui.Essentials" preserve="All" />
+
+    <!-- Preserve application assemblies -->
+    <assembly fullname="Kommunist.Application" preserve="All" />
+    <assembly fullname="Kommunist.Core" preserve="All" />
+
+    <!-- Preserve third-party libraries -->
+    <assembly fullname="CommunityToolkit.Mvvm" preserve="All" />
+    <assembly fullname="CommunityToolkit.Maui" preserve="All" />
+    <assembly fullname="CommunityToolkit.Maui.Core" preserve="All" />
+    <assembly fullname="PropertyChanged" preserve="All" />
+    <assembly fullname="XCalendar.Core" preserve="All" />
+    <assembly fullname="XCalendar.Maui" preserve="All" />
+    <assembly fullname="CalendarView.MAUI" preserve="All" />
+</linker>

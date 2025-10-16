@@ -44,14 +44,23 @@
         <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
         <PublishTrimmed>false</PublishTrimmed>
         <RunAOTCompilation>false</RunAOTCompilation>
+        <EnableLLVM>false</EnableLLVM>
 
-        <!-- Android specific optimizations -->
+        <!-- Completely disable all optimization and shrinking -->
+        <AndroidEnableProguard>false</AndroidEnableProguard>
         <AndroidUseAapt2>true</AndroidUseAapt2>
         <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
         <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+        <AndroidDexTool>d8</AndroidDexTool>
+        <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+        <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
 
-        <!-- Preserve reflection for MVVM, commands, and bindings -->
+        <!-- Preserve all code - critical for commands and bindings -->
         <MtouchLink>None</MtouchLink>
+        <_EnableMauiLinking>false</_EnableMauiLinking>
+        <TrimMode>none</TrimMode>
+        <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+        <IlcGenerateStackTraceData>true</IlcGenerateStackTraceData>
     </PropertyGroup>
 
 
@@ -107,6 +116,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Kommunist.Core\Kommunist.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+        <AndroidLinkDescription Include="Platforms\Android\LinkerConfig.xml" />
     </ItemGroup>
 
     <ItemGroup>
